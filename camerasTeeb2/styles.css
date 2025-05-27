@@ -1,0 +1,783 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Poppins;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+input[type="text"] {
+    border: none !important;  /* Remove a borda */
+    outline: none !important; /* Remove o contorno ao focar */
+ /* Garante que não fique com fundo branco */
+}
+button {
+    border: none !important;
+    outline: none !important;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    /* Remove margens do body */
+    padding: 0;
+    /* Remove padding do body */
+    overflow-x: hidden;
+}
+
+/* Cabeçalho */
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgb(14, 19, 20);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    list-style: none;
+    margin: 0;
+    width: max-content;
+    z-index: 1000;
+}
+
+.dropdown-menu li {
+    margin: 0;
+}
+
+.dropdown-menu a {
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+/* Exibir menu ao passar o cursor */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Estilos gerais do cabeçalho */
+header {
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgb(14, 19, 20);
+    padding: 8px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.169);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.dark-mode header{
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2); 
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header .logo img {
+    width: 150px;
+    height: auto;
+}
+
+header nav {
+    flex-grow: 1;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+/* Estilo para o botão de menu sanduíche */
+.menu-toggle {
+    cursor: pointer;
+    font-size: 26px;
+    color: white;
+    position: relative;
+    z-index: 1010;
+    display: flex;
+    align-items: center;
+}
+.menu-toggle i {
+    font-size: 26px; /* Mantém o tamanho do ícone consistente */
+    transition: transform 0.3s ease;
+    width: 26px; /* Garante que não aumente o tamanho do botão */
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-toggle i.fa-times {
+    transform: rotate(180deg);
+}
+
+/* Estilos para os itens do menu */
+header nav ul li {
+    position: relative;
+    padding: 2px 5px;
+    border-radius: 5px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: #c6c5c5;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    display: block;
+    padding: 10px 15px;
+}
+
+
+header nav ul li:hover {
+    background-color: rgb(241, 196, 0);
+}
+header nav ul li:last-child:hover {
+    background-color: rgb(1, 1, 1);
+}
+
+header nav ul li a:hover {
+    color: #000000;
+}
+
+header .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgb(14, 19, 20);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    list-style: none;
+    margin: 0;
+    width: max-content;
+    z-index: 1000;
+}
+
+header .dropdown-menu li {
+    margin: 0;
+}
+
+header .dropdown-menu a {
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+header .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Exibir ícone do menu sanduíche */
+
+#navLinks li a {
+    display: flex;
+    align-items: center; /* Alinha o ícone e o texto */
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    padding: 8px 3px;
+    transition: background 0.3s;
+    border-radius: 5px;
+    gap: 8px; /* Espaço entre o ícone e o texto */
+}
+/* Estilos responsivos */
+/* Escondendo o menu por padrão em telas menores */
+#nav {
+    display: flex;
+
+    /* Mantém o menu em linha */
+}
+
+/* Estilo para o menu quando estiver visível */
+#nav.active {
+    display: block;
+    /* Mostra o menu quando a classe "active" está presente */
+}
+
+#nav.active~.container {
+    justify-content: center;
+    /* Centraliza a logo */
+}
+
+/* Estilizando o menu sanduíche */
+.menu-toggle i {
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Quando o menu está ativo, o ícone gira */
+.menu-toggle.active i {
+    transform: rotate(90deg);
+}
+
+
+/* Garante que o pseudo-elemento exiba o X com cor branca */
+.menu-toggle.active i:before {
+    content: '\f00d';
+    color: white;
+}
+
+
+/* Estilos para o ícone do perfil */
+
+
+.profile-icon a {
+    color: #c6c5c5;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espaço entre o ícone e o texto */
+    transition: color 0.3s ease;
+}
+
+.profile-icon a i {
+    font-size: 20px;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+.profile-icon a:hover i {
+    color: #000; /* Torna o ícone preto ao passar o mouse */
+}
+
+.profile-icon a:hover {
+    color: #000; /* Torna o texto preto ao passar o mouse */
+}
+
+/* Btn Voltar para o topo */
+.back-to-top {
+    width: 60px !important; /* Garante que o tamanho seja fixo */
+    height: 60px !important; /* Igual à largura para formar um círculo */
+    border-radius: 50% !important; /* Força o formato redondo */
+    aspect-ratio: 1 / 1 !important; /* Mantém a proporção */
+    background-color: #f4b400 !important; /* Cor de fundo */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    cursor: pointer !important;
+    border: none !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* Evita distorção */
+    z-index: 9999 !important;
+    opacity: 0; /* Começa invisível */
+    visibility: hidden; /* Evita que ocupe espaço quando oculto */
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out; /* Animação suave */
+    color: #f90d7f;
+
+}
+
+.back-to-top.show {
+    opacity: 1; /* Fica visível */
+    visibility: visible; /* Agora pode ser clicado */
+}
+.back-to-top:hover {
+    background-color: rgb(201, 165, 6);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+.overlay.active ~ .back-to-top {
+    filter: blur(5px);
+    pointer-events: none; /* Impede cliques enquanto está desfocado */
+}
+* Estilo da barra de pesquisa em resoluções maiores */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    /* Centraliza horizontalmente a barra de pesquisa */
+    padding: 10px;
+    background-color: #f3f3f3;
+    /* Cor de fundo semelhante à Amazon */
+}
+
+.search-form {
+    display: flex;
+    width: 80%;
+    /* Largura da barra de pesquisa em telas maiores */
+    max-width: 900px;
+    /* Largura máxima da barra de pesquisa */
+    border: 1px solid #ccc;
+    /* Bordas */
+    border-radius: 5px;
+    /* Cantos arredondados */
+    background-color: white;
+    overflow: hidden;
+}
+
+.search-input {
+    flex: 1;
+
+    /* O campo de texto ocupa todo o espaço disponível */
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    /* Remove as bordas internas */
+    outline: none;
+    /* Remove o contorno ao focar */
+}
+.dark-mode .search-input{
+    background-color: #272727 !important;
+    border: none;
+    outline: none;
+}
+
+.search-btn {
+    background-color: rgb(241, 196, 0);
+    /* Cor semelhante ao botão de busca da Amazon */
+    border: none;
+    padding: 0 20px;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+    background-color: rgb(201, 165, 6);
+    /* Cor de hover */
+}
+
+
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 40px 0;
+    font-family: Arial, sans-serif;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    width: 22%;
+    margin-bottom: 20px;
+}
+
+.footer-column h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #f9f9f9;
+}
+
+.footer-column p,
+.footer-column ul {
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.footer-column ul {
+    padding: 0;
+    list-style: none;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-column ul li a:hover {
+    text-decoration: underline;
+}
+
+.social-links li {
+    display: inline;
+    margin-right: 10px;
+}
+
+.footer-bottom {
+    background-color: #070707;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 12px;
+}
+
+.footer-bottom p {
+    margin: 5px 0;
+}
+
+.footer-bottom a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-bottom a:hover {
+    text-decoration: underline;
+}
+
+.contact-info {
+    margin-top: 15px;
+}
+
+.contact-info h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: rgb(253, 198, 0);
+    /* Destaque do título dos contatos */
+}
+
+.contact-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact-info ul li {
+    margin-bottom: 5px;
+    font-size: 1em;
+    color: #ffffff;
+}
+
+.blur-background {
+    filter: blur(5px);
+    transition: filter 0.3s ease-in-out;
+}
+
+
+
+
+/* Estilos para telas maiores (mínimo 769px) */
+/* Estilos para telas maiores (mínimo 769px) */
+@media (max-width: 600px) {
+    #nav {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Começa fora da tela */
+        width: 70vw; /* Largura do menu */
+        max-width: 400px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        padding: 20px;
+        transition: transform 0.3s ease-in-out; /* Animação suave */
+        transform: translateX(100%); /* Move o menu para fora da tela */
+        z-index: 1000;
+    }
+    
+    /* Quando o menu está ativo, ele desliza para dentro */
+    #nav.active {
+        transform: translateX(0);
+        right: 0;
+    }
+    #navLinks li a {
+        font-size: 22px; /* Maior para facilitar a leitura */
+        padding: 15px 20px;
+    }
+    #navLinks li a {
+        font-size: 22px; /* Maior para facilitar a leitura */
+        padding: 15px 20px;
+    }
+
+    header {
+        box-shadow: none;
+    }
+
+    .back-to-top {
+        bottom: 10px;
+        right: 10px;
+        padding: 15px;
+        font-size: 1.2em;
+    }
+
+    .search-bar {
+        background-color: black;
+    }
+
+    .search-form {
+        width: 90%;
+        max-width: 100%;
+    }
+
+    .search-input {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .search-btn {
+        font-size: 14px;
+        padding: 0 15px;
+    }
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Escurece o fundo */
+        backdrop-filter: blur(5px); /* Aplica desfoque */
+        z-index: 999;
+    }
+    
+    .overlay.active {
+        display: block;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+    }
+    body.menu-active .back-to-top {
+        filter: blur(5px);
+        pointer-events: none; /* Impede cliques enquanto está desfocado */
+    }
+}
+
+@media (min-width: 770px) {
+    #nav {
+        position: static; /* Mantém o menu no fluxo normal */
+        display: flex !important; /* Garante que fique visível */
+        transform: none !important; /* Remove qualquer transformação */
+        background: transparent; /* Mantém o fundo normal */
+        height: auto;
+        width: auto;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    
+    
+    /* Quando o menu está ativo, ele desliza para dentro */
+    #nav.active {
+        right: 0;
+    }
+    .menu-toggle {
+        display: none;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .menu-toggle {
+        display: block;
+        color: white;
+    }
+
+    .menu-toggle i {
+        color: white;
+        top: 90%;
+    }
+
+    #nav {
+        position: absolute;
+        top: 4%;
+        right: 0;
+        width: 70vw; /* Ocupa metade da tela */
+        max-width: 400px;
+        background: rgba(0, 0, 0, 0.95);
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none; /* Oculto por padrão */
+        transition: all 0.3s ease-in-out;
+        z-index: 1000;
+    }
+
+
+    #nav.active {
+        max-height: 300px;
+        display: block;
+    }
+
+    #nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+
+    }
+
+    #nav ul li {
+        width: 100%;
+        padding: 10px;
+        text-align: left;
+    }
+
+    #nav ul li:hover {
+        background-color: rgb(241, 196, 0);
+        color: black;
+    }
+
+    #nav ul li a {
+        display: block;
+        text-align: left;
+        color: white;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+    #navLinks li a {
+        gap: 8px;
+    }
+
+    .profile-icon {
+        display: flex;
+    }
+
+    .profile-icon a {
+        display: block;
+        text-align: left;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-column {
+        width: 100%;
+        text-align: center;
+    }
+    #nav ul li a {
+        padding: 5px 8px;
+        font-size: 18px;
+        text-align: left;
+    }
+    .search-form {
+        display: flex;
+        width: 100%;
+        max-width: 100%;
+      }
+      /* Permite que o input se expanda e encolha corretamente */
+      .search-input {
+        flex: 1;
+        min-width: 0; /* Essencial para evitar que o botão seja empurrado para fora */
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        outline: none;
+      }
+      /* Garante que o botão não encolha e permaneça visível */
+      .search-btn {
+        flex-shrink: 0;
+        padding: 10px 15px;
+        font-size: 16px;
+        background-color: rgb(241, 196, 0);
+        color: black;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .search-btn:hover {
+        background-color: rgb(201, 165, 6);
+      }
+}
+
+@media (max-width: 480px) {
+    header .logo img {
+        width: 100px;
+    }
+
+    .menu-toggle i {
+        font-size: 30px;
+        color: white;
+    }
+
+    #nav ul {
+        gap: 0;
+        align-items: flex-start;
+    }
+
+   
+
+    .profile-icon a i {
+        font-size: 20px;
+        text-align: left;
+    }
+
+    header .container {
+        padding: 6 5px;
+    }
+
+    footer {
+        padding: 20px 0;
+    }
+
+    .footer-column h3 {
+        font-size: 16px;
+    }
+
+    .footer-column p,
+    .footer-column ul {
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    .footer-bottom {
+        font-size: 10px;
+    }
+
+    .contact-info h3 {
+        font-size: 1em;
+    }
+
+    .contact-info ul li {
+        font-size: 0.9em;
+    }
+}
+
+@media (min-width: 1024px) {
+    header {
+        justify-content: flex-end;
+    }
+
+    header .logo {
+        margin-right: auto;
+    }
+
+    header nav ul li {
+        margin-left: 30px;
+    }
+    
+}
