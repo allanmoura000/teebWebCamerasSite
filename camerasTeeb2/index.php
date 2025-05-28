@@ -68,7 +68,7 @@
 
                     <!-- Ícone ao lado do nome "Entrar" -->
                     <li class="profile-icon">
-                        <a href="conta.php" id="auth-link">
+                        <a href="cadastro.php" id="auth-link">
                             <i class="fas fa-user-circle"></i>
                             <span>Entrar</span>
                         </a>

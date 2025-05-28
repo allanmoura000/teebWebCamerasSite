@@ -5,9 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/imagens/icon.ico" type="image/x-icon">
-    <title>Cadastro Moderno</title>
+    <title>Cadastro</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="shortcut icon" href="/imagens/icon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -23,6 +22,10 @@
             background-color: #272727;
         }
 
+        .mt-4 {
+            
+        }
+
         .header-logo {
             display: none
         }
@@ -33,7 +36,7 @@
 
         .frame {
             width: 80%;
-            height: 90%;
+            height: 95%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             display: flex;
             border-radius: 10px 0px 0px 10px;
@@ -51,7 +54,6 @@
             background-color: #121212;
             color: #f4f4f4;
             overflow-y: auto;
-            padding: 20px;
             position: relative;
             border-radius: 10px;
         }
@@ -218,7 +220,6 @@
         }
 
 
-
         #photoMessageError {
             display: none;
             opacity: 0;
@@ -288,7 +289,7 @@
 
         .close-btn {
             position: absolute;
-            top: 10px;
+            top: 4px;
             right: 10px;
             background: none;
             border: none;
@@ -339,7 +340,7 @@
             background: #272727;
             padding: 20px;
             max-width: 80%;
-            max-height: 80%;
+            max-height: 90%;
             overflow-y: auto;
             /* Permite o scroll vertical */
             border-radius: 10px;
@@ -350,11 +351,11 @@
         }
 
         .close-btn {
-            position: absolute;
+            position: fixed;
             /* Fixa o botão no topo direito */
-            top: 10px;
-            right: 10px;
-            font-size: 50px;
+            top: 4%;
+            right: 10%;
+            font-size: 42px;
             background: transparent;
             border: none;
             cursor: pointer;
@@ -367,6 +368,7 @@
         .popup-subtitle {
             font-family: 'Montserrat', sans-serif;
             margin: 10px 0;
+            margin-top: -5px;
             color: white;
         }
 
@@ -385,14 +387,16 @@
 
         #uploadProgress {
             width: 100%;
+            display: none;
             height: 8px;
             border-radius: 4px;
             background-color: #fdd835;
             margin-top: 20px;
-            display: none;
+            /* Amarelo padrão */
         }
 
-        Ï @media (max-width: 768px) {
+
+        @media (max-width: 768px) {
             .popup-text {
                 margin: 10px 0;
                 margin-top: 0%;
@@ -427,9 +431,14 @@
             .header-logo {
                 display: block;
                 max-width: 50%;
-                margin-top: 10%;
+                margin-top: 0%;
                 margin-left: 25%;
             }
+            @media (max-width: 768px) {
+
+                margin-top: 0%;
+            }
+            
 
             .img_inicio {
                 display: hidden;
@@ -471,201 +480,229 @@
             #photoMessageError {
                 top: 50%;
             }
-
-            .logo,
-            .header-logo {
-                content: url("imagens/TeebLogo.png");
-                display: block;
-                max-width: 50%;
-                margin-top: 10%;
-                margin-left: 25%;
-            }
         }
     </style>
 
 </head>
 
 <body>
-  <div class="frame">
-    <div class="left-panel">
-      <!-- Conteúdo da esquerda -->
-    </div>
-    <div class="right-panel">
-      <a href="index.php">
-        <img src="imagens/TeebLogoPreta.png" alt="Logo" class="logo">
-      </a>
-      <div class="container mt-4">
+    <div class="frame">
+        <div class="left-panel">
+            <img src="imagens/TeebLogo.png" alt="Logo" class="logo">
+            <img src="imagens/indoor-security-system-abstract-concept-vector-ill (4).png" alt="img_inicio"
+                class="img_inicio">
 
-        <!-- Etapa 1: Dados Pessoais -->
-        <div id="step1" class="step">
-          <h3>Etapa 1: Informações Pessoais</h3>
-          <form id="form1">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nome Completo</label>
-              <input type="text" class="form-control" id="name" required>
+        </div>
+        <div class="right-panel">
+            <img src="imagens/TeebLogo_amarela.png" alt="Header Logo" class="header-logo">
+            <div class="container mt-4">
+                <div class="logo-container">
+                    <img src="imagens/" alt="Logo" class="logo-left">
+                </div>
+
+                
+
+                <div id="step1" class="step">
+                    <h3>Informações Pessoais</h3>
+                    <form id="form1">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <!-- Inside the step1 form -->
+<!-- Dentro do seu form, logo após o campo de senha -->
+<div class="mb-3">
+  <label for="password" class="form-label">Senha</label>
+  <input type="password" class="form-control" id="password" required>
+</div>
+<div class="mb-3">
+  <label for="confirm_password" class="form-label">Confirme a Senha</label>
+  <input type="password" class="form-control" id="confirm_password" required>
+</div>
+
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="phone" placeholder="(00) 00000-0000"
+                                maxlength="15" required>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary disabled">Voltar</button>
+                            <button type="button" class="btn btn-primary" onclick="validateStep1()">Próximo</button>
+                        </div>
+
+                    </form>
+                </div>
+
+                            
+
+
+
+            <div id="step2" class="step" style="display: none;">
+                <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
+                <div class="text-center mt-4">
+                    <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
+                        style="max-width: 200px;">
+                    <p style="margin-top:30px ; color: #3bb54a;" class="text-success fw-bold">Informações enviadas com sucesso!</p>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
+
+                </div>
             </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">E-mail</label>
-              <input type="email" class="form-control" id="email" required>
+
+
             </div>
-            <div class="mb-3">
-              <label for="phone" class="form-label">Número de Telefone</label>
-              <input type="tel" class="form-control" id="phone" placeholder="Opcional para SMS">
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Crie uma Senha</label>
-              <input type="password" class="form-control" id="password" minlength="6" required>
-            </div>
-            <div class="d-flex justify-content-between">
-              <button type="button" class="btn btn-secondary disabled">Voltar</button>
-              <!-- Ao clicar, envia dados para gerar o código e avança para etapa 2 -->
-              <button type="button" class="btn btn-primary" onclick="sendVerificationCode()">Próximo</button>
-            </div>
-            <div class="text-center mt-3">
-              <p class="text-light">Já tem uma conta?</p>
-              <button type="button" class="btn btn-primary w-100" onclick="redirectToLogin()">Entrar</button>
-            </div>
-          </form>
         </div>
 
-        <!-- Etapa 2: Verificação do Código -->
-        <div id="step2" class="step" style="display: none;">
-          <h3>Verifique o Código</h3>
-          <p>Enviamos um código de verificação para o seu e‑mail ou telefone. Insira-o abaixo:</p>
-          <form id="form2">
-            <div class="mb-3">
-              <label for="verificationCode" class="form-label">Código de Verificação</label>
-              <input type="text" class="form-control" id="verificationCode" required>
-            </div>
-            <div class="d-flex justify-content-between">
-              <button type="button" class="btn btn-secondary" onclick="resendCode()">Reenviar Código</button>
-              <button type="button" class="btn btn-primary" onclick="verifyCode()">Finalizar Cadastro</button>
-            </div>
-          </form>
-          <div id="message" class="mt-3"></div>
-        </div>
-
-      </div>
     </div>
-  </div>
 
-  <!-- Scripts de bibliotecas -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    // Variável global para armazenar temporariamente os dados do usuário
-    let cadastroData = {};
+    <div id="popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">×</button>
+            <h2 class="popup-title">Selfie Com Documento</h2>
+            <h4 class="popup-subtitle">Use esse sistema para validar seu cadastro. Atente-se as instruções abaixo</h4>
+            <img src="imagens/homem_identidade.png" alt="Imagem 2" class="popup-image">
+            <br><br><br>
+            <p class="popup-text">Tire a foto com o documento próximo ao rosto, conforme o exemplo ilustrado abaixo e
+                clique em “Enviar Documentação”</p>
+            <br> <br>
 
-    // Função para enviar os dados da etapa 1 e solicitar o envio do código de verificação
-    function sendVerificationCode() {
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const password = document.getElementById("password").value.trim();
+            <h4 class="popup-subtitle" style="font-size: 21px;">Caso tenha dúvidas, siga o passo a passo abaixo</h4>
+            <br>
+            <br>
+            <p class="popup-text">
+            <p class="popup-text">
 
-      if (!name || !email || !password) {
-        alert("Preencha os campos obrigatórios");
+                <li> 1° Passo: Aperte o botão "Capturar Foto", a câmera do telefone abrirá logo em seguida.</li><br>
+                <li> 2° Passo: Agora posicione o documento ao lado do rosto semelhante ao demonstrado no exemplo acima, e capture a imagem.</li><br>
+                <li> 3° Passo: Logo após envie a selfie com o documento apertando em "Enviar Documentação", espere a mensagem, e passe para próxima etapa.</li>
+
+
+            </p>
+
+        </div>
+    </div>
+<script>
+    let currentStep = 1;
+
+// Avança para o próximo passo
+function nextStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step;
+    updateStepIndicators(step);
+}
+
+// Volta para o passo anterior
+function previousStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step; // Atualiza a etapa atual corretamente
+
+    updateStepIndicators(step);
+}
+
+
+// Atualiza os indicadores de etapa
+function updateStepIndicators(step) {
+    for (let i = 1; i <= 4; i++) {
+        const stepIndicator = document.getElementById(`stepIndicator${i}`);
+        const line = document.getElementById(`line${i - 1}`);
+        if (stepIndicator) {
+            stepIndicator.classList.toggle('completed', i < step);
+            stepIndicator.classList.toggle('active', i === step);
+            if (line) line.classList.toggle('completed', i < step);
+        }
+    }
+}
+
+// Validação e envio dos dados da Etapa 1
+function validateStep1() {
+    // Campos existentes
+    const name  = document.getElementById("name").value.trim();
+    const cpf   = document.getElementById("cpf").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    
+    // Novos campos de senha
+    const password        = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+
+    // Validação de senha mínima
+    if (password.length < 6) {
+        alert("A senha deve ter pelo menos 6 caracteres!");
         return;
-      }
-
-      // Armazena os dados para a finalização do cadastro
-      cadastroData = { name, email, phone, password };
-
-      // Envia os dados para o endpoint que gerará e enviará o código
-      fetch("sendCode.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          document.getElementById("message").innerText = data.error;
-        } else {
-          // Exibe a etapa 2 para inserção do código
-          document.getElementById("step1").style.display = "none";
-          document.getElementById("step2").style.display = "block";
-          document.getElementById("message").innerText = "Código enviado! Verifique seu e-mail ou SMS.";
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao enviar o código de verificação:", err);
-        document.getElementById("message").innerText = "Erro ao enviar código de verificação.";
-      });
     }
-
-    // Função para reenviar o código de verificação
-    function resendCode() {
-      // Pode-se chamar o mesmo endpoint ou um específico para reenviar
-      fetch("sendCode.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `email=${encodeURIComponent(cadastroData.email)}`
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          document.getElementById("message").innerText = data.error;
-        } else {
-          document.getElementById("message").innerText = "Novo código enviado!";
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao reenviar o código:", err);
-        document.getElementById("message").innerText = "Erro ao reenviar código.";
-      });
-    }
-
-    // Função para validar o código informado e concluir o cadastro
-    function verifyCode() {
-      const code = document.getElementById("verificationCode").value.trim();
-      if (!code) {
-        alert("Informe o código de verificação.");
+    
+    // Validação de confirmação
+    if (password !== confirmPassword) {
+        alert("As senhas não coincidem!");
         return;
-      }
+    }
 
-      // Chama o endpoint de validação do código
-      fetch("verifyCode.php", {
+    // Validação dos demais campos
+    if (!name || !cpf || !email || !phone) {
+        alert("Preencha todos os campos antes de continuar!");
+        return;
+    }
+
+    // Envia os dados (incluindo a senha)
+    fetch("/camerasTeeb2/camerasTeeb2/salvar_usuario1.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `email=${encodeURIComponent(cadastroData.email)}&code=${encodeURIComponent(code)}`
-      })
-      .then(response => response.json())
-      .then(data => {
+        body: 
+          `name=${encodeURIComponent(name)}` +
+          `&cpf=${encodeURIComponent(cpf)}` +
+          `&email=${encodeURIComponent(email)}` +
+          `&phone=${encodeURIComponent(phone)}` +
+          `&password=${encodeURIComponent(password)}`
+    })
+    .then(response => response.json())
+    .then(data => {
         if (data.error) {
-          document.getElementById("message").innerText = data.error;
+            alert(`Erro ao salvar dados: ${data.error}`);
         } else {
-          // Se o código foi validado com sucesso, finalize o cadastro
-          // Aqui, você pode enviar os dados definitivamente para salvar no banco
-          fetch("finalizeCadastro.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `name=${encodeURIComponent(cadastroData.name)}&email=${encodeURIComponent(cadastroData.email)}&phone=${encodeURIComponent(cadastroData.phone)}&password=${encodeURIComponent(cadastroData.password)}`
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              document.getElementById("message").innerText = data.error;
-            } else {
-              // Redireciona para a página index após o cadastro concluído com sucesso
-              window.location.href = "index.php";
-            }
-          })
-          .catch(err => {
-            console.error("Erro ao finalizar cadastro:", err);
-            document.getElementById("message").innerText = "Erro ao finalizar cadastro.";
-          });
+            // Armazena o ID retornado e avança para a próxima etapa
+            localStorage.setItem("userId", data.id);
+            nextStep(2);
         }
-      })
-      .catch(err => {
-        console.error("Erro na verificação do código:", err);
-        document.getElementById("message").innerText = "Erro na verificação do código.";
-      });
-    }
+    })
+    .catch(error => {
+        console.error("Erro:", error);
+        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+    });
+}
 
-    function redirectToLogin() {
-      window.location.href = "login.php";
-    }
-  </script>
+// Máscaras nos campos de entrada
+function setupInputMasks() {
+    VMasker(document.getElementById("cpf")).maskPattern("999.999.999-99");
+    VMasker(document.getElementById("phone")).maskPattern("(99) 99999-9999");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupInputMasks();
+    document.querySelector("#form1 button.btn-primary").addEventListener("click", validateStep1);
+    document.querySelector("#step2 button.btn-secondary").addEventListener("click", () => previousStep(1)); // Corrigido o botão voltar
+});
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ua-parser-js@0.7.36/dist/ua-parser.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-masker/1.2.0/vanilla-masker.min.js"></script>
+
+    <script src="script.js"></script>
 </body>
+
 </html>
