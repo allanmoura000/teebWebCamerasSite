@@ -13,12 +13,12 @@ use PHPMailer\PHPMailer\Exception;
 header('Content-Type: application/json');
 
 // Incluir conexão com banco de dados
-include __DIR__ . '/conexao.php';
+include 'conexao.php';
 
 try {
     $data = json_decode(file_get_contents('php://input'), true);
     
-    if (!$data) {
+    if (!$data || !isset($data['userId']) || !isset($data['email'])) {
         throw new Exception("Dados inválidos na requisição");
     }
     
@@ -28,7 +28,7 @@ try {
     // Gera código de 6 dígitos
     $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-    // Salva no banco
+    // Salva no banco - ATUALIZE O NOME DA COLUNA PARA 'verification_code'
     $stmt = $conexao->prepare("UPDATE cadastro_simples SET verification_code = ? WHERE id = ?");
     $stmt->bind_param("si", $code, $userId);
     

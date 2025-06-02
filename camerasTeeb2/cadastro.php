@@ -638,41 +638,34 @@ function updateStepIndicators(step) {
         }
     }
 }
-function sendVerificationCode(userId, email) {
-   return fetch("/camerasTeeb2/camerasTeeb2/enviar_codigo.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, email })
-    })
-    .then(response => {
-        // Verifique se a resposta é JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            return response.text().then(text => {
-                throw new Error(`Resposta inválida: ${text}`);
+        function sendVerificationCode(userId, email) {
+            return fetch("enviar_codigo.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, email })
+            })
+            .then(response => response.json());
+        }
+
+        function validateCode() {
+            const code = document.getElementById("verificationCode").value;
+            const userId = localStorage.getItem("userId");
+
+            fetch("verificar_codigo.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    nextStep(3); // Vai para a etapa de conclusão
+                } else {
+                    alert("Código inválido. Tente novamente.");
+                }
             });
         }
-        return response.json();
-    });
-}
-function validateCode() {
-    const code = document.getElementById("verificationCode").value;
-    const userId = localStorage.getItem("userId");
 
-    fetch("verificar_codigo.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, code })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            nextStep(3); // Vai para a etapa de conclusão
-        } else {
-            alert("Código inválido. Tente novamente.");
-        }
-    });
-}
 function resendCode() {
     const userId = localStorage.getItem("userId");
     const email = localStorage.getItem("userEmail");
@@ -717,35 +710,32 @@ function validateStep1() {
     }
 
     // Envia os dados (incluindo a senha)
-    fetch("/camerasTeeb2/camerasTeeb2/salvar_usuario1.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: 
-          `name=${encodeURIComponent(name)}` +
-          `&cpf=${encodeURIComponent(cpf)}` +
-          `&email=${encodeURIComponent(email)}` +
-          `&phone=${encodeURIComponent(phone)}` +
-          `&password=${encodeURIComponent(password)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(`Erro ao salvar dados: ${data.error}`);
-        } else {
-            // Armazena o ID retornado e avança para a próxima etapa
-sendVerificationCode(data.id, email)
-    .then(() => nextStep(2))
-    .catch(error => {
-        console.error("Erro ao enviar código:", error);
-        alert("Falha ao enviar código de verificação: " + error.message);
-    });
+   fetch("salvar_usuario1.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(`Erro ao salvar dados: ${data.error}`);
+                } else {
+                    localStorage.setItem("userId", data.id);
+                    localStorage.setItem("userEmail", email);
+                    
+                    sendVerificationCode(data.id, email)
+                        .then(() => nextStep(2))
+                        .catch(error => {
+                            console.error("Erro ao enviar código:", error);
+                            alert("Falha ao enviar código de verificação");
+                        });
+                }
+            })
+            .catch(error => {
+                console.error("Erro:", error);
+                alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+            });
         }
-    })
-    .catch(error => {
-        console.error("Erro:", error);
-        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
-    });
-}
 
 // Máscaras nos campos de entrada
 function setupInputMasks() {
