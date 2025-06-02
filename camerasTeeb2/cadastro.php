@@ -545,9 +545,22 @@
 
                             
 
+<div id="step2" class="step" style="display: none;">
+    <h3>Verificação por E-mail</h3>
+    <div class="mb-3">
+        <label for="verificationCode" class="form-label">Código de Verificação</label>
+        <input type="text" class="form-control" id="verificationCode" maxlength="6" required>
+    </div>
+    <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
+        <button type="button" class="btn btn-primary" onclick="validateCode()">Verificar</button>
+    </div>
+    <div class="mt-3">
+        <p>Não recebeu o código? <a href="#" onclick="resendCode(); return false;">Reenviar</a></p>
+    </div>
+</div>
 
-
-            <div id="step2" class="step" style="display: none;">
+            <div id="step3" class="step" style="display: none;">
                 <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
                 <div class="text-center mt-4">
                     <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
@@ -625,7 +638,54 @@ function updateStepIndicators(step) {
         }
     }
 }
+function sendVerificationCode(userId, email) {
+   return fetch("/camerasTeeb2/camerasTeeb2/enviar_codigo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, email })
+    })
+    .then(response => {
+        // Verifique se a resposta é JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            return response.text().then(text => {
+                throw new Error(`Resposta inválida: ${text}`);
+            });
+        }
+        return response.json();
+    });
+}
+function validateCode() {
+    const code = document.getElementById("verificationCode").value;
+    const userId = localStorage.getItem("userId");
 
+    fetch("verificar_codigo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            nextStep(3); // Vai para a etapa de conclusão
+        } else {
+            alert("Código inválido. Tente novamente.");
+        }
+    });
+}
+function resendCode() {
+    const userId = localStorage.getItem("userId");
+    const email = localStorage.getItem("userEmail");
+    
+    sendVerificationCode(userId, email)
+        .then(data => {
+            if (data.success) {
+                alert("Código reenviado com sucesso!");
+            } else {
+                alert("Erro ao reenviar código.");
+            }
+        });
+}
 // Validação e envio dos dados da Etapa 1
 function validateStep1() {
     // Campos existentes
@@ -673,8 +733,12 @@ function validateStep1() {
             alert(`Erro ao salvar dados: ${data.error}`);
         } else {
             // Armazena o ID retornado e avança para a próxima etapa
-            localStorage.setItem("userId", data.id);
-            nextStep(2);
+sendVerificationCode(data.id, email)
+    .then(() => nextStep(2))
+    .catch(error => {
+        console.error("Erro ao enviar código:", error);
+        alert("Falha ao enviar código de verificação: " + error.message);
+    });
         }
     })
     .catch(error => {

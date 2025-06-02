@@ -1,70 +1,56 @@
 <?php
-include 'db.php';
+// send_verification.php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 header('Content-Type: application/json');
+include 'conexao.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
-$userId = $data['userId'];
-
-// Gerar código de 6 dígitos
-$code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-$expiry = date('Y-m-d H:i:s', strtotime('+10 minutes'));
-
-$stmt = $conn->prepare("UPDATE cadastro_simples SET verification_code = ?, code_expiry = ? WHERE id = ?");
-$stmt->bind_param('ssi', $code, $expiry, $userId);
-
-if($stmt->execute()) {
-    // Obter dados do usuário
-    $result = $conn->query("SELECT name, email FROM cadastro_simples WHERE id = $userId");
-    $user = $result->fetch_assoc();
-    
-    // Configurações do e-mail
-    $to = $user['email'];
-    $subject = '🔐 Código de Verificação - Teeb Web';
-    $fromEmail = 'allanmouraoficial2@gmail.com';
-    $fromName = 'Teeb Web Security';
-    $replyTo = 'allanmouraoficial2@gmail.com';
-
-    // Corpo do e-mail em HTML
-    $messageHTML = '
-    <html>
-    <head>
-        <style>
-            body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
-            .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
-            .code { font-size: 24px; color: #fdd835; font-weight: bold; margin: 20px 0; }
-            .footer { margin-top: 20px; color: #666; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h2>Olá, '.$user['name'].'!</h2>
-            <p>Seu código de verificação para acesso ao sistema é:</p>
-            <div class="code">'.$code.'</div>
-            <p>Este código é válido por 10 minutos ⏳</p>
-            <div class="footer">
-                <p>Atenciosamente,<br>
-                Equipe Teeb Web Security<br>
-                <small>http://localhost/camerasteeb2/camerasTeeb2/conta.php</small></p>
-            </div>
-        </div>
-    </body>
-    </html>
-    ';
-
-    // Headers do e-mail
-    $headers = "From: $fromName <$fromEmail>\r\n";
-    $headers .= "Reply-To: $replyTo\r\n";
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-
-    // Envio do e-mail
-    if(mail($to, $subject, $messageHTML, $headers)) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Falha no envio do e-mail']);
-    }
-    
-} else {
-    echo json_encode(['success' => false]);
+$email = trim($_POST['email'] ?? '');
+if (!$email) {
+    http_response_code(400);
+    echo json_encode(['error' => 'E-mail é obrigatório.']);
+    exit;
 }
-?>
+
+// Verifica se o usuário existe
+$stmt = $conexao->prepare("SELECT id FROM cadastro_simples WHERE email = ?");
+$stmt->bind_param('s', $email);
+$stmt->execute();
+$res = $stmt->get_result();
+if ($res->num_rows === 0) {
+    http_response_code(404);
+    echo json_encode(['error' => 'Usuário não encontrado.']);
+    exit;
+}
+$user = $res->fetch_assoc();
+$userId = $user['id'];
+
+// Gera um código de 6 dígitos
+$code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+// Salva no banco
+$upd = $conexao->prepare("
+    UPDATE cadastro_simples
+       SET verification_code = ?, is_verified = 0
+     WHERE id = ?
+");
+$upd->bind_param('si', $code, $userId);
+$upd->execute();
+
+// Envia o e-mail (ajuste headers conforme seu servidor)
+$to      = $email;
+$subject = 'Seu código de verificação';
+$message = "Olá,\n\nSeu código de verificação é: $code\n\nDigite-o no site para confirmar seu cadastro.";
+$headers = 'From: no-reply@seudominio.com' . "\r\n" .
+           'Reply-To: no-reply@seudominio.com' . "\r\n" .
+           'X-Mailer: PHP/' . phpversion();
+
+if (mail($to, $subject, $message, $headers)) {
+    echo json_encode(['success' => 'Código enviado para ' . $email]);
+} else {
+    http_response_code(500);
+    echo json_encode(['error' => 'Falha ao enviar e-mail.']);
+}
+$upd->close();
+$stmt->close();
+$conexao->close();

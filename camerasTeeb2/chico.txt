@@ -519,14 +519,17 @@
                             <input type="email" class="form-control" id="email" required>
                         </div>
                         <!-- Inside the step1 form -->
+<!-- Dentro do seu form, logo após o campo de senha -->
 <div class="mb-3">
-    <label for="password" class="form-label">Senha</label>
-    <input type="password" class="form-control" id="password" required minlength="6">
+  <label for="password" class="form-label">Senha</label>
+  <input type="password" class="form-control" id="password" required>
 </div>
 <div class="mb-3">
-    <label for="confirm_password" class="form-label">Confirmar Senha</label>
-    <input type="password" class="form-control" id="confirm_password" required minlength="6">
+  <label for="confirm_password" class="form-label">Confirme a Senha</label>
+  <input type="password" class="form-control" id="confirm_password" required>
 </div>
+
+
                         <div class="mb-3">
                             <label for="phone" class="form-label">Telefone</label>
                             <input type="text" class="form-control" id="phone" placeholder="(00) 00000-0000"
@@ -542,9 +545,22 @@
 
                             
 
+<div id="step2" class="step" style="display: none;">
+    <h3>Verificação por E-mail</h3>
+    <div class="mb-3">
+        <label for="verificationCode" class="form-label">Código de Verificação</label>
+        <input type="text" class="form-control" id="verificationCode" maxlength="6" required>
+    </div>
+    <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
+        <button type="button" class="btn btn-primary" onclick="validateCode()">Verificar</button>
+    </div>
+    <div class="mt-3">
+        <p>Não recebeu o código? <a href="#" onclick="resendCode(); return false;">Reenviar</a></p>
+    </div>
+</div>
 
-
-            <div id="step2" class="step" style="display: none;">
+            <div id="step3" class="step" style="display: none;">
                 <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
                 <div class="text-center mt-4">
                     <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
@@ -622,55 +638,115 @@ function updateStepIndicators(step) {
         }
     }
 }
+function sendVerificationCode(userId, email) {
+   return fetch("/camerasTeeb2/camerasTeeb2/enviar_codigo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, email })
+    })
+    .then(response => {
+        // Verifique se a resposta é JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            return response.text().then(text => {
+                throw new Error(`Resposta inválida: ${text}`);
+            });
+        }
+        return response.json();
+    });
+}
+function validateCode() {
+    const code = document.getElementById("verificationCode").value;
+    const userId = localStorage.getItem("userId");
 
+    fetch("verificar_codigo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            nextStep(3); // Vai para a etapa de conclusão
+        } else {
+            alert("Código inválido. Tente novamente.");
+        }
+    });
+}
+function resendCode() {
+    const userId = localStorage.getItem("userId");
+    const email = localStorage.getItem("userEmail");
+    
+    sendVerificationCode(userId, email)
+        .then(data => {
+            if (data.success) {
+                alert("Código reenviado com sucesso!");
+            } else {
+                alert("Erro ao reenviar código.");
+            }
+        });
+}
 // Validação e envio dos dados da Etapa 1
 function validateStep1() {
-    // Existing fields
-    const name = document.getElementById("name").value.trim();
-    const cpf = document.getElementById("cpf").value.trim();
+    // Campos existentes
+    const name  = document.getElementById("name").value.trim();
+    const cpf   = document.getElementById("cpf").value.trim();
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
     
-    // New password fields
-    const password = document.getElementById("password").value;
+    // Novos campos de senha
+    const password        = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm_password").value;
 
-    // Password validation
+    // Validação de senha mínima
     if (password.length < 6) {
         alert("A senha deve ter pelo menos 6 caracteres!");
         return;
     }
     
+    // Validação de confirmação
     if (password !== confirmPassword) {
         alert("As senhas não coincidem!");
         return;
     }
 
-    // Existing validation
+    // Validação dos demais campos
     if (!name || !cpf || !email || !phone) {
         alert("Preencha todos os campos antes de continuar!");
         return;
     }
 
-    // Send data including password
+    // Envia os dados (incluindo a senha)
     fetch("/camerasTeeb2/camerasTeeb2/salvar_usuario1.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
+        body: 
+          `name=${encodeURIComponent(name)}` +
+          `&cpf=${encodeURIComponent(cpf)}` +
+          `&email=${encodeURIComponent(email)}` +
+          `&phone=${encodeURIComponent(phone)}` +
+          `&password=${encodeURIComponent(password)}`
     })
     .then(response => response.json())
     .then(data => {
         if (data.error) {
             alert(`Erro ao salvar dados: ${data.error}`);
         } else {
-            localStorage.setItem("userId", data.id);
-            nextStep(2);
+            // Armazena o ID retornado e avança para a próxima etapa
+sendVerificationCode(data.id, email)
+    .then(() => nextStep(2))
+    .catch(error => {
+        console.error("Erro ao enviar código:", error);
+        alert("Falha ao enviar código de verificação: " + error.message);
+    });
         }
     })
     .catch(error => {
         console.error("Erro:", error);
+        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
     });
 }
+
 // Máscaras nos campos de entrada
 function setupInputMasks() {
     VMasker(document.getElementById("cpf")).maskPattern("999.999.999-99");
@@ -696,6 +772,107 @@ document.addEventListener("DOMContentLoaded", () => {
 </html>
 
 <?php
+// Ativar exibição de erros para depuração
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Ajustar caminho do autoloader
+require __DIR__ . '/../vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+header('Content-Type: application/json');
+
+// Incluir conexão com banco de dados
+include __DIR__ . '/conexao.php';
+
+try {
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$data) {
+        throw new Exception("Dados inválidos na requisição");
+    }
+    
+    $userId = $data['userId'];
+    $email = $data['email'];
+
+    // Gera código de 6 dígitos
+    $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+    // Salva no banco
+    $stmt = $conexao->prepare("UPDATE cadastro_simples SET verification_code = ? WHERE id = ?");
+    $stmt->bind_param("si", $code, $userId);
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Erro ao salvar código no banco: " . $stmt->error);
+    }
+
+    // Configura PHPMailer
+    $mail = new PHPMailer(true);
+
+    // Configurações do servidor SMTP (ATUALIZE COM SEUS DADOS)
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'allanmouraoficial2@gmail.com'; // Seu e-mail REAL
+    $mail->Password = 'zttj mzej zvcv dgps';     // Sua senha REAL
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
+    $mail->CharSet = 'UTF-8';
+
+    // Remetente
+    $mail->setFrom('allanmouraoficial2@gmail.com', 'Sistema de Verificação');
+    $mail->addAddress($email);
+
+    // Conteúdo
+    $mail->isHTML(true);
+    $mail->Subject = 'Seu Código de Verificação';
+    $mail->Body    = "Seu código de verificação é: <b>$code</b>";
+    $mail->AltBody = "Seu código de verificação é: $code";
+
+    $mail->send();
+    echo json_encode(['success' => true]);
+    
+} catch(Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+    
+    // Log adicional para depuração
+    error_log("Erro em enviar_codigo.php: " . $e->getMessage());
+}
+?>
+
+<?php
+include 'conexao.php';
+
+$data = json_decode(file_get_contents('php://input'), true);
+$userId = $data['userId'];
+$code = $data['code'];
+
+$stmt = $conexao->prepare("SELECT verification_code FROM cadastro_simples WHERE id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+if ($row && $row['verification_code'] === $code) {
+    // Marca como verificado
+    $update = $conexao->prepare("UPDATE cadastro_simples SET is_verified = 1 WHERE id = ?");
+    $update->bind_param("i", $userId);
+    $update->execute();
+    
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false]);
+}
+?>
+
+<?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -705,32 +882,38 @@ header('Content-Type: application/json');
 include 'conexao.php';
 
 // Receber os dados enviados pelo formulário
-$name = trim($_POST['name'] ?? '');
-$cpf = trim($_POST['cpf'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$phone = trim($_POST['phone'] ?? '');
+$name     = trim($_POST['name'] ?? '');
+$cpf      = trim($_POST['cpf'] ?? '');
+$email    = trim($_POST['email'] ?? '');
+$phone    = trim($_POST['phone'] ?? '');
+$password = trim($_POST['password'] ?? '');
 
 // Validar os dados recebidos
-if (!$name || !$cpf || !$email || !$phone) {
+if (!$name || !$cpf || !$email || !$phone || !$password) {
     http_response_code(400); // Requisição inválida
     echo json_encode(["error" => "Preencha todos os campos obrigatórios."]);
     exit;
 }
 
+// Criptografar a senha
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
 // Verificar se o CPF já existe
-$sqlCheck = "SELECT id FROM cadastro_simples WHERE cpf = ?";
-$stmtCheck = $conexao->prepare($sqlCheck);
+$sqlCheck   = "SELECT id FROM cadastro_simples WHERE cpf = ?";
+$stmtCheck  = $conexao->prepare($sqlCheck);
 $stmtCheck->bind_param('s', $cpf);
 $stmtCheck->execute();
-$result = $stmtCheck->get_result();
+$result     = $stmtCheck->get_result();
 
 if ($result->num_rows > 0) {
-    // Atualizar o registro existente
-    $row = $result->fetch_assoc();
-    $userId = $row['id'];
-    $sqlUpdate = "UPDATE cadastro_simples SET name = ?, email = ?, phone = ? WHERE id = ?";
+    // Atualizar o registro existente, incluindo nova senha
+    $row       = $result->fetch_assoc();
+    $userId    = $row['id'];
+    $sqlUpdate = "UPDATE cadastro_simples 
+                    SET name = ?, email = ?, phone = ?, password = ? 
+                  WHERE id = ?";
     $stmtUpdate = $conexao->prepare($sqlUpdate);
-    $stmtUpdate->bind_param('sssi', $name, $email, $phone, $userId);
+    $stmtUpdate->bind_param('ssssi', $name, $email, $phone, $hashedPassword, $userId);
     if ($stmtUpdate->execute()) {
         echo json_encode(['id' => $userId, 'message' => 'Registro atualizado com sucesso!']);
     } else {
@@ -739,10 +922,11 @@ if ($result->num_rows > 0) {
     }
     $stmtUpdate->close();
 } else {
-    // Inserir um novo registro
-    $sqlInsert = "INSERT INTO cadastro_simples (name, cpf, email, phone) VALUES (?, ?, ?, ?)";
+    // Inserir um novo registro com senha
+    $sqlInsert = "INSERT INTO cadastro_simples (name, cpf, email, phone, password) 
+                  VALUES (?, ?, ?, ?, ?)";
     $stmtInsert = $conexao->prepare($sqlInsert);
-    $stmtInsert->bind_param('ssss', $name, $cpf, $email, $phone);
+    $stmtInsert->bind_param('sssss', $name, $cpf, $email, $phone, $hashedPassword);
     if ($stmtInsert->execute()) {
         $insertedId = $stmtInsert->insert_id;
         echo json_encode(['id' => $insertedId, 'message' => 'Registro inserido com sucesso!']);
