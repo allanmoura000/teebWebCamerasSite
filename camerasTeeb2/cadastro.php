@@ -486,6 +486,15 @@
 </head>
 
 <body>
+<!-- Adicione isso logo após a abertura do <body> -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+        <div style="width:300px; height:8px; background:#333; border-radius:4px; overflow:hidden;">
+            <div id="loadingBar" style="height:100%; width:0%; background:#fdd835; transition:width 0.3s;"></div>
+        </div>
+        <p style="color:#fdd835; margin-top:20px;">Processando, por favor aguarde...</p>
+    </div>
+</div>
     <div class="frame">
         <div class="left-panel">
             <img src="imagens/TeebLogo.png" alt="Logo" class="logo">
@@ -544,7 +553,12 @@
                 </div>
 
                             
-
+<!-- Dentro do formulário step1 -->
+<div class="mt-3 text-center">
+  <p style="color: #f4f4f4;">Já tem uma conta? 
+    <a href="login.php" style="color: #fdd835;">Entrar</a>
+  </p>
+</div>
 <div id="step2" class="step" style="display: none;">
     <h3>Verificação por E-mail</h3>
     <div class="mb-3">
@@ -607,6 +621,23 @@
     </div>
 <script>
     let currentStep = 1;
+    // Funções para controlar a barra de carregamento
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    const bar = document.getElementById('loadingBar');
+    overlay.style.display = 'block';
+    bar.style.width = '30%';
+}
+
+function updateLoading(percent) {
+    const bar = document.getElementById('loadingBar');
+    bar.style.width = percent + '%';
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'none';
+}
 
 // Avança para o próximo passo
 function nextStep(step) {
@@ -681,6 +712,8 @@ function resendCode() {
 }
 // Validação e envio dos dados da Etapa 1
 function validateStep1() {
+      showLoading();
+    updateLoading(30);
     // Campos existentes
     const name  = document.getElementById("name").value.trim();
     const cpf   = document.getElementById("cpf").value.trim();
@@ -710,32 +743,46 @@ function validateStep1() {
     }
 
     // Envia os dados (incluindo a senha)
-   fetch("salvar_usuario1.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(`Erro ao salvar dados: ${data.error}`);
-                } else {
-                    localStorage.setItem("userId", data.id);
-                    localStorage.setItem("userEmail", email);
-                    
-                    sendVerificationCode(data.id, email)
-                        .then(() => nextStep(2))
-                        .catch(error => {
-                            console.error("Erro ao enviar código:", error);
-                            alert("Falha ao enviar código de verificação");
-                        });
-                }
-            })
-            .catch(error => {
-                console.error("Erro:", error);
-                alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
-            });
+       fetch("salvar_usuario1.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
+    })
+    .then(response => {
+        updateLoading(60);
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            hideLoading();
+            alert(`Erro ao salvar dados: ${data.error}`);
+        } else {
+            updateLoading(80);
+            localStorage.setItem("userId", data.id);
+            localStorage.setItem("userEmail", email);
+            
+            // Envia o código APENAS UMA VEZ
+            sendVerificationCode(data.id, email)
+                .then(() => {
+                    updateLoading(100);
+                    setTimeout(() => {
+                        hideLoading();
+                        nextStep(2);
+                    }, 500);
+                })
+                .catch(error => {
+                    hideLoading();
+                    console.error("Erro ao enviar código:", error);
+                    alert("Falha ao enviar código de verificação");
+                });
         }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error("Erro:", error);
+        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+    });
+}
 
 // Máscaras nos campos de entrada
 function setupInputMasks() {

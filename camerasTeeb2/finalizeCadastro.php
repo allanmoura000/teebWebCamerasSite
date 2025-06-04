@@ -1,10 +1,11 @@
 <?php
+session_start();
 // finalizeCadastro.php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
-session_start();
+
 
 // Verifica se os dados da verificação existem na sessão
 if (!isset($_SESSION['verification'])) {

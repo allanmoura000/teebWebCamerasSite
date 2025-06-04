@@ -993,3 +993,20 @@ document.getElementById('post-teebweb').addEventListener('click', () => {
 });
 
 
+// Funções para controlar a barra de carregamento
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    const bar = document.getElementById('loadingBar');
+    overlay.style.display = 'block';
+    bar.style.width = '30%';
+}
+
+function updateLoading(percent) {
+    const bar = document.getElementById('loadingBar');
+    bar.style.width = percent + '%';
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'none';
+}

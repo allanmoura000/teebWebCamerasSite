@@ -1,5 +1,6 @@
 <?php
-session_start();
+@session_start();
+
 include 'conexao.php';
 
 $user_id = isset($_SESSION['userId']) ? intval($_SESSION['userId']) : 0;
