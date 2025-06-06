@@ -55,7 +55,7 @@ try {
 
     // Conteúdo
     $mail->isHTML(true);
-    $mail->Subject = 'Seu Código de Verificaçãoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo';
+    $mail->Subject = 'Seu Código de Verificação';
     $mail->Body    = "Seu código de verificação é: <b>$code</b>";
     $mail->AltBody = "Seu código de verificação é: $code";
 

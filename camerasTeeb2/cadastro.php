@@ -530,12 +530,24 @@
                         <!-- Inside the step1 form -->
 <!-- Dentro do seu form, logo após o campo de senha -->
 <div class="mb-3">
-  <label for="password" class="form-label">Senha</label>
-  <input type="password" class="form-control" id="password" required>
+    <label for="password" class="form-label">Senha</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="password" required>
+        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
 </div>
+
+<!-- Campo de Confirmação de Senha -->
 <div class="mb-3">
-  <label for="confirm_password" class="form-label">Confirme a Senha</label>
-  <input type="password" class="form-control" id="confirm_password" required>
+    <label for="confirm_password" class="form-label">Confirme a Senha</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="confirm_password" required>
+        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirm_password">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
 </div>
 
 
@@ -576,17 +588,18 @@
 </div>
 
             <div id="step3" class="step" style="display: none;">
-                <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
-                <div class="text-center mt-4">
-                    <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
-                        style="max-width: 200px;">
-                    <p style="margin-top:30px ; color: #3bb54a;" class="text-success fw-bold">Informações enviadas com sucesso!</p>
-                </div>
-                <div class="d-flex justify-content-between mt-3">
-                <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
-
-                </div>
-            </div>
+    <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
+    <div class="text-center mt-4">
+        <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
+            style="max-width: 200px;">
+        <p style="margin-top:30px ; color: #3bb54a;" class="text-success fw-bold">
+            Informações enviadas com sucesso!
+        </p>
+        <p style="color: #f4f4f4; margin-top: 15px;">
+            Você será redirecionado para a página inicial em 3 segundos...
+        </p>
+    </div>
+</div>
 
 
             </div>
@@ -629,7 +642,34 @@ function showLoading() {
     overlay.style.display = 'block';
     bar.style.width = '30%';
 }
+// Adicione esta função no final do seu script
+function setupPasswordToggles() {
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+}
 
+// Chame a função no DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    setupInputMasks();
+    setupPasswordToggles(); // Adicione esta linha
+    
+    // Restante do seu código...
+});
 function updateLoading(percent) {
     const bar = document.getElementById('loadingBar');
     bar.style.width = percent + '%';
@@ -680,23 +720,28 @@ function updateStepIndicators(step) {
         }
 
         function validateCode() {
-            const code = document.getElementById("verificationCode").value;
-            const userId = localStorage.getItem("userId");
+        const code = document.getElementById("verificationCode").value;
+        const userId = localStorage.getItem("userId");
 
-            fetch("verificar_codigo.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, code })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    nextStep(3); // Vai para a etapa de conclusão
-                } else {
-                    alert("Código inválido. Tente novamente.");
-                }
-            });
-        }
+        fetch("verificar_codigo.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                nextStep(3); // Vai para a etapa de conclusão
+                
+                // Redireciona para a home após 3 segundos
+                setTimeout(() => {
+                    window.location.href = "index.php"; // Altere para a URL da sua home
+                }, 3000);
+            } else {
+                alert("Código inválido. Tente novamente.");
+            }
+        });
+    }
 
 function resendCode() {
     const userId = localStorage.getItem("userId");
@@ -713,43 +758,37 @@ function resendCode() {
 }
 // Validação e envio dos dados da Etapa 1
 function validateStep1() {
-const btn = document.querySelector("#form1 button.btn-primary");
+ const btn = document.querySelector("#form1 button.btn-primary");
     
     // Bloquear múltiplos cliques
     if (btn.getAttribute('data-loading') === 'true') return;
-    btn.setAttribute('data-loading', 'true');
-    btn.textContent = "Enviando...";
-    btn.disabled = true;
-
-    showLoading();
-    updateLoading(30);
-    // Campos existentes
+    
+    // Obter valores ANTES de mostrar carregamento
     const name  = document.getElementById("name").value.trim();
     const cpf   = document.getElementById("cpf").value.trim();
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    
-    // Novos campos de senha
-    const password        = document.getElementById("password").value;
+    const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm_password").value;
 
-    // Validação de senha mínima
+    // Validar senhas ANTES de qualquer processamento
     if (password.length < 6) {
         alert("A senha deve ter pelo menos 6 caracteres!");
         return;
     }
     
-    // Validação de confirmação
     if (password !== confirmPassword) {
         alert("As senhas não coincidem!");
         return;
     }
 
-    // Validação dos demais campos
-    if (!name || !cpf || !email || !phone) {
-        alert("Preencha todos os campos antes de continuar!");
-        return;
-    }
+    // Só depois das validações iniciamos o processo
+    btn.setAttribute('data-loading', 'true');
+    btn.textContent = "Enviando...";
+    btn.disabled = true;
+    
+    showLoading();
+    updateLoading(30);
 
     // Envia os dados (incluindo a senha)
        fetch("salvar_usuario1.php", {

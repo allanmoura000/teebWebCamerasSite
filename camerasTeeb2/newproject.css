@@ -2584,7 +2584,23 @@ input:checked+.toggle-btn:before {
         /* Ajusta o conteúdo dentro do contêiner */
     }
 }
+/* Adicione/atualize na seção de estilos */
+.input-group .toggle-password {
+    background-color: white !important;
+    border: 1px solid #ced4da;
+}
 
+.input-group .toggle-password i {
+    color: #6c757d !important; /* Cinza médio */
+}
+
+.input-group .toggle-password:hover {
+    background-color: #f8f9fa !important;
+}
+
+.input-group .toggle-password:hover i {
+    color: #495057 !important; /* Cinza mais escuro no hover */
+}
 @media (min-width: 1500px) {
     
     .video-card {
