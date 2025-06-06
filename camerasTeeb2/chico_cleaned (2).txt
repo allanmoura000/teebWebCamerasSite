@@ -1,389 +1,888 @@
+///////////////////////// cadastro.php
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/imagens/icon.ico" type="image/x-icon">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #272727;
+        }
+
+        .mt-4 {
+            
+        }
+
+        .header-logo {
+            display: none
+        }
+
+        .logo-left {
+            display: none;
+        }
+
+        .frame {
+            width: 80%;
+            height: 95%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            border-radius: 10px 0px 0px 10px;
+        }
+
+        .left-panel {
+            flex: 1;
+            background-color: #fdd835;
+            border-radius: 10px 0px 0px 10px;
+        }
+
+
+        .right-panel {
+            flex: 1;
+            background-color: #121212;
+            color: #f4f4f4;
+            overflow-y: auto;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        .header-bar {
+            display: none;
+            width: 100%;
+            height: 20px;
+            background-color: #fdd835;
+            position: absolute;
+            top: 20px;
+            left: 0;
+        }
+
+        .logo {
+            margin-top: 10%;
+            margin-left: 15%;
+            max-width: 70%;
+            height: auto;
+        }
+
+        .btn-primary {
+            background-color: #fdd835;
+            border: none;
+            color: #121212;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffd600;
+        }
+
+        .btn-secondary {
+            background-color: #fdd835;
+            /* Amarelo padrão */
+            color: #121212;
+            /* Texto escuro para contraste */
+            border: none;
+            border-radius: 8px;
+            /* Bordas arredondadas */
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ffd600;
+            /* Amarelo mais claro no hover */
+            color: #121212;
+        }
+
+        .btn-secondary i {
+            font-size: 18px;
+            /* Ícone do botão */
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-step {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #333;
+            border: 2px solid #f4f4f4;
+            text-align: center;
+            color: #f4f4f4;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+        }
+
+        .progress-step.active {
+            background-color: #fdd835;
+            border-color: #fdd835;
+            color: #121212;
+            font-weight: bold;
+        }
+
+        .progress-line {
+            flex: 1;
+            height: 2px;
+            background-color: #333;
+        }
+
+        .progress-line.completed {
+            background-color: #fdd835;
+        }
+
+        .progress-step.completed {
+            background-color: #fdd835;
+            /* Amarelo */
+            border-color: #fdd835;
+            color: #121212;
+        }
+
+        #camera {
+            display: none;
+        }
+
+        video,
+        canvas {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+
+        h3 {
+            color: #fdd835;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .effect-quote {
+            position: absolute;
+            top: 50%;
+            left: 29%;
+            width: 30%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fdd835;
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-style: italic;
+            padding: 10px;
+            border: 2px solid #121212;
+            border-radius: 8px;
+            background-color: #121212;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #photoMessage {
+            display: none;
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            color: #fdd835;
+            font-weight: bold;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        #photoMessage.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+
+        #photoMessageError {
+            display: none;
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            color: #ff4d4d;
+            font-weight: bold;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        #photoMessageError.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .text-center mt-4 {
+            text-align: center;
+        }
+
+        .h3-step4 {
+            text-align: center;
+        }
+
+        .img-ultimatela {
+            width: 30%;
+        }
+
+        .img_inicio {
+            margin-top: -6%;
+            margin-left: 6%;
+            width: 90%;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .popup-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .popup-subtitle {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .popup-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+
+        }
+
+        .popup-content {
+            background: #272727;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 90%;
+            overflow-y: auto;
+            /* Permite o scroll vertical */
+            border-radius: 10px;
+            position: relative;
+            box-sizing: border-box;
+
+
+        }
+
+        .close-btn {
+            position: fixed;
+            /* Fixa o botão no topo direito */
+            top: 4%;
+            right: 10%;
+            font-size: 42px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            color: white;
+            /* Garante que o botão esteja acima do conteúdo */
+        }
+
+        .popup-title,
+        .popup-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            margin-top: -5px;
+            color: white;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        .popup-text {
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            margin-top: 0%;
+            color: white;
+        }
+
+        #uploadProgress {
+            width: 100%;
+            display: none;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #fdd835;
+            margin-top: 20px;
+            /* Amarelo padrão */
+        }
+
+
+        @media (max-width: 768px) {
+            .popup-text {
+                margin: 10px 0;
+                margin-top: 0%;
+            }
+
+        }
+
+
+        @media (max-width: 568px) {
+            .frame {
+                width: 100%;
+                height: 100%;
+                flex-direction: column;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                flex: none;
+                width: 100%;
+                height: 100%;
+                padding: 10px;
+            }
+
+            .popup-text {
+                margin: 10px 0;
+                margin-top: -15%;
+            }
+
+            .header-logo {
+                display: block;
+                max-width: 50%;
+                margin-top: 0%;
+                margin-left: 25%;
+            }
+            @media (max-width: 768px) {
+
+                margin-top: 0%;
+            }
+            
+
+            .img_inicio {
+                display: hidden;
+            }
+
+            .container {
+                margin-top: 10%;
+            }
+
+            .success-message {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            .redirect-message {
+                font-size: 16px;
+                color: #555;
+            }
+
+            .redirect-message a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+            .redirect-message a:hover {
+                text-decoration: underline;
+            }
+
+            .illustration {
+                margin-top: 20px;
+            }
+
+            #photoMessage {
+                top: 50%;
+            }
+
+            #photoMessageError {
+                top: 50%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+<!-- Adicione isso logo após a abertura do <body> -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+        <div style="width:300px; height:8px; background:#333; border-radius:4px; overflow:hidden;">
+            <div id="loadingBar" style="height:100%; width:0%; background:#fdd835; transition:width 0.3s;"></div>
+        </div>
+        <p style="color:#fdd835; margin-top:20px;">Processando, por favor aguarde...</p>
+    </div>
+</div>
+    <div class="frame">
+        <div class="left-panel">
+            <img src="imagens/TeebLogo.png" alt="Logo" class="logo">
+            <img src="imagens/indoor-security-system-abstract-concept-vector-ill (4).png" alt="img_inicio"
+                class="img_inicio">
+
+        </div>
+        <div class="right-panel">
+            <img src="imagens/TeebLogo_amarela.png" alt="Header Logo" class="header-logo">
+            <div class="container mt-4">
+                <div class="logo-container">
+                    <img src="imagens/" alt="Logo" class="logo-left">
+                </div>
+
+                
+
+                <div id="step1" class="step">
+                    <h3>Informações Pessoais</h3>
+                    <form id="form1">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <!-- Inside the step1 form -->
+<!-- Dentro do seu form, logo após o campo de senha -->
+<div class="mb-3">
+  <label for="password" class="form-label">Senha</label>
+  <input type="password" class="form-control" id="password" required>
+</div>
+<div class="mb-3">
+  <label for="confirm_password" class="form-label">Confirme a Senha</label>
+  <input type="password" class="form-control" id="confirm_password" required>
+</div>
+
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="phone" placeholder="(00) 00000-0000"
+                                maxlength="15" required>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary disabled">Voltar</button>
+                            <button type="button" class="btn btn-primary" onclick="validateStep1()">Próximo</button>
+                        </div>
+
+                    </form>
+                </div>
+
+                            
+<!-- Dentro do formulário step1 -->
+<div class="mt-3 text-center">
+  <p style="color: #f4f4f4;">Já tem uma conta? 
+    <a href="login.php" style="color: #fdd835;">Entrar</a>
+  </p>
+</div>
+<div id="step2" class="step" style="display: none;">
+    <h3>Verificação por E-mail</h3>
+    <div class="mb-3">
+        <label for="verificationCode" class="form-label">Código de Verificação</label>
+        <input type="text" class="form-control" id="verificationCode" maxlength="6" required>
+    </div>
+    <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
+        <button type="button" class="btn btn-primary" onclick="validateCode()">Verificar</button>
+    </div>
+    <div class="mt-3">
+        <p>Não recebeu o código? <a href="#" onclick="resendCode(); return false;">Reenviar</a></p>
+    </div>
+</div>
+
+            <div id="step3" class="step" style="display: none;">
+                <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
+                <div class="text-center mt-4">
+                    <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
+                        style="max-width: 200px;">
+                    <p style="margin-top:30px ; color: #3bb54a;" class="text-success fw-bold">Informações enviadas com sucesso!</p>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
+
+                </div>
+            </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">×</button>
+            <h2 class="popup-title">Selfie Com Documento</h2>
+            <h4 class="popup-subtitle">Use esse sistema para validar seu cadastro. Atente-se as instruções abaixo</h4>
+            <img src="imagens/homem_identidade.png" alt="Imagem 2" class="popup-image">
+            <br><br><br>
+            <p class="popup-text">Tire a foto com o documento próximo ao rosto, conforme o exemplo ilustrado abaixo e
+                clique em “Enviar Documentação”</p>
+            <br> <br>
+
+            <h4 class="popup-subtitle" style="font-size: 21px;">Caso tenha dúvidas, siga o passo a passo abaixo</h4>
+            <br>
+            <br>
+            <p class="popup-text">
+            <p class="popup-text">
+
+                <li> 1° Passo: Aperte o botão "Capturar Foto", a câmera do telefone abrirá logo em seguida.</li><br>
+                <li> 2° Passo: Agora posicione o documento ao lado do rosto semelhante ao demonstrado no exemplo acima, e capture a imagem.</li><br>
+                <li> 3° Passo: Logo após envie a selfie com o documento apertando em "Enviar Documentação", espere a mensagem, e passe para próxima etapa.</li>
+
+
+            </p>
+
+        </div>
+    </div>
+<script>
+    let currentStep = 1;
+    // Funções para controlar a barra de carregamento
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    const bar = document.getElementById('loadingBar');
+    overlay.style.display = 'block';
+    bar.style.width = '30%';
+}
+
+function updateLoading(percent) {
+    const bar = document.getElementById('loadingBar');
+    bar.style.width = percent + '%';
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'none';
+}
+
+// Avança para o próximo passo
+function nextStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step;
+    updateStepIndicators(step);
+}
+
+// Volta para o passo anterior
+function previousStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step; // Atualiza a etapa atual corretamente
+
+    updateStepIndicators(step);
+}
+
+
+// Atualiza os indicadores de etapa
+function updateStepIndicators(step) {
+    for (let i = 1; i <= 4; i++) {
+        const stepIndicator = document.getElementById(`stepIndicator${i}`);
+        const line = document.getElementById(`line${i - 1}`);
+        if (stepIndicator) {
+            stepIndicator.classList.toggle('completed', i < step);
+            stepIndicator.classList.toggle('active', i === step);
+            if (line) line.classList.toggle('completed', i < step);
+        }
+    }
+}
+        function sendVerificationCode(userId, email) {
+            return fetch("enviar_codigo.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, email })
+            })
+            .then(response => response.json());
+        }
+
+        function validateCode() {
+            const code = document.getElementById("verificationCode").value;
+            const userId = localStorage.getItem("userId");
+
+            fetch("verificar_codigo.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    nextStep(3); // Vai para a etapa de conclusão
+                } else {
+                    alert("Código inválido. Tente novamente.");
+                }
+            });
+        }
+
+function resendCode() {
+    const userId = localStorage.getItem("userId");
+    const email = localStorage.getItem("userEmail");
+    
+    sendVerificationCode(userId, email)
+        .then(data => {
+            if (data.success) {
+                alert("Código reenviado com sucesso!");
+            } else {
+                alert("Erro ao reenviar código.");
+            }
+        });
+}
+// Validação e envio dos dados da Etapa 1
+function validateStep1() {
+      showLoading();
+    updateLoading(30);
+    // Campos existentes
+    const name  = document.getElementById("name").value.trim();
+    const cpf   = document.getElementById("cpf").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    
+    // Novos campos de senha
+    const password        = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+
+    // Validação de senha mínima
+    if (password.length < 6) {
+        alert("A senha deve ter pelo menos 6 caracteres!");
+        return;
+    }
+    
+    // Validação de confirmação
+    if (password !== confirmPassword) {
+        alert("As senhas não coincidem!");
+        return;
+    }
+
+    // Validação dos demais campos
+    if (!name || !cpf || !email || !phone) {
+        alert("Preencha todos os campos antes de continuar!");
+        return;
+    }
+
+    // Envia os dados (incluindo a senha)
+       fetch("salvar_usuario1.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
+    })
+    .then(response => {
+        updateLoading(60);
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            hideLoading();
+            alert(`Erro ao salvar dados: ${data.error}`);
+        } else {
+            updateLoading(80);
+            localStorage.setItem("userId", data.id);
+            localStorage.setItem("userEmail", email);
+            
+            // Envia o código APENAS UMA VEZ
+            sendVerificationCode(data.id, email)
+                .then(() => {
+                    updateLoading(100);
+                    setTimeout(() => {
+                        hideLoading();
+                        nextStep(2);
+                    }, 500);
+                })
+                .catch(error => {
+                    hideLoading();
+                    console.error("Erro ao enviar código:", error);
+                    alert("Falha ao enviar código de verificação");
+                });
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error("Erro:", error);
+        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+    });
+}
+
+// Máscaras nos campos de entrada
+function setupInputMasks() {
+    VMasker(document.getElementById("cpf")).maskPattern("999.999.999-99");
+    VMasker(document.getElementById("phone")).maskPattern("(99) 99999-9999");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupInputMasks();
+    document.querySelector("#form1 button.btn-primary").addEventListener("click", validateStep1);
+    document.querySelector("#step2 button.btn-secondary").addEventListener("click", () => previousStep(1)); // Corrigido o botão voltar
+});
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ua-parser-js@0.7.36/dist/ua-parser.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-masker/1.2.0/vanilla-masker.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+////////////////////// enviar_codigo.php
+
 <?php
-session_start();
+// Ativar exibição de erros para depuração
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Ajustar caminho do autoloader
+require __DIR__ . '/../vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+header('Content-Type: application/json');
+
+// Incluir conexão com banco de dados
 include 'conexao.php';
 
-$user_id = isset($_SESSION['userId']) ? intval($_SESSION['userId']) : 0;
+try {
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$data || !isset($data['userId']) || !isset($data['email'])) {
+        throw new Exception("Dados inválidos na requisição");
+    }
+    
+    $userId = $data['userId'];
+    $email = $data['email'];
 
-/**
- * Função que obtém um resumo da história do local a partir da API do Wikipedia.
- * (Mesma função do código anterior)
- */
-function getWikipediaHistory($localName)
-{
-  // ... (mesmo código de antes)
-}
+    // Gera código de 6 dígitos
+    $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-/**
- * Função que atualiza o campo 'historia' da câmera no banco, caso esteja vazio.
- */
-function updateCameraHistory($conexao, $id, $nome)
-{
-  // ... (mesmo código de antes)
-}
-
-// Verifica se há um termo de busca
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-if (!empty($search)) {
-  $sql = "SELECT id, nome, iframe, imagem, historia FROM cad_cameras WHERE nome LIKE ?";
-  $stmt = $conexao->prepare($sql);
-  $searchTerm = "%$search%";
-  $stmt->bind_param("s", $searchTerm);
-  $stmt->execute();
-  $resultado = $stmt->get_result();
-} else {
-  $sql = "SELECT id, nome, iframe, imagem, historia FROM cad_cameras";
-  $resultado = $conexao->query($sql);
-}
-
-echo '<section class="camera-section" id="cameras">';
-echo '<div class="cameracamera">';
-echo '<h1>Câmeras</h1>';
-echo '<div class="camera-videos">';
-
-if ($resultado->num_rows > 0) {
-  while ($row = $resultado->fetch_assoc()) {
-
-    $id = $row['id'];
-    $nome = $row['nome'];
-    $imagem = $row['imagem'];
-    $iframe = $row['iframe'];
-    $historia = $row['historia'];
-
-    if (empty($historia)) {
-      $historia = updateCameraHistory($conexao, $id, $nome);
+    // Salva no banco - ATUALIZE O NOME DA COLUNA PARA 'verification_code'
+    $stmt = $conexao->prepare("UPDATE cadastro_simples SET verification_code = ? WHERE id = ?");
+    $stmt->bind_param("si", $code, $userId);
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Erro ao salvar código no banco: " . $stmt->error);
     }
 
-    // CONSULTA DAS AVALIAÇÕES
-    $sql_rating = "SELECT AVG(nota) as media, COUNT(*) as total FROM avaliacoes WHERE camera_id = ?";
-    $stmt_rating = $conexao->prepare($sql_rating);
-    $stmt_rating->bind_param("i", $id);
-    $stmt_rating->execute();
-    $result_rating = $stmt_rating->get_result();
-    $row_rating = $result_rating->fetch_assoc();
-    $media = ($row_rating['media']) ? number_format($row_rating['media'], 1) : '0.0';
-    $total = ($row_rating['total']) ? $row_rating['total'] : '0';
+    // Configura PHPMailer
+    $mail = new PHPMailer(true);
 
-    // Recupera a avaliação do usuário (se logado)
-    $userRating = 0;
-    if ($user_id > 0) {
-      $stmt_userRating = $conexao->prepare("SELECT nota FROM avaliacoes WHERE camera_id = ? AND user_id = ?");
-      $stmt_userRating->bind_param("ii", $id, $user_id);
-      $stmt_userRating->execute();
-      $result_userRating = $stmt_userRating->get_result();
-      if ($result_userRating->num_rows > 0) {
-        $row_userRating = $result_userRating->fetch_assoc();
-        $userRating = intval($row_userRating['nota']);
-      }
-      $stmt_userRating->close();
-    }
+    // Configurações do servidor SMTP (ATUALIZE COM SEUS DADOS)
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'allanmouraoficial2@gmail.com'; // Seu e-mail REAL
+    $mail->Password = 'zttj mzej zvcv dgps';     // Sua senha REAL
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
+    $mail->CharSet = 'UTF-8';
 
-    // Arredonda a média para exibir as estrelas
-    $roundedRating = round($media);
+    // Remetente
+    $mail->setFrom('allanmouraoficial2@gmail.com', 'Sistema de Verificação');
+    $mail->addAddress($email);
 
-    // CONSULTA DAS VISUALIZAÇÕES (executada antes de montar o card)
-    $sql_views = "SELECT total, online FROM visualizacoes WHERE camera_id = ?";
-    $stmt_views = $conexao->prepare($sql_views);
-    $stmt_views->bind_param("i", $id);
-    $stmt_views->execute();
-    $result_views = $stmt_views->get_result();
-    $row_views = $result_views->fetch_assoc();
-    $totalViews = isset($row_views['total']) ? $row_views['total'] : 0;
-    $onlineViews = isset($row_views['online']) ? $row_views['online'] : 0;
+    // Conteúdo
+    $mail->isHTML(true);
+    $mail->Subject = 'Seu Código de Verificaçãoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo';
+    $mail->Body    = "Seu código de verificação é: <b>$code</b>";
+    $mail->AltBody = "Seu código de verificação é: $code";
 
-    // Exibe o card da câmera
-    echo '<div class="video-card" data-id="' . $id . '">';
-    echo '<div class="card-image-container">';
-    echo '<img src="' . $imagem . '" alt="' . $nome . '">';
-    echo '<div class="card-overlay">';
-    // Cabeçalho com o nome da câmera
-    echo '<div class="camera-header">';
-    echo '<h3 class="camera-name">' . $nome . '</h3>';
-    echo '</div>'; // .camera-header
-
-    // Seção que agrupa avaliação e estatísticas
-    echo '<div class="camera-rating-info">';
-    // Avaliação
-    echo '<div class="camera-rating">';
-    echo '<div class="star-rating">';
-    $starsToFill = ($userRating > 0) ? $userRating : $roundedRating;
-    for ($i = 1; $i <= 5; $i++) {
-      if ($i <= $starsToFill) {
-        echo "<span class='star filled'>&#9733;</span>";
-      } else {
-        echo "<span class='star'>&#9734;</span>";
-      }
-    }
-    echo '</div>'; // .star-rating
-    echo '<div class="rating-text">';
-    echo '<span class="rating-average">' . $media . '</span> de <span class="rating-count">' . $total . '</span> avaliações';
-    echo '</div>';
-    echo '</div>'; // .camera-rating
-
-    // Estatísticas de visualizações
-    echo '<div class="camera-stats">';
-    echo '<span class="stats-views"><i class="fa fa-eye"></i> ' . $totalViews . ' visualizações</span>';
-    echo '<span class="stats-live"><i class="fa fa-circle"></i> ' . $onlineViews . ' ao vivo</span>';
-    echo '</div>'; // .camera-stats
-    echo '</div>'; // .camera-rating-info
-    echo '</div>'; // .card-overlay
-    echo '</div>'; // .card-image-container
-    echo '</div>'; // .video-card
-
-    // Prepara o iframe com proxy
-    $iframe_proxy = str_replace("http://", "https://corsproxy.io/?", $iframe);
-
-    // Cria o popup para exibição da câmera
-    echo "<div id='popup-{$id}' class='popup'>"; // Notação mais clara com chaves
-    echo "  <div class='popup-content'>";
-    echo "    <div class='video-container'>";
-    echo "      <span class='close' data-popup-id='popup-{$id}'>&times;</span>";
-    echo "      <div id='video-container-{$id}' style='position: relative;'>"; // ID único
-    echo "        <iframe id='iframe-{$id}' data-src='{$iframe_proxy}' title='{$nome}' frameborder='0' allow='autoplay; encrypted-media; fullscreen; picture-in-picture' allowfullscreen playsinline webkit-playsinline style='width:100%; pointer-events: none;'></iframe>"; // ID único
-    echo "        <div style='position: absolute; bottom: 10px; right: 10px; pointer-events: auto; z-index: 10000;'>";
-    echo "          <button onclick=\"enterFullScreen('video-container-{$id}')\" style='background-color: rgb(241, 196, 0); color: black; border: none; padding: 6px; border-radius: 12%; display: block;'>"; // Passa o ID correto
-    echo "            <i class='fa fa-expand' aria-hidden='true'></i>";
-    echo "          </button>";
-    echo "          <button onclick='exitFullScreen()' style='background-color: rgb(241, 196, 0); color: black; border: none; padding: 6px; border-radius: 12%; display: none;'>";
-    echo "            <i class='fa fa-compress' aria-hidden='true'></i>";
-    echo "          </button>";
-    echo "        </div>";
-    echo "      </div>";
-    // Popup com avaliação e visualizações
-    echo "      <div id='video-description-$id' class='video-description'>";
-    echo '<div class="popup-header">';
-    echo '<h2 class="camera-title">' . $nome . '</h2>';
-    echo '<div class="rating-container" data-camera-id="' . $id . '">';
-    echo '<div class="star-rating">';
-    for ($i = 1; $i <= 5; $i++) {
-      $class = ($userRating > 0 && $i <= $userRating) ? 'selected' : '';
-      echo "<span class='star $class' data-value='{$i}'>&#9733;</span>";
-    }
-    echo '</div>';
-    echo '<div class="rating-info">';
-    echo '<span class="rating-average">' . $media . '</span> (de <span class="rating-count">' . $total . '</span> avaliações)';
-    echo '</div>';
-    echo '</div>';
-    echo '</div>';
-    echo "      <div class='views-container'>";
-    echo "        <span class='views-item'><i class='fa fa-eye'></i> <span id='total-$id'>" . $totalViews . "</span> visualizações</span>";
-    echo "        <span class='views-item live'><i class='fa fa-circle'></i> <span id='online-$id'>" . $onlineViews . "</span> ao vivo</span>";
-    echo "      </div>";
-    $historiaCurta = substr($historia, 0, 2000);
-    echo "      <div class='video-description'>";
-    echo "        <p id='historia-$id' class='historia-text'>$historiaCurta...</p>";
-    echo "        <button class='ver-mais' onclick='toggleHistoria($id)'>Ver mais</button>";
-    echo "      </div>";
-    echo "      </div>"; // .video-description (popup)
-    echo "    </div>";
-    // Seção de comentários
-    echo "    <div class='comentarios'>";
-    echo "      <div class='comments-list' id='comments-list-$id'>";
-    echo "        <h1>Comentários</h1>";
-    echo "      </div>";
-    echo "      <div class='comment-input-container'>";
-    echo "        <textarea id='new-comment-$id' placeholder='Escreva um comentário...'></textarea>";
-    echo "        <button id='submit-comment-$id'>Publicar</button>";
-    echo "      </div>";
-    echo "    </div>";
-    echo "  </div>";
-    echo "</div>"; // .popup
-  }
-} else {
-  echo "<p>Nenhuma câmera encontrada.</p>";
+    $mail->send();
+    echo json_encode(['success' => true]);
+    
+} catch(Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+    
+    // Log adicional para depuração
+    error_log("Erro em enviar_codigo.php: " . $e->getMessage());
 }
-
-echo '</div>'; // .camera-videos
-echo '</div>'; // .cameracamera
-
-// Card lateral (side card)
-echo '<div class="side-card">';
-echo '<img src="imagens/postage.png" frameborder="0" width="300" alt="" class="add-img">';
-echo '</div>';
-
-echo '</section>';
 ?>
-
-//////////////////// get_oauth_token.php
-<?php
-
-/**
- * PHPMailer - PHP email creation and transport class.
- * PHP Version 5.5
- * @package PHPMailer
- * @see https://github.com/PHPMailer/PHPMailer/ The PHPMailer GitHub project
- * @author Marcus Bointon (Synchro/coolbru) <phpmailer@synchromedia.co.uk>
- * @author Jim Jagielski (jimjag) <jimjag@gmail.com>
- * @author Andy Prevost (codeworxtech) <codeworxtech@users.sourceforge.net>
- * @author Brent R. Matzelle (original founder)
- * @copyright 2012 - 2020 Marcus Bointon
- * @copyright 2010 - 2012 Jim Jagielski
- * @copyright 2004 - 2009 Andy Prevost
- * @license https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html GNU Lesser General Public License
- * @note This program is distributed in the hope that it will be useful - WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.
- */
-
-/**
- * Get an OAuth2 token from an OAuth2 provider.
- * * Install this script on your server so that it's accessible
- * as [https/http]://<yourdomain>/<folder>/get_oauth_token.php
- * e.g.: http://localhost/phpmailer/get_oauth_token.php
- * * Ensure dependencies are installed with 'composer install'
- * * Set up an app in your Google/Yahoo/Microsoft account
- * * Set the script address as the app's redirect URL
- * If no refresh token is obtained when running this file,
- * revoke access to your app and run the script again.
- */
-
-namespace PHPMailer\PHPMailer;
-
-/**
- * Aliases for League Provider Classes
- * Make sure you have added these to your composer.json and run `composer install`
- * Plenty to choose from here:
- * @see https://oauth2-client.thephpleague.com/providers/thirdparty/
- */
-//@see https://github.com/thephpleague/oauth2-google
-use League\OAuth2\Client\Provider\Google;
-//@see https://packagist.org/packages/hayageek/oauth2-yahoo
-use Hayageek\OAuth2\Client\Provider\Yahoo;
-//@see https://github.com/stevenmaguire/oauth2-microsoft
-use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
-//@see https://github.com/greew/oauth2-azure-provider
-use Greew\OAuth2\Client\Provider\Azure;
-
-if (!isset($_GET['code']) && !isset($_POST['provider'])) {
-    ?>
-<html>
-<body>
-<form method="post">
-    <h1>Select Provider</h1>
-    <input type="radio" name="provider" value="Google" id="providerGoogle">
-    <label for="providerGoogle">Google</label><br>
-    <input type="radio" name="provider" value="Yahoo" id="providerYahoo">
-    <label for="providerYahoo">Yahoo</label><br>
-    <input type="radio" name="provider" value="Microsoft" id="providerMicrosoft">
-    <label for="providerMicrosoft">Microsoft</label><br>
-    <input type="radio" name="provider" value="Azure" id="providerAzure">
-    <label for="providerAzure">Azure</label><br>
-    <h1>Enter id and secret</h1>
-    <p>These details are obtained by setting up an app in your provider's developer console.
-    </p>
-    <p>ClientId: <input type="text" name="clientId"><p>
-    <p>ClientSecret: <input type="text" name="clientSecret"></p>
-    <p>TenantID (only relevant for Azure): <input type="text" name="tenantId"></p>
-    <input type="submit" value="Continue">
-</form>
-</body>
-</html>
-    <?php
-    exit;
-}
-
-require 'vendor/autoload.php';
-
-session_start();
-
-$providerName = '';
-$clientId = '';
-$clientSecret = '';
-$tenantId = '';
-
-if (array_key_exists('provider', $_POST)) {
-    $providerName = $_POST['provider'];
-    $clientId = $_POST['clientId'];
-    $clientSecret = $_POST['clientSecret'];
-    $tenantId = $_POST['tenantId'];
-    $_SESSION['provider'] = $providerName;
-    $_SESSION['clientId'] = $clientId;
-    $_SESSION['clientSecret'] = $clientSecret;
-    $_SESSION['tenantId'] = $tenantId;
-} elseif (array_key_exists('provider', $_SESSION)) {
-    $providerName = $_SESSION['provider'];
-    $clientId = $_SESSION['clientId'];
-    $clientSecret = $_SESSION['clientSecret'];
-    $tenantId = $_SESSION['tenantId'];
-}
-
-//If you don't want to use the built-in form, set your client id and secret here
-//$clientId = 'RANDOMCHARS-----duv1n2.apps.googleusercontent.com';
-//$clientSecret = 'RANDOMCHARS-----lGyjPcRtvP';
-
-//If this automatic URL doesn't work, set it yourself manually to the URL of this script
-$redirectUri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-//$redirectUri = 'http://localhost/PHPMailer/redirect';
-
-$params = [
-    'clientId' => $clientId,
-    'clientSecret' => $clientSecret,
-    'redirectUri' => $redirectUri,
-    'accessType' => 'offline'
-];
-
-$options = [];
-$provider = null;
-
-switch ($providerName) {
-    case 'Google':
-        $provider = new Google($params);
-        $options = [
-            'scope' => [
-                'https://mail.google.com/'
-            ]
-        ];
-        break;
-    case 'Yahoo':
-        $provider = new Yahoo($params);
-        break;
-    case 'Microsoft':
-        $provider = new Microsoft($params);
-        $options = [
-            'scope' => [
-                'wl.imap',
-                'wl.offline_access'
-            ]
-        ];
-        break;
-    case 'Azure':
-        $params['tenantId'] = $tenantId;
-
-        $provider = new Azure($params);
-        $options = [
-            'scope' => [
-                'https://outlook.office.com/SMTP.Send',
-                'offline_access'
-            ]
-        ];
-        break;
-}
-
-if (null === $provider) {
-    exit('Provider missing');
-}
-
-if (!isset($_GET['code'])) {
-    //If we don't have an authorization code then get one
-    $authUrl = $provider->getAuthorizationUrl($options);
-    $_SESSION['oauth2state'] = $provider->getState();
-    header('Location: ' . $authUrl);
-    exit;
-    //Check given state against previously stored one to mitigate CSRF attack
-} elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
-    unset($_SESSION['oauth2state']);
-    unset($_SESSION['provider']);
-    exit('Invalid state');
-} else {
-    unset($_SESSION['provider']);
-    //Try to get an access token (using the authorization code grant)
-    $token = $provider->getAccessToken(
-        'authorization_code',
-        [
-            'code' => $_GET['code']
-        ]
-    );
-    //Use this to interact with an API on the users behalf
-    //Use this to get a new access token if the old one expires
-    echo 'Refresh Token: ', htmlspecialchars($token->getRefreshToken());
-}

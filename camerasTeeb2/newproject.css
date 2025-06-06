@@ -2586,6 +2586,15 @@ input:checked+.toggle-btn:before {
 }
 
 @media (min-width: 1500px) {
+    
+    .video-card {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        /* Aumenta a altura dos vídeos */
+        overflow: hidden;
+    }
+
     .camera-videos {
         grid-template-columns: repeat(3, 1fr);
         /* 3 colunas */

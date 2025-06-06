@@ -546,7 +546,8 @@
                         </div>
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary disabled">Voltar</button>
-                            <button type="button" class="btn btn-primary" onclick="validateStep1()">Próximo</button>
+                            <!-- No botão da etapa 1: manter apenas o onclick -->
+<button type="button" class="btn btn-primary" onclick="validateStep1()">Próximo</button>
                         </div>
 
                     </form>
@@ -712,7 +713,15 @@ function resendCode() {
 }
 // Validação e envio dos dados da Etapa 1
 function validateStep1() {
-      showLoading();
+const btn = document.querySelector("#form1 button.btn-primary");
+    
+    // Bloquear múltiplos cliques
+    if (btn.getAttribute('data-loading') === 'true') return;
+    btn.setAttribute('data-loading', 'true');
+    btn.textContent = "Enviando...";
+    btn.disabled = true;
+
+    showLoading();
     updateLoading(30);
     // Campos existentes
     const name  = document.getElementById("name").value.trim();
@@ -782,6 +791,7 @@ function validateStep1() {
         console.error("Erro:", error);
         alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
     });
+    
 }
 
 // Máscaras nos campos de entrada
