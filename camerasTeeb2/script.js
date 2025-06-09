@@ -57,35 +57,210 @@ async function fetchWithRetry(url, options = {}, retries = 3) {
         throw error;
     }
 }
-document.querySelectorAll('.slide').forEach(slide => {
-    slide.addEventListener('click', function () {
-        if (this.classList.contains("no-popup")) return;
-        
-        const cameraId = this.getAttribute('data-camera-id');
-        if (!cameraId) return;
 
-        // Registra visualização com retentativa
-        fetchWithRetry(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`)
-            .then(data => atualizarInterface(cameraId, data))
-            .catch(console.error);
+// Função unificada para abrir o popup e carregar comentários
+function abrirPopup(cameraId) {
+    console.log(`Abrindo popup para câmera ID: ${cameraId}`);
+    const popup = document.getElementById(`popup-${cameraId}`);
+    if (!popup) {
+        console.error(`Popup com ID popup-${cameraId} não encontrado.`);
+        return;
+    }
 
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-            popup.style.display = "flex";
-            document.body.classList.add("no-scroll");
-            carregarComentarios(cameraId);
+    // Verifica se o popup já está aberto para evitar duplicação
+    if (popup.style.display === "flex") {
+        console.log(`Popup ${cameraId} já está aberto`);
+        return;
+    }
 
-            // Inicia heartbeat
-            heartbeatInterval = setInterval(() => {
-                fetch(`visualizacoes.php?camera_id=${cameraId}&acao=ping`)
-                    .catch(console.error);
-            }, 30000);
+    // Exibe o popup
+    popup.style.display = "flex";
+    document.body.classList.add("no-scroll");
 
-            const iframe = popup.querySelector("iframe");
-            if (iframe && !iframe.src) {
-                iframe.src = iframe.getAttribute("data-src");
-            }
+    // Carrega os comentários imediatamente
+    carregarComentarios(cameraId);
+
+    // Registra visualização apenas uma vez
+    console.log(`Registrando visualização para câmera ${cameraId}`);
+    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`, {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Resposta do servidor para câmera ${cameraId}:`, data);
+        if (data && typeof data === 'object') {
+            atualizarInterface(cameraId, data);
+            // Inicia heartbeat apenas após registrar a visualização com sucesso
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+            }
+            heartbeatInterval = setInterval(() => {
+                // Usa ping apenas para manter a sessão ativa, sem incrementar contadores
+                fetch(`visualizacoes.php?camera_id=${cameraId}&acao=ping`, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                }).catch(err => console.error('Erro no ping:', err));
+            }, 30000);
+        } else {
+            console.error('Dados inválidos recebidos:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao registrar visualização:', error);
+    });
+
+    // Carrega o iframe se necessário
+    const iframe = popup.querySelector("iframe");
+    if (iframe && !iframe.src) {
+        iframe.src = iframe.getAttribute("data-src");
+    }
+}
+
+// Função para fechar o popup
+function fecharPopup(cameraId) {
+    console.log(`Fechando popup para câmera ID: ${cameraId}`);
+    const popup = document.getElementById(`popup-${cameraId}`);
+    if (!popup) {
+        console.error(`Popup com ID popup-${cameraId} não encontrado.`);
+        return;
+    }
+
+    // Verifica se o popup está realmente aberto
+    if (popup.style.display !== "flex") {
+        console.log(`Popup ${cameraId} já está fechado`);
+        return;
+    }
+
+    // Limpa o heartbeat
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
+
+    // Limpa o iframe
+    const iframe = popup.querySelector("iframe");
+    if (iframe) iframe.src = "";
+
+    // Esconde o popup
+    popup.style.display = "none";
+    document.body.classList.remove("no-scroll");
+
+    // Registra o fechamento
+    console.log(`Registrando fechamento para câmera ${cameraId}`);
+    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=fechar`, {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Resposta do servidor ao fechar câmera ${cameraId}:`, data);
+        if (data && typeof data === 'object') {
+            atualizarInterface(cameraId, data);
+        } else {
+            console.error('Dados inválidos recebidos ao fechar:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao fechar visualização:', error);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Configuração dos cards de vídeo e slides
+    document.querySelectorAll('.video-card, .map-video-card, .slide:not(.no-popup)').forEach(card => {
+        card.addEventListener('click', function() {
+            const cameraId = this.getAttribute('data-id') || this.getAttribute('data-camera-id');
+            if (!cameraId) return;
+
+            // Fecha o popup do mapa se existir
+            if (typeof map !== "undefined" && map.closePopup) {
+                map.closePopup();
+            }
+
+            abrirPopup(cameraId);
+        });
+    });
+
+    // Configuração dos botões de fechar
+    document.querySelectorAll('.popup .close').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const popup = this.closest('.popup');
+            if (!popup) return;
+            const cameraId = popup.id.replace('popup-', '');
+            fecharPopup(cameraId);
+        });
+    });
+
+    // Fecha o popup ao clicar fora do conteúdo
+    document.querySelectorAll('.popup').forEach(popup => {
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                const cameraId = popup.id.replace('popup-', '');
+                fecharPopup(cameraId);
+            }
+        });
+    });
+
+    // Configuração única dos botões de comentário
+    document.querySelectorAll('.comment-input-container button').forEach(btn => {
+        // Remove qualquer onclick inline
+        btn.removeAttribute('onclick');
+        btn.type = 'button';
+        
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            const cameraId = btn.id.replace('submit-comment-', '');
+            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
+            
+            if (!comentario) { 
+                alert('Digite um comentário!'); 
+                return; 
+            }
+
+            const userId = localStorage.getItem('userId');
+            if (!userId) { 
+                alert('Você precisa estar logado para comentar.'); 
+                return; 
+            }
+
+            // Busca nome e envia o comentário
+            fetch(`getUserName.php?userId=${userId}`)
+                .then(r => r.json())
+                .then(data => enviarComentario(cameraId, data.name || 'Usuário', comentario))
+                .catch(() => enviarComentario(cameraId, 'Usuário', comentario));
+        });
+    });
+
+    // Configuração dos textareas para envio com Enter
+    document.querySelectorAll('.comment-input-container textarea').forEach(textarea => {
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const btn = this.parentElement.querySelector('button');
+                if (btn) btn.click();
+            }
+        });
     });
 });
 
@@ -149,131 +324,6 @@ document.addEventListener("DOMContentLoaded", function () {
         menuIcon.classList.toggle("fa-times");
     });
 });
-
-// Abre o popup quando o cartão de vídeo é clicado
-document.addEventListener("DOMContentLoaded", function () {
-    // Função unificada para abrir o popup com a lógica completa
-    function abrirPopup(cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-            popup.style.display = "flex";
-            document.body.classList.add("no-scroll");
-            carregarComentarios(cameraId);
-            const iframe = popup.querySelector("iframe");
-            if (iframe && !iframe.src) {
-                const videoSrc = iframe.getAttribute("data-src");
-                iframe.src = videoSrc;
-            }
-        } else {
-            return;
-        }
-    }
-
-    // Função unificada para fechar o popup
-    function fecharPopup(cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-            clearInterval(heartbeatInterval);
-            const iframe = popup.querySelector("iframe");
-            if (iframe) iframe.src = "";
-            popup.style.display = "none";
-            document.body.classList.remove("no-scroll");
-            
-            fetchWithRetry(`visualizacoes.php?camera_id=${cameraId}&acao=fechar`)
-                .then(data => atualizarInterface(cameraId, data))
-                .catch(console.error);
-        }
-    }
-    
-
-    // Torna as funções acessíveis globalmente para que os onclick inline funcionem
-    window.abrirPopup = abrirPopup;
-    window.fecharPopup = fecharPopup;
-
-    // Event delegation para os cards que já existem no DOM
-    document.querySelectorAll(".video-card, .map-video-card").forEach(card => {
-        card.addEventListener("click", function () {
-            const cameraId = card.getAttribute("data-id") || card.getAttribute("data-camera-id");
-            if (cameraId) {
-                abrirPopup(cameraId);
-                // Fecha o popup do Leaflet, se estiver aberto
-                if (typeof map !== "undefined" && map.closePopup) {
-                    map.closePopup();
-                }
-            }
-        });
-    });
-
-    // Fecha o popup quando o botão de fechar (".close") é clicado
-    document.querySelectorAll(".popup .close").forEach(button => {
-        button.addEventListener("click", function (e) {
-            const popup = button.closest(".popup");
-            if (popup) {
-                const cameraId = popup.id.replace('popup-', '');
-                if (cameraId) {
-                    encerrarVisualizacao(cameraId);
-                }
-                popup.style.display = "none"; // Esconde o popup
-                document.body.classList.remove("no-scroll");
-            }
-            e.stopPropagation();
-        });
-    });
-
-    // Fecha o popup se o usuário clicar fora do conteúdo (na área de overlay)
-    document.querySelectorAll(".popup").forEach(popup => {
-        popup.addEventListener("click", function (e) {
-            // Se o clique foi diretamente no overlay (fora do conteúdo interno)
-            if (e.target === popup) {
-                const cameraId = popup.id.replace('popup-', '');
-                if (cameraId) {
-                    encerrarVisualizacao(cameraId);
-                }
-                popup.style.display = "none";
-                document.body.classList.remove("no-scroll");
-            }
-        });
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const backToTopButton = document.querySelector(".back-to-top");
-
-    window.addEventListener("scroll", function () {
-        if (window.scrollY > 300) { // Exibe o botão ao descer 300px
-            backToTopButton.classList.add("show");
-        } else {
-            backToTopButton.classList.remove("show");
-        }
-    });
-
-    backToTopButton.addEventListener("click", function () {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth" // Rolagem suave ao topo
-        });
-    });
-});
-
-// Função para abrir o popup da câmera (caso seja chamada de outro lugar)
-function abrirPopup(id) {
-    const popup = document.getElementById(`popup-${id}`);
-    if (popup) {
-        popup.style.display = "flex";
-    } else {
-        return;
-    }
-}
-
-// Função para fechar o popup (caso seja chamada de outro lugar)
-function fecharPopup(id) {
-    const popup = document.getElementById(`popup-${id}`);
-    if (popup) {
-        popup.style.display = "none";
-    } else {
-        return;
-    }
-}
 
 document.addEventListener("DOMContentLoaded", function () {
     const darkModeToggle = document.getElementById("dark-mode-toggle");
@@ -347,79 +397,70 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".comment-input-container button").forEach(button => {
-        button.addEventListener("click", function () {
-            const cameraId = this.id.replace("submit-comment-", "");
-            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
-
-            if (!comentario) {
-                alert("Digite um comentário!");
-                return;
-            }
-
-            const userId = localStorage.getItem("userId");
-
-            if (userId) {
-                // Buscar o nome do usuário logado
-                fetch("getUserName.php?userId=" + userId)
-                    .then(response => response.json())
-                    .then(data => {
-                        const usuario = data.name || "Usuário";
-                        enviarComentario(cameraId, usuario, comentario);
-                    })
-                    .catch(err => {
-                        enviarComentario(cameraId, "Usuário", comentario);
-                    });
-            } else {
-                alert("Você precisa estar logado para comentar.");
-            }
-        });
-    });
-});
-
+// Função para enviar comentário (encapsula submitComment)
 function enviarComentario(cameraId, usuario, comentario) {
-    fetch("salvar_comentario.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `camera_id=${cameraId}&usuario=${encodeURIComponent(usuario)}&comentario=${encodeURIComponent(comentario)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById(`new-comment-${cameraId}`).value = "";
-            carregarComentarios(cameraId);
-        } else {
-            alert("Erro ao salvar comentário.");
-        }
-    });
+    const textarea = document.getElementById(`new-comment-${cameraId}`);
+    textarea.value = comentario;
+    submitComment(cameraId);
 }
 
+// Função que faz o POST no servidor
+function submitComment(cameraId) {
+    const textarea = document.getElementById(`new-comment-${cameraId}`);
+    const text = textarea.value.trim();
+    if (!text) { alert('Digite um comentário'); return; }
+
+    // Verifica palavras inadequadas
+    if (!verificarComentario(text)) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('camera_id', cameraId);
+    formData.append('comentario', text);
+
+    fetch('salvar_comentario.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                textarea.value = '';
+                carregarComentarios(cameraId);
+            } else {
+                alert(res.message || 'Erro ao salvar comentário');
+            }
+        })
+        .catch(err => {
+            console.error('Erro ao salvar comentário:', err);
+            alert('Erro ao salvar comentário');
+        });
+}
+
+// Função para carregar comentários (única definição)
 function carregarComentarios(cameraId) {
     fetch(`carregar_comentarios.php?camera_id=${cameraId}`)
-        .then(response => response.json())
+        .then(r => r.json())
         .then(comentarios => {
-            const listaComentarios = document.getElementById(`comments-list-${cameraId}`);
-            listaComentarios.innerHTML = "<h1>Comentários</h1>";
-
-            comentarios.forEach(comentario => {
-                const comentarioElemento = document.createElement("div");
-                comentarioElemento.classList.add("comment");
-                comentarioElemento.innerHTML = `
+            const lista = document.getElementById(`comments-list-${cameraId}`);
+            lista.innerHTML = '<h1>Comentários</h1>';
+            comentarios.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'comment';
+                div.innerHTML = `
                     <div class="comment-header">
                         <i class="fas fa-user-circle fa-2x comment-avatar"></i>
                         <div class="comment-info">
-                            <span class="comment-username">${comentario.usuario}</span>
-                            <span class="comment-timestamp">${new Date(comentario.data).toLocaleString()}</span>
+                            <span class="comment-username">${c.nome}</span>
+                            <span class="comment-timestamp">${new Date(c.data).toLocaleString()}</span>
                         </div>
                     </div>
                     <div class="comment-text">
-                        <p>${comentario.comentario}</p>
+                        <p>${c.comentario}</p>
                     </div>
                 `;
-                listaComentarios.appendChild(comentarioElemento);
+                lista.appendChild(div);
             });
-        });
+        })
+        .catch(err => console.error('Erro ao carregar comentários:', err));
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -565,51 +606,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.querySelectorAll('.slide').forEach(slide => {
-    slide.addEventListener('click', function () {
-      const cameraId = this.getAttribute('data-camera-id');
-      if (cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-          popup.style.display = "flex";
-          document.body.classList.add("no-scroll");
-          // Carrega os comentários para a câmera
-          carregarComentarios(cameraId);
-          // Verifica se o iframe já foi carregado e, se não, carrega-o
-          const iframe = popup.querySelector("iframe");
-          if (iframe && !iframe.src) {
-            const videoSrc = iframe.getAttribute("data-src");
-            iframe.src = videoSrc;
-          }
-        } else {
-          return;
-        }
-      } else {
-        return;
-      }
-    });
-});
-
-// Para slides que possuem câmera, manter a funcionalidade original
-document.querySelectorAll('.slide:not(.no-popup)').forEach(slide => {
-    slide.addEventListener('click', function () {
-      const cameraId = this.getAttribute('data-camera-id');
-      if (cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-          popup.style.display = "flex";
-          document.body.classList.add("no-scroll");
-          carregarComentarios(cameraId);
-          const iframe = popup.querySelector("iframe");
-          if (iframe && !iframe.src) {
-            const videoSrc = iframe.getAttribute("data-src");
-            iframe.src = videoSrc;
-          }
-        }
-      }
-    });
-});
-
 let currentFullscreenContainer = null;
 
 function enterFullScreen(containerId) {
@@ -744,108 +740,68 @@ function atualizarContadores() {
 // Atualiza os contadores apenas ao carregar a página
 atualizarContadores();
 
-// Função para registrar uma nova visualização ao abrir o popup
-// Função para registrar a abertura do popup
-function registrarVisualizacao(cameraId) {
-    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`)
-        .then(response => response.json())
-        .then(data => {
-            atualizarInterface(cameraId, data);
-        })
-        .catch(error => {});
-}
-
-// Função para registrar o fechamento do popup
-// 2) Também ajuste o lugar onde você registra o fechamento do popup,
-//    para usar o mesmo padrão de leitura de texto + parse:
-
-function encerrarVisualizacao(cameraId) {
-    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=fechar`)
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.text();
-      })
-      .then(text => {
-        try {
-          const data = JSON.parse(text);
-          atualizarInterface(cameraId, data);
-        } catch (e) {
-          console.error('Resposta não é JSON ao fechar:', text);
-        }
-      })
-      .catch(err => console.error('Erro ao encerrar visualização:', err));
-  }
-  
-
 // Atualiza a interface com os novos valores da API
 function atualizarInterface(cameraId, data) {
+    console.log(`Atualizando interface para câmera ${cameraId}:`, data);
+    if (!data || typeof data !== 'object') {
+        console.error('Dados inválidos recebidos:', data);
+        return;
+    }
+
+    const total = parseInt(data.total) || 0;
+    const online = parseInt(data.online) || 0;
+
     // Atualiza elementos dentro do popup (se estiver aberto)
     const totalElement = document.getElementById(`total-${cameraId}`);
     const onlineElement = document.getElementById(`online-${cameraId}`);
-    if (totalElement) totalElement.textContent = data.total || 0;
-    if (onlineElement) onlineElement.textContent = data.online || 0;
+    if (totalElement) {
+        totalElement.textContent = total;
+        console.log(`Total atualizado para ${total}`);
+    }
+    if (onlineElement) {
+        onlineElement.textContent = online;
+        console.log(`Online atualizado para ${online}`);
+    }
 
     // Atualiza os cards em todas as seções (lista principal e slider)
     document.querySelectorAll(`[data-id="${cameraId}"] .stats-views, [data-camera-id="${cameraId}"] .stats-views`).forEach(el => {
-        el.textContent = `${data.total || 0} visualizações`;
+        el.innerHTML = `<i class="fa fa-eye"></i> ${total} visualizações`;
     });
 
-    document.querySelectorAll(
-        `[data-id="${cameraId}"] .stats-live, [data-camera-id="${cameraId}"] .stats-live`
-      ).forEach(el => {
-        el.innerHTML = `<i class="fa fa-circle"></i> ${data.online || 0} ao vivo`;
-      });
-      
-} 
-// Evento para abrir o popup
-document.querySelectorAll('.video-card').forEach(card => {
-    card.addEventListener('click', function () {
-        const cameraId = this.getAttribute('data-id');
-        if (cameraId) {
-            registrarVisualizacao(cameraId);
-        }
+    document.querySelectorAll(`[data-id="${cameraId}"] .stats-live, [data-camera-id="${cameraId}"] .stats-live`).forEach(el => {
+        el.innerHTML = `<i class="fa fa-circle"></i> ${online} ao vivo`;
     });
-});
-
-// Evento para fechar o popup corretamente ao clicar no "X"
-document.querySelectorAll('.popup .close').forEach(button => {
-    button.addEventListener('click', function () {
-        const popup = this.closest('.popup');
-        if (popup) {
-            const cameraId = popup.id.replace('popup-', '');
-            if (cameraId) {
-                encerrarVisualizacao(cameraId);
-            }
-            popup.style.display = "none"; // Esconde o popup
-            document.body.classList.remove("no-scroll");
-        }
-    });
-});
+}
 
 // Atualiza o contador online periodicamente sem alterar valores no banco
-// 1) Função de polling de status (executada periodicamente)
 setInterval(() => {
-    document.querySelectorAll('.video-card').forEach(card => {
-      const cameraId = card.getAttribute('data-id');
-      if (!cameraId) return;
-  
-      fetch(`visualizacoes.php?camera_id=${cameraId}&acao=status`)
-        .then(res => {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          return res.text();                    // lê como texto cru
+    document.querySelectorAll('.popup[style*="flex"]').forEach(popup => {
+        const cameraId = popup.id.replace('popup-', '');
+        if (!cameraId) return;
+
+        // Usa status apenas para verificar visualizações online, sem incrementar
+        fetch(`visualizacoes.php?camera_id=${cameraId}&acao=status`, {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
         })
-        .then(text => {
-          try {
-            const data = JSON.parse(text);      // tenta converter para JSON
-            atualizarInterface(cameraId, data);
-          } catch (e) {
-            console.error('Resposta não é JSON:', text);
-          }
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && typeof data === 'object') {
+                atualizarInterface(cameraId, data);
+            }
         })
         .catch(err => console.error('Erro ao atualizar status:', err));
     });
-  }, 10000); // a cada 10s
-  
+}, 10000); // a cada 10s
+
 function toggleHistoria(id) {
     let historiaText = document.getElementById(`historia-${id}`);
     let botao = document.querySelector(`[onclick='toggleHistoria(${id})']`);
@@ -872,20 +828,6 @@ function verificarComentario(comentario) {
     return true;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".comment-input-container button").forEach(button => {
-        button.addEventListener("click", function () {
-            const cameraId = this.id.replace("submit-comment-", "");
-            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
-
-            if (!verificarComentario(comentario)) {
-                return;
-            }
-
-            // Continua com o envio do comentário
-        });
-    });
-});
 document.querySelectorAll('.comment-input-container textarea').forEach(textarea => {
     textarea.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) { // Verifica se Enter foi pressionado sem Shift
@@ -991,7 +933,6 @@ document.getElementById('post-teebweb').addEventListener('click', () => {
 
   window.location.href = url;
 });
-
 
 // Funções para controlar a barra de carregamento
 function showLoading() {

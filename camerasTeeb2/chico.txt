@@ -1,143 +1,143 @@
-/////////////////////// comentarios.php
+////////// cameras.php
 
 <?php
-include 'conexao.php'; // Arquivo de conexão com o banco
+@session_start();
 
-header('Content-Type: application/json');
+include 'conexao.php';
+
+$user_id = isset($_SESSION['userId']) ? intval($_SESSION['userId']) : 0;
 
 /**
- * Filtra palavras ofensivas do comentário.
- * Substitui palavras proibidas por "***"
+ * Função que obtém um resumo da história do local a partir da API do Wikipedia.
+ * (Mesma função do código anterior)
  */
-function filtrarComentario($comentario) {
-    $palavrasProibidas = ['palavrão1', 'palavrão2', 'palavrão3']; // Liste as palavras proibidas aqui
-    return preg_replace('/\b(' . implode('|', $palavrasProibidas) . ')\b/i', '***', $comentario);
+function getWikipediaHistory($localName)
+{
+  // ... (mesmo código de antes)
 }
-
-// Verifica se o comentário foi enviado via POST
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $camera_id = intval($_POST['camera_id']);
-    $usuario = trim($_POST['usuario']) ?: "Anônimo";
-    $comentario = trim($_POST['comentario']);
-
-    if (!empty($comentario)) {
-        $comentarioFiltrado = filtrarComentario($comentario);
-
-        // Insere no banco de dados
-        $stmt = $conexao->prepare("INSERT INTO comentarios (camera_id, usuario, comentario, data) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("iss", $camera_id, $usuario, $comentarioFiltrado);
-        
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "comentario" => $comentarioFiltrado, "usuario" => $usuario]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Erro ao salvar comentário."]);
-        }
-
-        $stmt->close();
-    } else {
-        echo json_encode(["success" => false, "message" => "O comentário não pode estar vazio."]);
-    }
-}
-
-$conexao->close();
-?>
-
-
-/////////////////// salvar_comentario.php
-
-<?php
-include 'conexao.php'; // Conexão com o banco de dados
-header('Content-Type: application/json');
 
 /**
- * Filtra o comentário para:
- * - Substituir os palavrões definidos por '***'
- * - Remover os caracteres '***', espaços e pontuações para verificar se sobra texto válido
- * Se o comentário ficar vazio após a limpeza, retorna false.
+ * Função que atualiza o campo 'historia' da câmera no banco, caso esteja vazio.
  */
-function filtrarComentario($comentario) {
-    // Lista de palavrões a serem censurados (adicione os termos reais)
-    $palavroes = ['palavrao1', 'palavrao2', 'palavrao3'];
-    
-    // Substitui os palavrões por '***', ignorando maiúsculas/minúsculas
-    $comentarioFiltrado = str_ireplace($palavroes, '***', $comentario);
-    
-    // Remove as ocorrências de '***' e depois elimina tudo que não seja letra ou número.
-    // Essa etapa remove espaços, pontuação e outros caracteres.
-    $comentarioLimpo = preg_replace('/[^\p{L}\p{N}]+/u', '', str_ireplace('***', '', $comentarioFiltrado));
-    
-    // Se não sobrar nenhum caractere válido, o comentário é considerado inválido.
-    if ($comentarioLimpo === '') {
-        return false;
+function updateCameraHistory($conexao, $id, $nome)
+{
+  // ... (mesmo código de antes)
+}
+
+// Verifica se há um termo de busca
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+if (!empty($search)) {
+  $sql = "SELECT id, nome, iframe, imagem, historia FROM cad_cameras WHERE nome LIKE ?";
+  $stmt = $conexao->prepare($sql);
+  $searchTerm = "%$search%";
+  $stmt->bind_param("s", $searchTerm);
+  $stmt->execute();
+  $resultado = $stmt->get_result();
+} else {
+  $sql = "SELECT id, nome, iframe, imagem, historia FROM cad_cameras";
+  $resultado = $conexao->query($sql);
+}
+
+echo '<section class="camera-section" id="cameras">';
+echo '<div class="cameracamera">';
+echo '<h1>Câmeras</h1>';
+echo '<div class="camera-videos">';
+
+if ($resultado->num_rows > 0) {
+  while ($row = $resultado->fetch_assoc()) {
+
+    $id = $row['id'];
+    $nome = $row['nome'];
+    $imagem = $row['imagem'];
+    $iframe = $row['iframe'];
+    $historia = $row['historia'];
+
+    if (empty($historia)) {
+      $historia = updateCameraHistory($conexao, $id, $nome);
     }
-    
-    return $comentarioFiltrado;
-}
 
-// Verifica se a requisição é POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $camera_id = $_POST['camera_id'];
-    $usuario   = $_POST['usuario'];
-    $comentario = $_POST['comentario'];
+    // CONSULTA DAS AVALIAÇÕES
+    $sql_rating = "SELECT AVG(nota) as media, COUNT(*) as total FROM avaliacoes WHERE camera_id = ?";
+    $stmt_rating = $conexao->prepare($sql_rating);
+    $stmt_rating->bind_param("i", $id);
+    $stmt_rating->execute();
+    $result_rating = $stmt_rating->get_result();
+    $row_rating = $result_rating->fetch_assoc();
+    $media = ($row_rating['media']) ? number_format($row_rating['media'], 1) : '0.0';
+    $total = ($row_rating['total']) ? $row_rating['total'] : '0';
 
-    // Verifica se os campos foram preenchidos
-    if (!empty($camera_id) && !empty($usuario) && !empty($comentario)) {
-        $comentarioFiltrado = filtrarComentario($comentario);
-
-        // Se o comentário for composto apenas por palavrões, bloqueia a inserção
-        if ($comentarioFiltrado === false) {
-            echo json_encode(["success" => false, "message" => "Comentário não permitido."]);
-            exit;
-        }
-
-        // Prepara e executa a inserção do comentário filtrado no banco de dados
-        $sql = "INSERT INTO comentarios (camera_id, usuario, comentario, data) VALUES (?, ?, ?, NOW())";
-        $stmt = $conexao->prepare($sql);
-        $stmt->bind_param("iss", $camera_id, $usuario, $comentarioFiltrado);
-
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "Comentário salvo!"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Erro ao salvar comentário."]);
-        }
-
-        $stmt->close();
-    } else {
-        echo json_encode(["success" => false, "message" => "Preencha todos os campos."]);
+    // Recupera a avaliação do usuário (se logado)
+    $userRating = 0;
+    if ($user_id > 0) {
+      $stmt_userRating = $conexao->prepare("SELECT nota FROM avaliacoes WHERE camera_id = ? AND user_id = ?");
+      $stmt_userRating->bind_param("ii", $id, $user_id);
+      $stmt_userRating->execute();
+      $result_userRating = $stmt_userRating->get_result();
+      if ($result_userRating->num_rows > 0) {
+        $row_userRating = $result_userRating->fetch_assoc();
+        $userRating = intval($row_userRating['nota']);
+      }
+      $stmt_userRating->close();
     }
-}
 
-$conexao->close();
-?>
+    // Arredonda a média para exibir as estrelas
+    $roundedRating = round($media);
 
+    // CONSULTA DAS VISUALIZAÇÕES (executada antes de montar o card)
+    $sql_views = "SELECT total, online FROM visualizacoes WHERE camera_id = ?";
+    $stmt_views = $conexao->prepare($sql_views);
+    $stmt_views->bind_param("i", $id);
+    $stmt_views->execute();
+    $result_views = $stmt_views->get_result();
+    $row_views = $result_views->fetch_assoc();
+    $totalViews = isset($row_views['total']) ? $row_views['total'] : 0;
+    $onlineViews = isset($row_views['online']) ? $row_views['online'] : 0;
 
-////////////////// carregar_comentarios.php
+    // Exibe o card da câmera
+    echo '<div class="video-card" data-id="' . $id . '">';
+    echo '<div class="card-image-container">';
+    echo '<img src="' . $imagem . '" alt="' . $nome . '">';
+    echo '<div class="card-overlay">';
+    // Cabeçalho com o nome da câmera
+    echo '<div class="camera-header">';
+    echo '<h3 class="camera-name">' . $nome . '</h3>';
+    echo '</div>'; // .camera-header
 
-<?php
-include 'conexao.php'; // Conexão com o banco de dados
+    // Seção que agrupa avaliação e estatísticas
+    echo '<div class="camera-rating-info">';
+    // Avaliação
+    echo '<div class="camera-rating">';
+    echo '<div class="star-rating">';
+    $starsToFill = ($userRating > 0) ? $userRating : $roundedRating;
+    for ($i = 1; $i <= 5; $i++) {
+      if ($i <= $starsToFill) {
+        echo "<span class='star filled'>&#9733;</span>";
+      } else {
+        echo "<span class='star'>&#9734;</span>";
+      }
+    }
+    echo '</div>'; // .star-rating
+    echo '<div class="rating-text">';
+    echo '<span class="rating-average">' . $media . '</span> de <span class="rating-count">' . $total . '</span> avaliações';
+    echo '</div>';
+    echo '</div>'; // .camera-rating
 
-header('Content-Type: application/json');
+    // Estatísticas de visualizações
+    echo '<div class="camera-stats">';
+    echo '<span class="stats-views"><i class="fa fa-eye"></i> ' . $totalViews . ' visualizações</span>';
+    echo '<span class="stats-live"><i class="fa fa-circle"></i> ' . $onlineViews . ' ao vivo</span>';
+    echo '</div>'; // .camera-stats
+    echo '</div>'; // .camera-rating-info
+    echo '</div>'; // .card-overlay
+    echo '</div>'; // .card-image-container
+    echo '</div>'; // .video-card
 
-$camera_id = $_GET['camera_id'];
+    // Prepara o iframe com proxy
+    $iframe_proxy = str_replace("http://", "https://corsproxy.io/?", $iframe);
 
-$sql = "SELECT usuario, comentario, data FROM comentarios WHERE camera_id = ? ORDER BY data DESC";
-$stmt = $conexao->prepare($sql);
-$stmt->bind_param("i", $camera_id);
-$stmt->execute();
-$resultado = $stmt->get_result();
-
-$comentarios = [];
-while ($row = $resultado->fetch_assoc()) {
-    $comentarios[] = $row;
-}
-
-echo json_encode($comentarios);
-?>
-
-
-////////////////// cameras.php
-
- echo "<div id='popup-{$id}' class='popup'>"; // Notação mais clara com chaves
+    // Cria o popup para exibição da câmera
+    echo "<div id='popup-{$id}' class='popup'>"; // Notação mais clara com chaves
     echo "  <div class='popup-content'>";
     echo "    <div class='video-container'>";
     echo "      <span class='close' data-popup-id='popup-{$id}'>&times;</span>";
@@ -180,1024 +180,709 @@ echo json_encode($comentarios);
     echo "      </div>"; // .video-description (popup)
     echo "    </div>";
     // Seção de comentários
-    echo "    <div class='comentarios'>";
-    echo "      <div class='comments-list' id='comments-list-$id'>";
-    echo "        <h1>Comentários</h1>";
-    echo "      </div>";
-    echo "      <div class='comment-input-container'>";
-    echo "        <textarea id='new-comment-$id' placeholder='Escreva um comentário...'></textarea>";
-    echo "        <button id='submit-comment-$id'>Publicar</button>";
-    echo "      </div>";
-    echo "    </div>";
+// Dentro do popup de cada câmera:
+echo "    <div class='comentarios'>";
+echo "      <div class='comments-list' id='comments-list-$id'>";
+echo "        <h1>Comentários</h1>";
+echo "      </div>";
+echo "      <div class='comment-input-container'>";
+echo "        <textarea id='new-comment-$id' placeholder='Escreva um comentário...'></textarea>";
+echo "        <button id='submit-comment-$id'>Publicar</button>";
+echo "      </div>";
+echo "    </div>";
     echo "  </div>";
-    echo "</div>"; //
-
-
-//////////////////////// script.js
-
-let currentSlide = 0;
-let heartbeatInterval;
-const slides = document.querySelectorAll('.slide');
-const dots = document.querySelectorAll('.dot');
-const totalSlides = slides.length;
-
-// Botões de navegação
-document.querySelector('.next').addEventListener('click', function () {
-    changeSlide(1);
-});
-
-document.querySelector('.prev').addEventListener('click', function () {
-    changeSlide(-1);
-});
-
-// Função para mudar o slide com base na direção ou no índice
-function changeSlide(direction) {
-    // Remove classe "active" do slide atual e do ponto correspondente
-    slides[currentSlide].classList.remove('active');
-    dots[currentSlide].classList.remove('active');
-
-    // Calcula o novo slide
-    currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
-
-    // Adiciona a classe "active" ao novo slide e ponto correspondente
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
-
-    // Faz a transição do slider
-    const slider = document.querySelector('.slider');
-    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    echo "</div>"; // .popup
+  }
+} else {
+  echo "<p>Nenhuma câmera encontrada.</p>";
 }
 
-// Alteração automática do slide a cada 5 segundos
-let autoSlide = setInterval(() => changeSlide(1), 5000);
+echo '</div>'; // .camera-videos
+echo '</div>'; // .cameracamera
 
-// Mudança manual ao clicar nas bolinhas e reinício do slide automático
-dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => {
-        currentSlide = index;
-        changeSlide(0);
-        clearInterval(autoSlide);
-        autoSlide = setInterval(() => changeSlide(1), 5000);
-    });
-});
+// Card lateral (side card)
+echo '<div class="side-card">';
+echo '<img src="imagens/postage.png" frameborder="0" width="300" alt="" class="add-img">';
+echo '</div>';
 
-async function fetchWithRetry(url, options = {}, retries = 3) {
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-    } catch (error) {
-        if (retries > 0) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            return fetchWithRetry(url, options, retries - 1);
+echo '</section>';
+?>
+
+
+///////////// cadstro.php
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/imagens/icon.ico" type="image/x-icon">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #272727;
         }
-        throw error;
-    }
-}
-document.querySelectorAll('.slide').forEach(slide => {
-    slide.addEventListener('click', function () {
-        if (this.classList.contains("no-popup")) return;
-        
-        const cameraId = this.getAttribute('data-camera-id');
-        if (!cameraId) return;
 
-        // Registra visualização com retentativa
-        fetchWithRetry(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`)
-            .then(data => atualizarInterface(cameraId, data))
-            .catch(console.error);
-
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-            popup.style.display = "flex";
-            document.body.classList.add("no-scroll");
-            carregarComentarios(cameraId);
-
-            // Inicia heartbeat
-            heartbeatInterval = setInterval(() => {
-                fetch(`visualizacoes.php?camera_id=${cameraId}&acao=ping`)
-                    .catch(console.error);
-            }, 30000);
-
-            const iframe = popup.querySelector("iframe");
-            if (iframe && !iframe.src) {
-                iframe.src = iframe.getAttribute("data-src");
-            }
-        }
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const menuToggle = document.querySelector(".menu-toggle");
-    const menuIcon = menuToggle.querySelector("i");
-    const menu = document.getElementById("nav");
-    const overlay = document.querySelector(".overlay");
-    const navLinks = document.querySelectorAll("#nav a");
-
-    function fecharMenu() {
-        if (window.innerWidth < 770) { // Só fecha o menu em telas pequenas
-            menu.classList.add("animate__fadeOutRight");
-            menu.classList.remove("animate__fadeInRight");
-
-            setTimeout(() => {
-                menu.style.display = "none";
-                overlay.style.display = "none";
-                menuToggle.classList.remove("active");
-                menuIcon.classList.remove("fa-times"); // Remove o "X"
-                menuIcon.classList.add("fa-bars"); // Volta para três barras
-            }, 90);
-        }
-    }
-
-    // Fecha o menu ao clicar em qualquer link de navegação
-    navLinks.forEach(link => {
-        link.addEventListener("click", function () {
-            fecharMenu();
-        });
-    });
-
-    // Fecha o menu ao clicar no overlay (fundo escuro)
-    overlay.addEventListener("click", function () {
-        fecharMenu();
-    });
-
-    // Abre ou fecha o menu ao clicar no botão de menu
-    menuToggle.addEventListener("click", function (event) {
-        if (!menu.classList.contains("animate__fadeInRight")) {
-            menu.style.display = "block";
-            menu.classList.add("animate__fadeInRight");
-            menu.classList.remove("animate__fadeOutRight");
-            overlay.style.display = "block";
-            menuToggle.classList.add("active");
-            menuIcon.classList.remove("fa-bars"); // Remove as três barras
-            menuIcon.classList.add("fa-times"); // Mostra o "X"
-        } else {
-            fecharMenu();
-        }
-        event.stopPropagation();
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const menuToggle = document.querySelector(".menu-toggle");
-    const menuIcon = menuToggle.querySelector("i");
-
-    menuToggle.addEventListener("click", function () {
-        menuIcon.classList.toggle("fa-bars");
-        menuIcon.classList.toggle("fa-times");
-    });
-});
-
-// Abre o popup quando o cartão de vídeo é clicado
-document.addEventListener("DOMContentLoaded", function () {
-    // Função unificada para abrir o popup com a lógica completa
-    function abrirPopup(cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-            popup.style.display = "flex";
-            document.body.classList.add("no-scroll");
-            carregarComentarios(cameraId);
-            const iframe = popup.querySelector("iframe");
-            if (iframe && !iframe.src) {
-                const videoSrc = iframe.getAttribute("data-src");
-                iframe.src = videoSrc;
-            }
-        } else {
-            return;
-        }
-    }
-
-    // Função unificada para fechar o popup
-    function fecharPopup(cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-            clearInterval(heartbeatInterval);
-            const iframe = popup.querySelector("iframe");
-            if (iframe) iframe.src = "";
-            popup.style.display = "none";
-            document.body.classList.remove("no-scroll");
+        .mt-4 {
             
-            fetchWithRetry(`visualizacoes.php?camera_id=${cameraId}&acao=fechar`)
-                .then(data => atualizarInterface(cameraId, data))
-                .catch(console.error);
         }
-    }
-    
 
-    // Torna as funções acessíveis globalmente para que os onclick inline funcionem
-    window.abrirPopup = abrirPopup;
-    window.fecharPopup = fecharPopup;
+        .header-logo {
+            display: none
+        }
 
-    // Event delegation para os cards que já existem no DOM
-    document.querySelectorAll(".video-card, .map-video-card").forEach(card => {
-        card.addEventListener("click", function () {
-            const cameraId = card.getAttribute("data-id") || card.getAttribute("data-camera-id");
-            if (cameraId) {
-                abrirPopup(cameraId);
-                // Fecha o popup do Leaflet, se estiver aberto
-                if (typeof map !== "undefined" && map.closePopup) {
-                    map.closePopup();
-                }
+        .logo-left {
+            display: none;
+        }
+
+        .frame {
+            width: 80%;
+            height: 95%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            border-radius: 10px 0px 0px 10px;
+        }
+
+        .left-panel {
+            flex: 1;
+            background-color: #fdd835;
+            border-radius: 10px 0px 0px 10px;
+        }
+
+
+        .right-panel {
+            flex: 1;
+            background-color: #121212;
+            color: #f4f4f4;
+            overflow-y: auto;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        .header-bar {
+            display: none;
+            width: 100%;
+            height: 20px;
+            background-color: #fdd835;
+            position: absolute;
+            top: 20px;
+            left: 0;
+        }
+
+        .logo {
+            margin-top: 10%;
+            margin-left: 15%;
+            max-width: 70%;
+            height: auto;
+        }
+
+        .btn-primary {
+            background-color: #fdd835;
+            border: none;
+            color: #121212;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffd600;
+        }
+
+        .btn-secondary {
+            background-color: #fdd835;
+            /* Amarelo padrão */
+            color: #121212;
+            /* Texto escuro para contraste */
+            border: none;
+            border-radius: 8px;
+            /* Bordas arredondadas */
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ffd600;
+            /* Amarelo mais claro no hover */
+            color: #121212;
+        }
+
+        .btn-secondary i {
+            font-size: 18px;
+            /* Ícone do botão */
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-step {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #333;
+            border: 2px solid #f4f4f4;
+            text-align: center;
+            color: #f4f4f4;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+        }
+
+        .progress-step.active {
+            background-color: #fdd835;
+            border-color: #fdd835;
+            color: #121212;
+            font-weight: bold;
+        }
+
+        .progress-line {
+            flex: 1;
+            height: 2px;
+            background-color: #333;
+        }
+
+        .progress-line.completed {
+            background-color: #fdd835;
+        }
+
+        .progress-step.completed {
+            background-color: #fdd835;
+            /* Amarelo */
+            border-color: #fdd835;
+            color: #121212;
+        }
+
+        #camera {
+            display: none;
+        }
+
+        video,
+        canvas {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+
+        h3 {
+            color: #fdd835;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .effect-quote {
+            position: absolute;
+            top: 50%;
+            left: 29%;
+            width: 30%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fdd835;
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-style: italic;
+            padding: 10px;
+            border: 2px solid #121212;
+            border-radius: 8px;
+            background-color: #121212;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #photoMessage {
+            display: none;
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            color: #fdd835;
+            font-weight: bold;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        #photoMessage.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+
+        #photoMessageError {
+            display: none;
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            color: #ff4d4d;
+            font-weight: bold;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        #photoMessageError.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .text-center mt-4 {
+            text-align: center;
+        }
+
+        .h3-step4 {
+            text-align: center;
+        }
+
+        .img-ultimatela {
+            width: 30%;
+        }
+
+        .img_inicio {
+            margin-top: -6%;
+            margin-left: 6%;
+            width: 90%;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .popup-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .popup-subtitle {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .popup-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+
+        }
+
+        .popup-content {
+            background: #272727;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 90%;
+            overflow-y: auto;
+            /* Permite o scroll vertical */
+            border-radius: 10px;
+            position: relative;
+            box-sizing: border-box;
+
+
+        }
+
+        .close-btn {
+            position: fixed;
+            /* Fixa o botão no topo direito */
+            top: 4%;
+            right: 10%;
+            font-size: 42px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            color: white;
+            /* Garante que o botão esteja acima do conteúdo */
+        }
+
+        .popup-title,
+        .popup-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            margin-top: -5px;
+            color: white;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        .popup-text {
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            margin-top: 0%;
+            color: white;
+        }
+
+        #uploadProgress {
+            width: 100%;
+            display: none;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #fdd835;
+            margin-top: 20px;
+            /* Amarelo padrão */
+        }
+
+
+        @media (max-width: 768px) {
+            .popup-text {
+                margin: 10px 0;
+                margin-top: 0%;
             }
-        });
-    });
 
-    // Fecha o popup quando o botão de fechar (".close") é clicado
-    document.querySelectorAll(".popup .close").forEach(button => {
-        button.addEventListener("click", function (e) {
-            const popup = button.closest(".popup");
-            if (popup) {
-                const cameraId = popup.id.replace('popup-', '');
-                if (cameraId) {
-                    encerrarVisualizacao(cameraId);
-                }
-                popup.style.display = "none"; // Esconde o popup
-                document.body.classList.remove("no-scroll");
-            }
-            e.stopPropagation();
-        });
-    });
-
-    // Fecha o popup se o usuário clicar fora do conteúdo (na área de overlay)
-    document.querySelectorAll(".popup").forEach(popup => {
-        popup.addEventListener("click", function (e) {
-            // Se o clique foi diretamente no overlay (fora do conteúdo interno)
-            if (e.target === popup) {
-                const cameraId = popup.id.replace('popup-', '');
-                if (cameraId) {
-                    encerrarVisualizacao(cameraId);
-                }
-                popup.style.display = "none";
-                document.body.classList.remove("no-scroll");
-            }
-        });
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const backToTopButton = document.querySelector(".back-to-top");
-
-    window.addEventListener("scroll", function () {
-        if (window.scrollY > 300) { // Exibe o botão ao descer 300px
-            backToTopButton.classList.add("show");
-        } else {
-            backToTopButton.classList.remove("show");
         }
-    });
 
-    backToTopButton.addEventListener("click", function () {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth" // Rolagem suave ao topo
-        });
-    });
-});
 
-// Função para abrir o popup da câmera (caso seja chamada de outro lugar)
-function abrirPopup(id) {
-    const popup = document.getElementById(`popup-${id}`);
-    if (popup) {
-        popup.style.display = "flex";
-    } else {
-        return;
-    }
-}
-
-// Função para fechar o popup (caso seja chamada de outro lugar)
-function fecharPopup(id) {
-    const popup = document.getElementById(`popup-${id}`);
-    if (popup) {
-        popup.style.display = "none";
-    } else {
-        return;
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    const darkModeToggle = document.getElementById("dark-mode-toggle");
-    const darkModeSwitch = document.getElementById("dark-mode-switch");
-    const toggleBtn = document.querySelector(".toggle-btn");
-    const body = document.body;
-    const themeIcon = document.getElementById("theme-icon"); // Ícone que será animado
-
-    // Verifica se o modo escuro está ativado no armazenamento local
-    if (localStorage.getItem("darkMode") === "enabled") {
-        body.classList.add("dark-mode");
-        darkModeSwitch.checked = true;
-        toggleBtn.classList.add("active");
-        if (themeIcon) {
-            themeIcon.classList.remove("fa-moon");
-            themeIcon.classList.add("fa-sun");
-        }
-    }
-
-    // Evento de clique no botão de modo escuro
-    darkModeToggle.addEventListener("click", function () {
-        // Se for em desktop, aplica a animação de rotação no ícone
-        if (window.innerWidth > 768 && themeIcon) {
-            themeIcon.classList.add("rotate");
-        }
-        
-        // Alterna o modo escuro/claro
-        body.classList.toggle("dark-mode");
-        const darkModeEnabled = body.classList.contains("dark-mode");
-
-        // Atualiza o estado do switch e do botão
-        darkModeSwitch.checked = darkModeEnabled;
-        toggleBtn.classList.toggle("active", darkModeEnabled);
-
-        // Armazena a preferência do usuário
-        localStorage.setItem("darkMode", darkModeEnabled ? "enabled" : "disabled");
-
-        // Se for desktop, após a animação, atualiza o ícone
-        if (window.innerWidth > 768 && themeIcon) {
-            setTimeout(function () {
-                themeIcon.classList.remove("rotate");
-                if (darkModeEnabled) {
-                    themeIcon.classList.remove("fa-moon");
-                    themeIcon.classList.add("fa-sun");
-                } else {
-                    themeIcon.classList.remove("fa-sun");
-                    themeIcon.classList.add("fa-moon");
-                }
-            }, 300);
-        }
-    });
-
-    // Evento de clique no switch
-    darkModeSwitch.addEventListener("change", function () {
-        body.classList.toggle("dark-mode", darkModeSwitch.checked);
-        toggleBtn.classList.toggle("active", darkModeSwitch.checked);
-
-        // Armazena a preferência do usuário
-        localStorage.setItem("darkMode", darkModeSwitch.checked ? "enabled" : "disabled");
-
-        // Atualiza o ícone sem animação (opcional)
-        if (themeIcon) {
-            if (darkModeSwitch.checked) {
-                themeIcon.classList.remove("fa-moon");
-                themeIcon.classList.add("fa-sun");
-            } else {
-                themeIcon.classList.remove("fa-sun");
-                themeIcon.classList.add("fa-moon");
-            }
-        }
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".comment-input-container button").forEach(button => {
-        button.addEventListener("click", function () {
-            const cameraId = this.id.replace("submit-comment-", "");
-            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
-
-            if (!comentario) {
-                alert("Digite um comentário!");
-                return;
+        @media (max-width: 568px) {
+            .frame {
+                width: 100%;
+                height: 100%;
+                flex-direction: column;
             }
 
-            const userId = localStorage.getItem("userId");
-
-            if (userId) {
-                // Buscar o nome do usuário logado
-                fetch("getUserName.php?userId=" + userId)
-                    .then(response => response.json())
-                    .then(data => {
-                        const usuario = data.name || "Usuário";
-                        enviarComentario(cameraId, usuario, comentario);
-                    })
-                    .catch(err => {
-                        enviarComentario(cameraId, "Usuário", comentario);
-                    });
-            } else {
-                alert("Você precisa estar logado para comentar.");
+            .left-panel {
+                display: none;
             }
-        });
-    });
-});
 
-function enviarComentario(cameraId, usuario, comentario) {
-    fetch("salvar_comentario.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `camera_id=${cameraId}&usuario=${encodeURIComponent(usuario)}&comentario=${encodeURIComponent(comentario)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById(`new-comment-${cameraId}`).value = "";
-            carregarComentarios(cameraId);
-        } else {
-            alert("Erro ao salvar comentário.");
+            .right-panel {
+                flex: none;
+                width: 100%;
+                height: 100%;
+                padding: 10px;
+            }
+
+            .popup-text {
+                margin: 10px 0;
+                margin-top: -15%;
+            }
+
+            .header-logo {
+                display: block;
+                max-width: 50%;
+                margin-top: 0%;
+                margin-left: 25%;
+            }
+            @media (max-width: 768px) {
+
+                margin-top: 0%;
+            }
+            
+
+            .img_inicio {
+                display: hidden;
+            }
+
+            .container {
+                margin-top: 10%;
+            }
+
+            .success-message {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            .redirect-message {
+                font-size: 16px;
+                color: #555;
+            }
+
+            .redirect-message a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+            .redirect-message a:hover {
+                text-decoration: underline;
+            }
+
+            .illustration {
+                margin-top: 20px;
+            }
+
+            #photoMessage {
+                top: 50%;
+            }
+
+            #photoMessageError {
+                top: 50%;
+            }
         }
-    });
-}
+    </style>
 
-function carregarComentarios(cameraId) {
-    fetch(`carregar_comentarios.php?camera_id=${cameraId}`)
-        .then(response => response.json())
-        .then(comentarios => {
-            const listaComentarios = document.getElementById(`comments-list-${cameraId}`);
-            listaComentarios.innerHTML = "<h1>Comentários</h1>";
+</head>
 
-            comentarios.forEach(comentario => {
-                const comentarioElemento = document.createElement("div");
-                comentarioElemento.classList.add("comment");
-                comentarioElemento.innerHTML = `
-                    <div class="comment-header">
-                        <i class="fas fa-user-circle fa-2x comment-avatar"></i>
-                        <div class="comment-info">
-                            <span class="comment-username">${comentario.usuario}</span>
-                            <span class="comment-timestamp">${new Date(comentario.data).toLocaleString()}</span>
-                        </div>
-                    </div>
-                    <div class="comment-text">
-                        <p>${comentario.comentario}</p>
-                    </div>
-                `;
-                listaComentarios.appendChild(comentarioElemento);
-            });
-        });
-}
+<body>
+<!-- Adicione isso logo após a abertura do <body> -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+        <div style="width:300px; height:8px; background:#333; border-radius:4px; overflow:hidden;">
+            <div id="loadingBar" style="height:100%; width:0%; background:#fdd835; transition:width 0.3s;"></div>
+        </div>
+        <p style="color:#fdd835; margin-top:20px;">Processando, por favor aguarde...</p>
+    </div>
+</div>
+    <div class="frame">
+        <div class="left-panel">
+            <img src="imagens/TeebLogo.png" alt="Logo" class="logo">
+            <img src="imagens/indoor-security-system-abstract-concept-vector-ill (4).png" alt="img_inicio"
+                class="img_inicio">
 
-document.addEventListener("DOMContentLoaded", function () {
-    const userId = localStorage.getItem("userId");
-    const authLink = document.getElementById("auth-link");
+        </div>
+        <div class="right-panel">
+            <img src="imagens/TeebLogo_amarela.png" alt="Header Logo" class="header-logo">
+            <div class="container mt-4">
+                <div class="logo-container">
+                    <img src="imagens/" alt="Logo" class="logo-left">
+                </div>
 
-    if (userId) {
-        // Se o usuário está logado, mudar o link para "Sair"
-        authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sair';
-        authLink.href = "#"; // Remover redirecionamento para login
-        authLink.addEventListener("click", function (event) {
-            event.preventDefault(); // Evita o redirecionamento
-            logoutUser(); // Chama a função de logout
-        });
-    }
-});
-
-// Função de logout
-function logoutUser() {
-    localStorage.removeItem("userId"); // Remove o ID do usuário
-    window.location.reload(); // Recarrega a página para aplicar a mudança
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("search-input");
-    const resultsContainer = document.getElementById("autocomplete-results");
-
-    searchInput.addEventListener("input", function () {
-        const query = searchInput.value.trim();
-
-        if (query.length < 1) {
-            resultsContainer.innerHTML = "";
-            resultsContainer.style.display = "none";
-            return;
-        }
-
-        fetch(`busca_cameras.php?query=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                resultsContainer.innerHTML = "";
                 
-                if (data.length > 0) {
-                    resultsContainer.style.display = "block";
 
-                    data.forEach(nome => {
-                        const div = document.createElement("div");
-                        div.classList.add("autocomplete-item");
-                        div.textContent = nome;
-                        div.addEventListener("click", function () {
-                            searchInput.value = nome;
-                            resultsContainer.innerHTML = "";
-                            resultsContainer.style.display = "none";
+                <div id="step1" class="step">
+                    <h3>Informações Pessoais</h3>
+                    <form id="form1">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <!-- Inside the step1 form -->
+<!-- Dentro do seu form, logo após o campo de senha -->
+<div class="mb-3">
+    <label for="password" class="form-label">Senha</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="password" required>
+        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Campo de Confirmação de Senha -->
+<div class="mb-3">
+    <label for="confirm_password" class="form-label">Confirme a Senha</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="confirm_password" required>
+        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirm_password">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
+</div>
+
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="phone" placeholder="(00) 00000-0000"
+                                maxlength="15" required>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary disabled">Voltar</button>
+                            <!-- No botão da etapa 1: manter apenas o onclick -->
+<button type="button" class="btn btn-primary" onclick="validateStep1()">Próximo</button>
+                        </div>
+
+                    </form>
+                </div>
+
                             
-                            // Simula o clique no botão de busca
-                            searchButton.click();
-                        });
-                        
-                        resultsContainer.appendChild(div);
-                    });
-                } else {
-                    resultsContainer.style.display = "none";
-                }
-            })
-            .catch(error => {});
-    });
+<!-- Dentro do formulário step1 -->
+<div class="mt-3 text-center">
+  <p style="color: #f4f4f4;">Já tem uma conta? 
+    <a href="login.php" style="color: #fdd835;">Entrar</a>
+  </p>
+</div>
+<div id="step2" class="step" style="display: none;">
+    <h3>Verificação por E-mail</h3>
+    <div class="mb-3">
+        <label for="verificationCode" class="form-label">Código de Verificação</label>
+        <input type="text" class="form-control" id="verificationCode" maxlength="6" required>
+    </div>
+    <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" onclick="previousStep(1)">Voltar</button>
+        <button type="button" class="btn btn-primary" onclick="validateCode()">Verificar</button>
+    </div>
+    <div class="mt-3">
+        <p>Não recebeu o código? <a href="#" onclick="resendCode(); return false;">Reenviar</a></p>
+    </div>
+</div>
 
-    // Oculta as sugestões se clicar fora do campo de busca
-    document.addEventListener("click", function (e) {
-        if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-            resultsContainer.style.display = "none";
-        }
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("search-input");
-    const resultsContainer = document.getElementById("autocomplete-results");
-    let currentIndex = -1; // Índice do item selecionado
-
-    searchInput.addEventListener("keydown", function (event) {
-        const items = resultsContainer.querySelectorAll(".autocomplete-item");
-
-        if (items.length > 0) {
-            if (event.key === "ArrowDown") {
-                event.preventDefault();
-                currentIndex = (currentIndex + 1) % items.length;
-                updateSelection();
-            } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-                currentIndex = (currentIndex - 1 + items.length) % items.length;
-                updateSelection();
-            } else if (event.key === "Enter") {
-                event.preventDefault();
-                if (currentIndex >= 0) {
-                    // Atualiza o input com o item selecionado
-                    searchInput.value = items[currentIndex].textContent;
-                    resultsContainer.innerHTML = "";
-                }
-                // Submete o formulário automaticamente
-                searchInput.form.submit();
-            } else if (event.key === "Backspace") {
-                // Reseta a seleção durante a exclusão
-                currentIndex = -1;
-                clearSelection();
-            }
-        } else if (event.key === "Enter") {
-            // Caso não haja itens no autocomplete, submete o formulário normalmente
-            searchInput.form.submit();
-        }
-    });
-
-    // Atualiza a seleção visual e o valor do input
-    function updateSelection() {
-        const items = resultsContainer.querySelectorAll(".autocomplete-item");
-        items.forEach(item => item.classList.remove("selected"));
-        if (currentIndex >= 0) {
-            items[currentIndex].classList.add("selected");
-            searchInput.value = items[currentIndex].textContent;
-        }
-    }
-
-    // Limpa a seleção visual
-    function clearSelection() {
-        const items = resultsContainer.querySelectorAll(".autocomplete-item");
-        items.forEach(item => item.classList.remove("selected"));
-    }
-
-    // Limpa os resultados ao perder o foco
-    searchInput.addEventListener("blur", function () {
-        setTimeout(() => {
-            currentIndex = -1;
-            resultsContainer.innerHTML = "";
-        }, 200);
-    });
-
-    // Ao clicar em um item, preenche o campo de busca e submete o formulário
-    resultsContainer.addEventListener("click", function (event) {
-        if (event.target.classList.contains("autocomplete-item")) {
-            searchInput.value = event.target.textContent;
-            resultsContainer.innerHTML = "";
-            searchInput.form.submit();
-        }
-    });
-});
-
-document.querySelectorAll('.slide').forEach(slide => {
-    slide.addEventListener('click', function () {
-      const cameraId = this.getAttribute('data-camera-id');
-      if (cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-          popup.style.display = "flex";
-          document.body.classList.add("no-scroll");
-          // Carrega os comentários para a câmera
-          carregarComentarios(cameraId);
-          // Verifica se o iframe já foi carregado e, se não, carrega-o
-          const iframe = popup.querySelector("iframe");
-          if (iframe && !iframe.src) {
-            const videoSrc = iframe.getAttribute("data-src");
-            iframe.src = videoSrc;
-          }
-        } else {
-          return;
-        }
-      } else {
-        return;
-      }
-    });
-});
-
-// Para slides que possuem câmera, manter a funcionalidade original
-document.querySelectorAll('.slide:not(.no-popup)').forEach(slide => {
-    slide.addEventListener('click', function () {
-      const cameraId = this.getAttribute('data-camera-id');
-      if (cameraId) {
-        const popup = document.getElementById(`popup-${cameraId}`);
-        if (popup) {
-          popup.style.display = "flex";
-          document.body.classList.add("no-scroll");
-          carregarComentarios(cameraId);
-          const iframe = popup.querySelector("iframe");
-          if (iframe && !iframe.src) {
-            const videoSrc = iframe.getAttribute("data-src");
-            iframe.src = videoSrc;
-          }
-        }
-      }
-    });
-});
-
-let currentFullscreenContainer = null;
-
-function enterFullScreen(containerId) {
-  var container = document.getElementById(containerId);
-  currentFullscreenContainer = container;
-  
-  if (container.requestFullscreen) {
-    container.requestFullscreen().then(() => {
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock("landscape").catch(err => {});
-      }
-      toggleFullscreenButtons(container, true);
-    }).catch(err => {});
-  } else if (container.webkitRequestFullscreen) { // Safari
-    container.webkitRequestFullscreen();
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.lock("landscape").catch(err => {});
-    }
-    toggleFullscreenButtons(container, true);
-  } else if (container.msRequestFullscreen) { // IE11
-    container.msRequestFullscreen();
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.lock("landscape").catch(err => {});
-    }
-    toggleFullscreenButtons(container, true);
-  } else {
-    alert("Fullscreen não é suportado neste dispositivo.");
-  }
-}
-
-function exitFullScreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) { // Safari
-    document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) { // IE11
-    document.msExitFullscreen();
-  }
-  
-  if (screen.orientation && screen.orientation.unlock) {
-    screen.orientation.unlock();
-  }
-  
-  // Altera manualmente os botões para o estado original
-  if (currentFullscreenContainer) {
-    toggleFullscreenButtons(currentFullscreenContainer, false);
-    currentFullscreenContainer = null;
-  }
-}
-
-function toggleFullscreenButtons(container, isFullscreen) {
-  // Procura todos os botões dentro do container
-  var buttons = container.querySelectorAll("button");
-  buttons.forEach(function(button) {
-    if (button.innerHTML.indexOf("fa-compress") !== -1) {
-      button.style.display = isFullscreen ? "block" : "none";
-    }
-    if (button.innerHTML.indexOf("fa-expand") !== -1) {
-      button.style.display = isFullscreen ? "none" : "block";
-    }
-  });
-}
-
-document.addEventListener("fullscreenchange", function() {
-  if (!document.fullscreenElement) {
-    // Aguarda 100ms para garantir que a transição tenha finalizado
-    setTimeout(() => {
-      document.body.style.transform = "none";
-      document.body.style.zoom = "1";
-      document.documentElement.style.transform = "none";
-      window.scrollTo(0, 0);
-    }, 100);
-  }
-});
-
-// Função para coletar informações do navegador e dispositivo
-function getUserDeviceInfo() {
-    let userAgent = navigator.userAgent;
-    let deviceType = /android/i.test(userAgent) ? 'Android' : 
-                     /iPhone|iPad|iPod/i.test(userAgent) ? 'iOS' : 'Desktop';
-    
-    let browser = /chrome/i.test(userAgent) && !/edge/i.test(userAgent) ? 'Chrome' :
-                  /firefox/i.test(userAgent) ? 'Firefox' :
-                  /safari/i.test(userAgent) && !/chrome/i.test(userAgent) ? 'Safari' : 'Desconhecido';
-
-    let androidVersion = '';
-    let match = userAgent.match(/Android\s([0-9\.]+)/);
-    if (match) {
-        androidVersion = match[1];
-    }
-
-    return {
-        userAgent: userAgent,
-        deviceType: deviceType,
-        browser: browser,
-        androidVersion: androidVersion,
-        screenWidth: window.screen.width,
-        screenHeight: window.screen.height,
-        language: navigator.language
-    };
-}
-
-// Enviar os dados para o servidor quando a página for carregada
-window.addEventListener("load", function () {
-    let visitorData = getUserDeviceInfo();
-
-    fetch('save_visitor.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(visitorData)
-    })
-    .then(response => response.text())
-    .then(data => {})
-    .catch(error => {});
-});
-
-function atualizarContadores() {
-    fetch('contador.php')
-        .then(response => response.text())
-        .then(text => {
-            return JSON.parse(text);
-        })
-        .then(data => {
-            document.getElementById('total').textContent = data.total;
-            document.getElementById('online').textContent = data.online;
-        })
-        .catch(error => {});
-}
-
-// Atualiza os contadores apenas ao carregar a página
-atualizarContadores();
-
-// Função para registrar uma nova visualização ao abrir o popup
-// Função para registrar a abertura do popup
-function registrarVisualizacao(cameraId) {
-    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`)
-        .then(response => response.json())
-        .then(data => {
-            atualizarInterface(cameraId, data);
-        })
-        .catch(error => {});
-}
-
-// Função para registrar o fechamento do popup
-// 2) Também ajuste o lugar onde você registra o fechamento do popup,
-//    para usar o mesmo padrão de leitura de texto + parse:
-
-function encerrarVisualizacao(cameraId) {
-    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=fechar`)
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.text();
-      })
-      .then(text => {
-        try {
-          const data = JSON.parse(text);
-          atualizarInterface(cameraId, data);
-        } catch (e) {
-          console.error('Resposta não é JSON ao fechar:', text);
-        }
-      })
-      .catch(err => console.error('Erro ao encerrar visualização:', err));
-  }
-  
-
-// Atualiza a interface com os novos valores da API
-function atualizarInterface(cameraId, data) {
-    // Atualiza elementos dentro do popup (se estiver aberto)
-    const totalElement = document.getElementById(`total-${cameraId}`);
-    const onlineElement = document.getElementById(`online-${cameraId}`);
-    if (totalElement) totalElement.textContent = data.total || 0;
-    if (onlineElement) onlineElement.textContent = data.online || 0;
-
-    // Atualiza os cards em todas as seções (lista principal e slider)
-    document.querySelectorAll(`[data-id="${cameraId}"] .stats-views, [data-camera-id="${cameraId}"] .stats-views`).forEach(el => {
-        el.textContent = `${data.total || 0} visualizações`;
-    });
-
-    document.querySelectorAll(
-        `[data-id="${cameraId}"] .stats-live, [data-camera-id="${cameraId}"] .stats-live`
-      ).forEach(el => {
-        el.innerHTML = `<i class="fa fa-circle"></i> ${data.online || 0} ao vivo`;
-      });
-      
-} 
-// Evento para abrir o popup
-document.querySelectorAll('.video-card').forEach(card => {
-    card.addEventListener('click', function () {
-        const cameraId = this.getAttribute('data-id');
-        if (cameraId) {
-            registrarVisualizacao(cameraId);
-        }
-    });
-});
-
-// Evento para fechar o popup corretamente ao clicar no "X"
-document.querySelectorAll('.popup .close').forEach(button => {
-    button.addEventListener('click', function () {
-        const popup = this.closest('.popup');
-        if (popup) {
-            const cameraId = popup.id.replace('popup-', '');
-            if (cameraId) {
-                encerrarVisualizacao(cameraId);
-            }
-            popup.style.display = "none"; // Esconde o popup
-            document.body.classList.remove("no-scroll");
-        }
-    });
-});
-
-// Atualiza o contador online periodicamente sem alterar valores no banco
-// 1) Função de polling de status (executada periodicamente)
-setInterval(() => {
-    document.querySelectorAll('.video-card').forEach(card => {
-      const cameraId = card.getAttribute('data-id');
-      if (!cameraId) return;
-  
-      fetch(`visualizacoes.php?camera_id=${cameraId}&acao=status`)
-        .then(res => {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          return res.text();                    // lê como texto cru
-        })
-        .then(text => {
-          try {
-            const data = JSON.parse(text);      // tenta converter para JSON
-            atualizarInterface(cameraId, data);
-          } catch (e) {
-            console.error('Resposta não é JSON:', text);
-          }
-        })
-        .catch(err => console.error('Erro ao atualizar status:', err));
-    });
-  }, 10000); // a cada 10s
-  
-function toggleHistoria(id) {
-    let historiaText = document.getElementById(`historia-${id}`);
-    let botao = document.querySelector(`[onclick='toggleHistoria(${id})']`);
-
-    if (historiaText.classList.contains("expandido")) {
-        historiaText.style.maxHeight = "60px"; // Volta para o tamanho original
-        botao.textContent = "Ver mais";
-    } else {
-        historiaText.style.maxHeight = "none"; // Expande o texto
-        botao.textContent = "Ver menos";
-    }
-
-    historiaText.classList.toggle("expandido");
-}
-
-function verificarComentario(comentario) {
-    let palavroes = ["palavrao1", "palavrao2", "palavrao3"]; // Adicione os palavrões aqui
-    let regex = new RegExp(palavroes.join("|"), "gi");
-
-    if (regex.test(comentario)) {
-        alert("Seu comentário contém palavras inadequadas.");
-        return false;
-    }
-    return true;
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".comment-input-container button").forEach(button => {
-        button.addEventListener("click", function () {
-            const cameraId = this.id.replace("submit-comment-", "");
-            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
-
-            if (!verificarComentario(comentario)) {
-                return;
-            }
-
-            // Continua com o envio do comentário
-        });
-    });
-});
-document.querySelectorAll('.comment-input-container textarea').forEach(textarea => {
-    textarea.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) { // Verifica se Enter foi pressionado sem Shift
-            e.preventDefault(); // Evita a quebra de linha
-            // Aciona o clique no botão de publicar comentário no mesmo container
-            this.parentElement.querySelector('button').click();
-        }
-    });
-});
-
-window.addEventListener('beforeunload', function () {
-    // Seleciona todos os elementos com a classe "popup"
-    const popups = document.querySelectorAll('.popup');
-    
-    popups.forEach(popup => {
-      // Verifica se o popup está visível (não está escondido)
-      if (popup.style.display !== 'none') {
-        // Extrai o ID da câmera a partir do id do popup (ex.: "popup-3")
-        const cameraId = popup.id.replace('popup-', '');
-        const url = `visualizacoes.php?camera_id=${cameraId}&acao=fechar`;
-        
-        // Usa sendBeacon para enviar a requisição de decremento de forma assíncrona
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(url);
-        } else {
-          // Fallback: requisição síncrona (menos recomendada, mas garante a execução)
-          var xhr = new XMLHttpRequest();
-          xhr.open("GET", url, false); // false torna a requisição síncrona
-          xhr.send(null);
-        }
-      }
-    });
-});
-  
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".star-rating").forEach(function (ratingContainer) {
-        let stars = Array.from(ratingContainer.querySelectorAll(".star"));
-
-        stars.forEach(function (star, index) {
-            star.addEventListener("mouseover", function () {
-                stars.forEach((s, i) => s.classList.toggle("hover", i <= index));
-            });
-            star.addEventListener("mouseout", function () {
-                stars.forEach(s => s.classList.remove("hover"));
-            });
-
-            star.addEventListener("click", function () {
-                const userId = localStorage.getItem("userId"); // Pega userId do LocalStorage
-
-                if (!userId) {
-                    alert("Você precisa estar logado para avaliar.");
-                    return;
-                }
-
-                let ratingValue = index + 1;
-                stars.forEach((s, i) => s.classList.toggle("selected", i < ratingValue));
-
-                let container = ratingContainer.closest(".rating-container");
-                let cameraId = container.getAttribute("data-camera-id");
-
-                fetch("salvar_avaliacao.php", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `camera_id=${cameraId}&nota=${ratingValue}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        container.querySelector(".rating-average").textContent = data.media;
-                        container.querySelector(".rating-count").textContent = data.total;
-                        localStorage.setItem(`rating_${cameraId}`, ratingValue); // Salva localmente
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {});
-            });
-        });
-    });
-
-    // Recupera a avaliação do usuário ao carregar a página
-    document.querySelectorAll(".rating-container").forEach(container => {
-        let cameraId = container.getAttribute("data-camera-id");
-        let userRating = localStorage.getItem(`rating_${cameraId}`);
-
-        if (userRating) {
-            let stars = container.querySelectorAll(".star");
-            stars.forEach((s, i) => s.classList.toggle("selected", i < userRating));
-        }
-    });
-});
-
-document.getElementById('post-teebweb').addEventListener('click', () => {
-  // Monta a mensagem de energia solar personalizada
-  let mensagem = `Olá! 😊\n\n` +
-    `*Pedido de Informações sobre Energia Solar*\n` +
-    `🌞 *Energia*: Sistema de Energia Solar da Teeb Web\n` +
-    `💬 Estou interessado em saber mais sobre os planos, preços e vantagens de adotar energia solar para o meu empreendimento.\n\n` +
-    `Aguardo seu retorno. Obrigado!`;
-
-  let telefoneVendedor = "+5588993253038";
-  let url = `https://api.whatsapp.com/send?phone=${telefoneVendedor}&text=${encodeURIComponent(mensagem)}`;
-
-  window.location.href = url;
-});
+            <div id="step3" class="step" style="display: none;">
+    <h3 class="h3-step4" style="color:#3bb54a">Concluído</h3>
+    <div class="text-center mt-4">
+        <img src="imagens/verificar.png" alt="Cadastro Concluído" class="img-ultimatela"
+            style="max-width: 200px;">
+        <p style="margin-top:30px ; color: #3bb54a;" class="text-success fw-bold">
+            Informações enviadas com sucesso!
+        </p>
+        <p style="color: #f4f4f4; margin-top: 15px;">
+            Você será redirecionado para a página inicial em 3 segundos...
+        </p>
+    </div>
+</div>
 
 
-// Funções para controlar a barra de carregamento
+            </div>
+        </div>
+
+    </div>
+
+    <div id="popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">×</button>
+            <h2 class="popup-title">Selfie Com Documento</h2>
+            <h4 class="popup-subtitle">Use esse sistema para validar seu cadastro. Atente-se as instruções abaixo</h4>
+            <img src="imagens/homem_identidade.png" alt="Imagem 2" class="popup-image">
+            <br><br><br>
+            <p class="popup-text">Tire a foto com o documento próximo ao rosto, conforme o exemplo ilustrado abaixo e
+                clique em “Enviar Documentação”</p>
+            <br> <br>
+
+            <h4 class="popup-subtitle" style="font-size: 21px;">Caso tenha dúvidas, siga o passo a passo abaixo</h4>
+            <br>
+            <br>
+            <p class="popup-text">
+            <p class="popup-text">
+
+                <li> 1° Passo: Aperte o botão "Capturar Foto", a câmera do telefone abrirá logo em seguida.</li><br>
+                <li> 2° Passo: Agora posicione o documento ao lado do rosto semelhante ao demonstrado no exemplo acima, e capture a imagem.</li><br>
+                <li> 3° Passo: Logo após envie a selfie com o documento apertando em "Enviar Documentação", espere a mensagem, e passe para próxima etapa.</li>
+
+
+            </p>
+
+        </div>
+    </div>
+<script>
+    let currentStep = 1;
+    // Funções para controlar a barra de carregamento
 function showLoading() {
     const overlay = document.getElementById('loadingOverlay');
     const bar = document.getElementById('loadingBar');
     overlay.style.display = 'block';
     bar.style.width = '30%';
 }
+// Adicione esta função no final do seu script
+function setupPasswordToggles() {
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+}
 
+// Chame a função no DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    setupInputMasks();
+    setupPasswordToggles(); // Adicione esta linha
+    
+    // Restante do seu código...
+});
 function updateLoading(percent) {
     const bar = document.getElementById('loadingBar');
     bar.style.width = percent + '%';
@@ -1208,7 +893,849 @@ function hideLoading() {
     overlay.style.display = 'none';
 }
 
-//////////////// loginCode.php
+// Avança para o próximo passo
+function nextStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step;
+    updateStepIndicators(step);
+}
+
+// Volta para o passo anterior
+function previousStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step; // Atualiza a etapa atual corretamente
+
+    updateStepIndicators(step);
+}
+
+
+// Atualiza os indicadores de etapa
+function updateStepIndicators(step) {
+    for (let i = 1; i <= 4; i++) {
+        const stepIndicator = document.getElementById(`stepIndicator${i}`);
+        const line = document.getElementById(`line${i - 1}`);
+        if (stepIndicator) {
+            stepIndicator.classList.toggle('completed', i < step);
+            stepIndicator.classList.toggle('active', i === step);
+            if (line) line.classList.toggle('completed', i < step);
+        }
+    }
+}
+        function sendVerificationCode(userId, email) {
+            return fetch("enviar_codigo.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, email })
+            })
+            .then(response => response.json());
+        }
+
+        function validateCode() {
+        const code = document.getElementById("verificationCode").value;
+        const userId = localStorage.getItem("userId");
+
+        fetch("verificar_codigo.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                nextStep(3); // Vai para a etapa de conclusão
+                
+                // Redireciona para a home após 3 segundos
+                setTimeout(() => {
+                    window.location.href = "index.php"; // Altere para a URL da sua home
+                }, 3000);
+            } else {
+                alert("Código inválido. Tente novamente.");
+            }
+        });
+    }
+
+function resendCode() {
+    const userId = localStorage.getItem("userId");
+    const email = localStorage.getItem("userEmail");
+    
+    sendVerificationCode(userId, email)
+        .then(data => {
+            if (data.success) {
+                alert("Código reenviado com sucesso!");
+            } else {
+                alert("Erro ao reenviar código.");
+            }
+        });
+}
+// Validação e envio dos dados da Etapa 1
+function validateStep1() {
+ const btn = document.querySelector("#form1 button.btn-primary");
+    
+    // Bloquear múltiplos cliques
+    if (btn.getAttribute('data-loading') === 'true') return;
+    
+    // Obter valores ANTES de mostrar carregamento
+    const name  = document.getElementById("name").value.trim();
+    const cpf   = document.getElementById("cpf").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+
+    // Validar senhas ANTES de qualquer processamento
+    if (password.length < 6) {
+        alert("A senha deve ter pelo menos 6 caracteres!");
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert("As senhas não coincidem!");
+        return;
+    }
+
+    // Só depois das validações iniciamos o processo
+    btn.setAttribute('data-loading', 'true');
+    btn.textContent = "Enviando...";
+    btn.disabled = true;
+    
+    showLoading();
+    updateLoading(30);
+
+    // Envia os dados (incluindo a senha)
+       fetch("salvar_usuario1.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
+    })
+    .then(response => {
+        updateLoading(60);
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            hideLoading();
+            alert(`Erro ao salvar dados: ${data.error}`);
+        } else {
+            updateLoading(80);
+            localStorage.setItem("userId", data.id);
+            localStorage.setItem("userEmail", email);
+            
+            // Envia o código APENAS UMA VEZ
+            sendVerificationCode(data.id, email)
+                .then(() => {
+                    updateLoading(100);
+                    setTimeout(() => {
+                        hideLoading();
+                        nextStep(2);
+                    }, 500);
+                })
+                .catch(error => {
+                    hideLoading();
+                    console.error("Erro ao enviar código:", error);
+                    alert("Falha ao enviar código de verificação");
+                });
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error("Erro:", error);
+        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+    });
+    
+}
+
+// Máscaras nos campos de entrada
+function setupInputMasks() {
+    VMasker(document.getElementById("cpf")).maskPattern("999.999.999-99");
+    VMasker(document.getElementById("phone")).maskPattern("(99) 99999-9999");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupInputMasks();
+    document.querySelector("#form1 button.btn-primary").addEventListener("click", validateStep1);
+    document.querySelector("#step2 button.btn-secondary").addEventListener("click", () => previousStep(1)); // Corrigido o botão voltar
+});
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ua-parser-js@0.7.36/dist/ua-parser.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-masker/1.2.0/vanilla-masker.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+
+////////////// salvar_usuario1.php
+
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+header('Content-Type: application/json');
+
+include 'conexao.php';
+
+$name     = trim($_POST['name']     ?? '');
+$cpf_raw  = trim($_POST['cpf']      ?? '');
+$email    = trim($_POST['email']    ?? '');
+$phone    = trim($_POST['phone']    ?? '');
+$password = trim($_POST['password'] ?? '');
+
+if (!$name || !$cpf_raw || !$email || !$phone || !$password) {
+    http_response_code(400);
+    echo json_encode(["error" => "Preencha todos os campos obrigatórios."]);
+    exit;
+}
+
+$cpf = preg_replace('/\D+/', '', $cpf_raw);
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+try {
+    // Verificar se o CPF já existe
+    $checkStmt = $conexao->prepare("SELECT id FROM cadastro_simples WHERE cpf = ?");
+    $checkStmt->bind_param('s', $cpf);
+    $checkStmt->execute();
+    $result = $checkStmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        // Atualizar registro existente
+        $row = $result->fetch_assoc();
+        $userId = $row['id'];
+        
+        $updateStmt = $conexao->prepare("
+            UPDATE cadastro_simples 
+            SET name = ?, email = ?, phone = ?, password = ?
+            WHERE id = ?
+        ");
+        $updateStmt->bind_param('ssssi', $name, $email, $phone, $hashedPassword, $userId);
+        $updateStmt->execute();
+    } else {
+        // Criar novo registro
+        $insertStmt = $conexao->prepare("
+            INSERT INTO cadastro_simples (cpf, name, email, phone, password)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $insertStmt->bind_param('sssss', $cpf, $name, $email, $phone, $hashedPassword);
+        $insertStmt->execute();
+        $userId = $insertStmt->insert_id;
+    }
+
+    // Retornar ID do usuário SEM gerar código aqui
+    echo json_encode(['id' => $userId]);
+
+} catch (mysqli_sql_exception $sqlEx) {
+    http_response_code(500);
+    echo json_encode(['error' => $sqlEx->getMessage()]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}
+?>
+
+
+//////////////// login.php
+
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/imagens/icon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #272727;
+        }
+
+        .header-logo {
+            display: none
+        }
+
+        .logo-left {
+            display: none;
+        }
+
+        .frame {
+            width: 80%;
+            height: 90%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            border-radius: 10px 0px 0px 10px;
+        }
+
+        .left-panel {
+            flex: 1;
+            background-color: #fdd835;
+            border-radius: 10px 0px 0px 10px;
+        }
+
+
+        .right-panel {
+            flex: 1;
+            background-color: #121212;
+            color: #f4f4f4;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        .header-bar {
+            display: none;
+            width: 100%;
+            height: 20px;
+            background-color: #fdd835;
+            position: absolute;
+            top: 20px;
+            left: 0;
+        }
+
+        .logo {
+            margin-top: 10%;
+            margin-left: 15%;
+            max-width: 70%;
+            height: auto;
+        }
+
+        .btn-primary {
+            background-color: #fdd835;
+            border: none;
+            color: #121212;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffd600;
+        }
+
+        .btn-secondary {
+            background-color: #fdd835;
+            /* Amarelo padrão */
+            color: #121212;
+            /* Texto escuro para contraste */
+            border: none;
+            border-radius: 8px;
+            /* Bordas arredondadas */
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ffd600;
+            /* Amarelo mais claro no hover */
+            color: #121212;
+        }
+
+        .btn-secondary i {
+            font-size: 18px;
+            /* Ícone do botão */
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-step {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #333;
+            border: 2px solid #f4f4f4;
+            text-align: center;
+            color: #f4f4f4;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+        }
+
+        .progress-step.active {
+            background-color: #fdd835;
+            border-color: #fdd835;
+            color: #121212;
+            font-weight: bold;
+        }
+
+        .progress-line {
+            flex: 1;
+            height: 2px;
+            background-color: #333;
+        }
+
+        .progress-line.completed {
+            background-color: #fdd835;
+        }
+
+        .progress-step.completed {
+            background-color: #fdd835;
+            /* Amarelo */
+            border-color: #fdd835;
+            color: #121212;
+        }
+
+        #camera {
+            display: none;
+        }
+
+        video,
+        canvas {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+
+        h3 {
+            color: #fdd835;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .effect-quote {
+            position: absolute;
+            top: 50%;
+            left: 29%;
+            width: 30%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fdd835;
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-style: italic;
+            padding: 10px;
+            border: 2px solid #121212;
+            border-radius: 8px;
+            background-color: #121212;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #photoMessage {
+            display: none;
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            color: #fdd835;
+            font-weight: bold;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        #photoMessage.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+
+
+        #photoMessageError {
+            display: none;
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            color: #ff4d4d;
+            font-weight: bold;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        #photoMessageError.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .text-center mt-4 {
+            text-align: center;
+        }
+
+        .h3-step4 {
+            text-align: center;
+        }
+
+        .img-ultimatela {
+            width: 30%;
+        }
+
+        .img_inicio {
+            margin-top: -6%;
+            margin-left: 6%;
+            width: 90%;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .popup-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .popup-subtitle {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .popup-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+
+        }
+
+        .popup-content {
+            background: #272727;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            /* Permite o scroll vertical */
+            border-radius: 10px;
+            position: relative;
+            box-sizing: border-box;
+
+
+        }
+
+        input[type="text"] {
+            border: none !important;
+            outline: none !important;
+            background-color: white !important;
+        }
+
+        .close-btn {
+            position: absolute;
+            /* Fixa o botão no topo direito */
+            top: 10px;
+            right: 10px;
+            font-size: 50px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            color: white;
+            /* Garante que o botão esteja acima do conteúdo */
+        }
+
+        .popup-title,
+        .popup-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            color: white;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        .popup-text {
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            margin-top: 0%;
+            color: white;
+        }
+
+        #uploadProgress {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #fdd835;
+            margin-top: 20px;
+            display: none;
+        }
+
+        Ï @media (max-width: 768px) {
+            .popup-text {
+                margin: 10px 0;
+                margin-top: 0%;
+            }
+
+        }
+
+
+        @media (max-width: 568px) {
+            .frame {
+                width: 100%;
+                height: 100%;
+                flex-direction: column;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+
+            .right-panel {
+                flex: none;
+                width: 100%;
+                height: 100%;
+                padding: 10px;
+            }
+
+            .popup-text {
+                margin: 10px 0;
+                margin-top: -15%;
+            }
+
+            .header-logo {
+                display: block;
+                max-width: 50%;
+                margin-top: 10%;
+                margin-left: 25%;
+            }
+
+            .img_inicio {
+                display: hidden;
+            }
+
+            .container {
+                margin-top: 10%;
+            }
+
+            .success-message {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            .redirect-message {
+                font-size: 16px;
+                color: #555;
+            }
+
+            .redirect-message a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+            .redirect-message a:hover {
+                text-decoration: underline;
+            }
+
+            .illustration {
+                margin-top: 20px;
+            }
+
+            #photoMessage {
+                top: 50%;
+            }
+
+            #photoMessageError {
+                top: 50%;
+            }
+
+            .logo,
+            .header-logo {
+                content: url("imagens/TeebLogo.png");
+                /* Substitui a logo preta pela nova */
+                display: block;
+                max-width: 50%;
+                margin-top: 10%;
+                margin-bottom: 10%;
+                margin-left: auto;
+                margin-right: auto;
+
+            }
+        }
+
+
+
+
+
+        .error-message {
+            color: #ff4d4d;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .register-link {
+            margin-top: 10px;
+            color: #fdd835;
+            display: block;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="frame">
+        <div class="left-panel">
+            <img src="imagens/TeebLogoPreta.png" alt="Logo" class="logo">
+            <img src="imagens/indoor-security-system-abstract-concept-vector-ill (4).png" alt="img_inicio"
+                class="img_inicio">
+
+        </div>
+        <div class="right-panel">
+
+            <div class="container mt-4">
+                <div class="logo-container">
+                    <a href="index.php">
+                        <img src="imagens/TeebLogoPreta.png" alt="Logo" class="logo">
+                    </a>
+                </div>
+
+                <h3 class="text-center">Entrar</h3>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="loginUser()">Entrar</button>
+                    <p class="error-message" id="errorMessage">E-mail ou senha incorretos. Faça o cadastro.</p>
+                </form>
+                <a href="conta.php" class="register-link">Ainda não tem uma conta? Cadastre-se</a>
+            </div>
+        </div>
+
+        <script>
+            function loginUser() {
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
+                const errorMessage = document.getElementById("errorMessage");
+
+                if (!email || !password) {
+                    errorMessage.innerText = "Preencha todos os campos.";
+                    errorMessage.style.display = "block";
+                    return;
+                }
+
+                fetch("loginCode.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            localStorage.setItem("userId", data.id);
+                            window.location.href = "index.php"; // Redireciona para a página principal
+                        } else {
+                            errorMessage.innerText = data.error;
+                            errorMessage.style.display = "block";
+                        }
+                    })
+                    .catch(error => {
+                        errorMessage.innerText = "Erro ao conectar ao servidor.";
+                        errorMessage.style.display = "block";
+                    });
+            }
+            document.getElementById("loginForm").addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault(); // Previne a submissão padrão do formulário
+                    loginUser(); // Chama a função de login
+                }
+            });
+
+        </script>
+
+</body>
+
+</html>
+
+
+//////////////////////////// loginCode.php
 
 
 <?php
@@ -1250,6 +1777,7 @@ if ($result->num_rows > 0) {
 $stmt->close();
 $conexao->close();
 ?>
+
 
 
 
@@ -1396,3 +1924,124 @@ $conexao->close();
     background-color: #0056b3;
 }
 
+
+.popup .close {
+    position: absolute;
+    top: -11px;
+    right: 0px;
+    font-size: 30px;
+    color: #333;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.close:hover {
+    color: #ff0000;
+}
+
+
+
+#video-container-1,
+#video-container-2,
+#video-container-3,
+#video-container-4,
+#video-container-5,
+#video-container-6,
+#video-container-7,
+#video-container-8 {
+    height: 900px;
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
+
+}
+.historia-text {
+    max-height: 60px; /* Define uma altura inicial pequena */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.ver-mais {
+    background: none;
+    border: none;
+    color: #007BFF;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px;
+}
+
+.ver-mais:hover {
+    text-decoration: underline;
+}
+
+
+#video-container-1 iframe,
+#video-container-2 iframe,
+#video-container-3 iframe,
+#video-container-4 iframe,
+#video-container-5 iframe,
+#video-container-6 iframe,
+#video-container-7 iframe,
+#video-container-8 iframe {
+    width: 100%;
+    /* Preencher a largura do container */
+    height: 100%;
+    /* Preencher a altura do container */
+    border: none;
+    /* Remover bordas */
+    display: block;
+}
+
+#comments-section-1,
+#comments-section-2,
+#comments-section-3,
+#comments-section-4,
+#comments-section-5,
+#comments-section-6,
+#comments-section-7,
+#comments-section-8 {
+    flex: 1;
+    margin-left: 20px;
+    padding-top: 20px;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+#video-description-1,
+#video-description-2,
+#video-description-3,
+#video-description-4,
+#video-description-5,
+#video-description-6,
+#video-description-7,
+#video-description-8 {
+    padding: 0px 5px 10px 5px;
+
+
+}
+
+.hidden-camera {
+
+    display: none;
+
+}
+
+/* Estilo do botão */
+#show-more-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: rgb(241, 196, 0);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#show-more-btn:hover {
+    background-color: rgb(241, 196, 0);
+}

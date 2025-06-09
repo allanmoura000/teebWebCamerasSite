@@ -1,12 +1,18 @@
 <?php
-include 'conexao.php'; // Arquivo de conexão com o banco
+session_start(); // Iniciar sessão
+include 'conexao.php';
 
 header('Content-Type: application/json');
 
-/**
- * Filtra palavras ofensivas do comentário.
- * Substitui palavras proibidas por "***"
- */
+// Verificar se o usuário está logado
+if (!isset($_SESSION['userName'])) {
+    echo json_encode(["success" => false, "message" => "Usuário não autenticado"]);
+    exit;
+}
+
+$camera_id = intval($_POST['camera_id']);
+$comentario = trim($_POST['comentario']);
+$usuario = $_SESSION['userName'];
 function filtrarComentario($comentario) {
     $palavrasProibidas = ['palavrão1', 'palavrão2', 'palavrão3']; // Liste as palavras proibidas aqui
     return preg_replace('/\b(' . implode('|', $palavrasProibidas) . ')\b/i', '***', $comentario);

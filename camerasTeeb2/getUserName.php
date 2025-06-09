@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 $userId = $_GET['userId'] ?? '';
 
 if (!empty($userId)) {
-    $sql = "SELECT name FROM usuarios WHERE id = ?";
+    $sql = "SELECT name FROM cadastro_simples WHERE id = ?";
     $stmt = $conexao->prepare($sql);
     $stmt->bind_param("i", $userId);
     $stmt->execute();

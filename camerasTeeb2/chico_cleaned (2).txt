@@ -1,893 +1,934 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+//////////////// script.js
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="theme-color" content="#FFFFFF"> 
-    <title>CamerasTeeb</title>
-    <link rel="shortcut icon" href="/imagens/icon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="newproject.css">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="mapa.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+let currentSlide = 0;
+let heartbeatInterval;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+const totalSlides = slides.length;
 
-
-</head>
-
-<body>
-    <div class="overlay"></div>
-
-    <header>
-        <div class="container">
-
-            <div class="logo">
-                <a href="index.php"><img src="imagens/TeebLogo_amarela.png" alt="Logo"></a>
-            </div>
-            <div class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
-            <nav id="nav" class="animate__animated">
-                <ul id="navLinks">
-                    <li>
-                        <a href="index.php">
-                            <i class="fas fa-home"></i>
-                            <span>Início</span>
-                        </a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#cameras" class="dropdown-toggle">
-                            <i class="fas fa-video"></i>
-                            <span>Câmeras</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#map">
-                            <i class="fas fa-map-marked-alt"></i>
-                            <span>Mapa</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#creditos">
-                            <i class="fas fa-users"></i>
-                            <span>Créditos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#newsStripe">
-                            <i class="fas fa-newspaper"></i>
-                            <span>Notícias</span>
-                        </a>
-                    </li>
-
-                    <!-- Ícone ao lado do nome "Entrar" -->
-                    <li class="profile-icon">
-                        <a href="cadastro.php" id="auth-link">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Entrar</span>
-                        </a>
-                    </li>
-
-                    <!-- Botão de modo escuro -->
-                    <li class="dark-mode-container">
-                        <button id="dark-mode-toggle">
-                            <i id="theme-icon" class="fas fa-moon"></i>
-                            <span class="dark-mode-text">Modo Escuro</span>
-                        </button>
-                        <div class="switch-container">
-                            <label class="switch">
-                                <input type="checkbox" id="dark-mode-switch">
-                                <span class="toggle-btn round"></span>
-                            </label>
-                        </div>
-                    </li>
-
-
-
-                </ul>
-
-            </nav>
-        </div>
-    </header>
-
-
-
-   <div class="search-bar">
-        <form class="search-form" action="cameras_filtro.php" method="GET">
-            <input type="text" name="search" id="search-input" class="search-input" placeholder="Buscar Cameras"
-                autocomplete="off">
-            <button type="submit" class="search-btn" id="search-button">Buscar</button>
-        </form>
-        <div id="autocomplete-results" class="autocomplete-results"></div>
-    </div>
-
-    <div class="slider-container">
-        <div class="slider">
-            <div class="slide active" id="slide-1" data-camera-id="2">
-                <img src="imagens/pracaAdventista.jpeg" alt="Slide 1">
-                <h3>Praça do Adventista</h3>
-                <p>Local histórico de encontro.</p>
-            </div>
-            <div class="slide" id="slide-2" data-camera-id="10">
-                <img src="imagens/pracacigano.jpeg" alt="Slide 2">
-                <h3>Praça do Cigano</h3>
-                <p>Cultura e tradições em harmonia.</p>
-            </div>
-            <div class="slide no-popup" id="slide-ad">
-                
-                    <picture>
-                        <source media="(max-width: 768px)" srcset="imagens/bannerSlider2.png">
-                        <source media="(min-width: 769px)" srcset="imagens/bannerSlider.png">
-                        <img src="imagens/bannerSlider.png" alt="Propaganda">
-                    </picture>
-                    <h3>Vem ser TEEB</h3>
-                    <p>Confira nossas ofertas!</p>
-                
-            </div>
-
-
-<script>
-    document.getElementById('slide-ad').addEventListener('click', () => {
-  let adicionais = [];
-
-  document.querySelectorAll('.adicional-item').forEach(item => {
-    const quantity = parseInt(item.querySelector('.quantity').textContent || "0");
-    if (quantity > 0) {
-      const name = item.getAttribute('data-name');
-      adicionais.push(`${name} x${quantity}`);
-    }
-  });
-
-  let totalValueElement = document.querySelector('#totalValue');
-  let totalValue = totalValueElement ? totalValueElement.textContent : "0.00";
-
-  let mensagem = `Olá! 😊\n\n` +
-    `*Pedido de Contratação de Plano*\n` +
-    `📡 *Plano*: 200 MEGA\n` +
-    `💵 *Preço do Plano*: R$69,99\n\n` +
-    `*Adicionais Selecionados:*\n` +
-    (adicionais.length ? adicionais.map(item => `➕ ${item}`).join("\n") : "Nenhum adicional selecionado.") +
-    `\n\n` +
-    `🧾 *Total Geral*: R$69,99\n\n` +
-    `Obrigado!`;
-
-  let telefoneVendedor = "+5588993253038";
-  let url = `https://api.whatsapp.com/send?phone=${telefoneVendedor}&text=${encodeURIComponent(mensagem)}`;
-
-  window.location.href = url;
+// Botões de navegação
+document.querySelector('.next').addEventListener('click', function () {
+    changeSlide(1);
 });
 
-</script>
+document.querySelector('.prev').addEventListener('click', function () {
+    changeSlide(-1);
+});
 
-            <div class="slide" id="slide-3" data-camera-id="6">
-                <img src="imagens/Bosco.jpeg" alt="Slide 3">
-                <h3>Sítio do Bosco</h3>
-                <p>Uma paisagem deslumbrante.</p>
-            </div>
-        </div>
-        <div class="slider-nav">
-            <button class="prev">&#10094;</button>
-            <button class="next">&#10095;</button>
-        </div>
-        <div class="indicators">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-        </div>
-    </div>
-    <a href="#nav" class="back-to-top">
-        <i class="fas fa-arrow-up"></i>
-    </a>
+// Função para mudar o slide com base na direção ou no índice
+function changeSlide(direction) {
+    // Remove classe "active" do slide atual e do ponto correspondente
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
 
-    <main>
+    // Calcula o novo slide
+    currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
 
-        <?php include 'cameras.php'; ?>
+    // Adiciona a classe "active" ao novo slide e ponto correspondente
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
 
+    // Faz a transição do slider
+    const slider = document.querySelector('.slider');
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+}
 
-        <div class="mapa-section" id="mapa">
-            <div class="mapamundi">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-                <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-                <div class="mapa-section" id="mapa">
-                    <div class="mapamundi">
-                        <div id="map"></div>
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-                        <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function () {
-                                // Event delegation para os cards das câmeras (lista e mapa)
-                                document.querySelectorAll(".video-card, .map-video-card").forEach(card => {
-                                    card.addEventListener("click", function () {
-                                        const cameraId = card.getAttribute("data-id") || card.getAttribute("data-camera-id");
-                                        if (cameraId) {
-                                            abrirPopup(cameraId);
-                                            // Se existir um popup do Leaflet aberto, feche-o
-                                            if (typeof map !== "undefined" && map.closePopup) {
-                                                map.closePopup();
-                                            }
-                                        } else {
-                                            console.error("Identificador da câmera não encontrado no card.");
-                                        }
-                                    });
-                                });
-                            });
+// Alteração automática do slide a cada 5 segundos
+let autoSlide = setInterval(() => changeSlide(1), 5000);
 
-                            // Função para abrir o popup completo (vídeo, comentários, etc.)
-                            function abrirPopup(cameraId) {
-                                console.log(`Abrindo popup para câmera ID: ${cameraId}`);
-                                const popup = document.getElementById(`popup-${cameraId}`);
-                                if (popup) {
-                                    popup.style.display = "flex";
-                                    document.body.classList.add("no-scroll");
-                                    carregarComentarios(cameraId);
-                                    const iframe = popup.querySelector("iframe");
-                                    if (iframe && !iframe.src) {
-                                        const videoSrc = iframe.getAttribute("data-src");
-                                        iframe.src = videoSrc;
-                                    }
-                                } else {
-                                    console.error(`Popup com ID popup-${cameraId} não encontrado.`);
-                                }
-                            }
+// Mudança manual ao clicar nas bolinhas e reinício do slide automático
+dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+        currentSlide = index;
+        changeSlide(0);
+        clearInterval(autoSlide);
+        autoSlide = setInterval(() => changeSlide(1), 5000);
+    });
+});
 
-                            // Função para fechar o popup completo
-                            function fecharPopup(cameraId) {
-                                console.log(`Fechando popup para câmera ID: ${cameraId}`);
-                                const popup = document.getElementById(`popup-${cameraId}`);
-                                if (popup) {
-                                    // Opcional: remover o src do iframe para descarregar o vídeo
-                                    const iframe = popup.querySelector("iframe");
-                                    if (iframe) {
-                                        iframe.src = "";
-                                    }
-                                    popup.style.display = "none";
-                                    document.body.classList.remove("no-scroll");
-                                } else {
-                                    console.error(`Popup com ID popup-${cameraId} não encontrado.`);
-                                }
-                            }
+async function fetchWithRetry(url, options = {}, retries = 3) {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    } catch (error) {
+        if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return fetchWithRetry(url, options, retries - 1);
+        }
+        throw error;
+    }
+}
 
-                            // Função para exibir um card dentro do marcador no mapa
-                            function exibirCardNoMapa(camera, marker) {
-                                console.log(`Exibindo card da câmera ${camera.id} no mapa`);
-                                let iframe_proxy = camera.iframe ? camera.iframe.replace("http://", "https://corsproxy.io/?") : "";
-                                var cardHtml = `
-              <div class="map-video-card" data-id="${camera.id}" onclick="registrarVisualizacao(${camera.id}); abrirPopup(${camera.id});">
-                <img src="${camera.imagem}" alt="${camera.nome}">
-                <p>${camera.nome}</p>
-                <div class="views-container">
-           
-              </div>
-            `;
-                                var popup = L.popup({ keepInView: true, autoClose: false, closeOnClick: false })
-                                    .setLatLng(marker.getLatLng())
-                                    .setContent(cardHtml)
-                                    .openOn(map);
-                                // Se o popup completo ainda não existe, adiciona-o ao body
-                                if (!document.getElementById(`popup-${camera.id}`)) {
-                                    let popupHtml = `
-                <div id="popup-${camera.id}" class="popup">
-                  <div class="popup-content">
-                    <div class="video-container">
-                      <span class="close" data-popup-id="popup-${camera.id}" onclick="fecharPopup(${camera.id})">&times;</span>
-                      <div id="video-container-${camera.id}">
-                        ${iframe_proxy ? `<iframe id="iframe-${camera.id}" data-src="${iframe_proxy}" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen playsinline webkit-playsinline></iframe>` : "<p>Vídeo não disponível</p>"}
-                      </div>
-                      <div id="video-description-${camera.id}">
-                        <h2>${camera.nome}</h2>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `;
-                                    document.body.insertAdjacentHTML("beforeend", popupHtml);
-                                }
-                            }
+// Função unificada para abrir o popup e carregar comentários
+function abrirPopup(cameraId) {
+    console.log(`Abrindo popup para câmera ID: ${cameraId}`);
+    const popup = document.getElementById(`popup-${cameraId}`);
+    if (!popup) {
+        console.error(`Popup com ID popup-${cameraId} não encontrado.`);
+        return;
+    }
 
-                            // Função para carregar as câmeras do banco de dados e adicioná-las ao mapa
-                            function carregarCameras() {
-                                fetch('teste_json.php')
-                                    .then(response => response.json())
-                                    .then(cameras => {
-                                        console.log("Dados carregados do JSON:", cameras);
-                                        if (Array.isArray(cameras) && cameras.length > 0) {
-                                            cameras.forEach(camera => {
-                                                if (camera.latitude && camera.longitude) {
-                                                    let latitude = parseFloat(camera.latitude);
-                                                    let longitude = parseFloat(camera.longitude);
-                                                    if (!isNaN(latitude) && !isNaN(longitude)) {
-                                                        var marker = L.marker([latitude, longitude]).addTo(map);
+    // Verifica se o popup já está aberto para evitar duplicação
+    if (popup.style.display === "flex") {
+        console.log(`Popup ${cameraId} já está aberto`);
+        return;
+    }
 
-                                                        // Evento de clique para animar o zoom e exibir o card
-                                                        marker.on('click', function () {
-                                                            // Fecha o popup aberto anteriormente
-                                                            map.closePopup();
+    // Exibe o popup
+    popup.style.display = "flex";
+    document.body.classList.add("no-scroll");
 
-                                                            // Desabilita o arraste do mapa para garantir que a animação ocorra sem interferência
-                                                            map.dragging.disable();
+    // Carrega os comentários imediatamente
+    carregarComentarios(cameraId);
 
-                                                            // Animação de flyTo para centralizar e aproximar do marcador
-                                                            map.flyTo([latitude, longitude], 17, {
-                                                                animate: true,
-                                                                duration: 1,
-                                                                easeLinearity: 0.8
-                                                            });
+    // Registra visualização apenas uma vez
+    console.log(`Registrando visualização para câmera ${cameraId}`);
+    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`, {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Resposta do servidor para câmera ${cameraId}:`, data);
+        if (data && typeof data === 'object') {
+            atualizarInterface(cameraId, data);
+            // Inicia heartbeat apenas após registrar a visualização com sucesso
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+            }
+            heartbeatInterval = setInterval(() => {
+                // Usa ping apenas para manter a sessão ativa, sem incrementar contadores
+                fetch(`visualizacoes.php?camera_id=${cameraId}&acao=ping`, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                }).catch(err => console.error('Erro no ping:', err));
+            }, 30000);
+        } else {
+            console.error('Dados inválidos recebidos:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao registrar visualização:', error);
+    });
 
-                                                            // Quando a animação terminar, reabilita o arraste e abre o popup
-                                                            map.once('moveend', function () {
-                                                                map.dragging.enable();
-                                                                exibirCardNoMapa(camera, marker);
-                                                            });
-                                                        });
-                                                    } else {
-                                                        console.warn(`Coordenadas inválidas para ${camera.nome}: ${camera.latitude}, ${camera.longitude}`);
-                                                    }
-                                                }
-                                            });
-                                        } else {
-                                            console.error("Erro: Nenhum dado de câmera encontrado.");
-                                        }
-                                    })
-                                    .catch(error => console.error("Erro ao buscar dados do mapa:", error));
-                            }
+    // Carrega o iframe se necessário
+    const iframe = popup.querySelector("iframe");
+    if (iframe && !iframe.src) {
+        iframe.src = iframe.getAttribute("data-src");
+    }
+}
 
-                            // Inicializa o mapa
-                            var map = L.map('map').setView([-3.7309, -40.9928], 15);
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; OpenStreetMap contributors'
-                            }).addTo(map);
-                            carregarCameras();
+// Função para fechar o popup
+function fecharPopup(cameraId) {
+    console.log(`Fechando popup para câmera ID: ${cameraId}`);
+    const popup = document.getElementById(`popup-${cameraId}`);
+    if (!popup) {
+        console.error(`Popup com ID popup-${cameraId} não encontrado.`);
+        return;
+    }
 
-                            // Fecha o card do mapa quando o usuário clicar fora dele
-                            map.on('click', function (e) {
-                                if (!e.originalEvent.target.closest(".map-video-card")) {
-                                    map.closePopup();
-                                }
-                            });
+    // Verifica se o popup está realmente aberto
+    if (popup.style.display !== "flex") {
+        console.log(`Popup ${cameraId} já está fechado`);
+        return;
+    }
 
-                            // Função para atualizar os contadores em todos os elementos com os IDs duplicados
-                            function atualizarInterface(cameraId, data) {
-                                document.querySelectorAll(`[id="total-${cameraId}"]`).forEach(el => {
-                                    el.textContent = data.total ?? 0;
-                                });
-                                document.querySelectorAll(`[id="online-${cameraId}"]`).forEach(el => {
-                                    el.textContent = data.online ?? 0;
-                                });
-                            }
+    // Limpa o heartbeat
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
 
-                            // Atualiza os contadores de visualizações tanto nos cards da lista quanto nos do mapa
-                            setInterval(() => {
-                                document.querySelectorAll('.video-card, .map-video-card').forEach(card => {
-                                    const cameraId = card.getAttribute('data-id') || card.getAttribute('data-camera-id');
-                                    if (cameraId) {
-                                        fetch(`visualizacoes.php?camera_id=${cameraId}&acao=status`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                atualizarInterface(cameraId, data);
-                                            })
-                                            .catch(error => console.error('❌ Erro ao atualizar status:', error));
-                                    }
-                                });
-                            }, 5000);
-                        </script>
-                    </div>
-                </div>
-            </div>
-        </div>
+    // Limpa o iframe
+    const iframe = popup.querySelector("iframe");
+    if (iframe) iframe.src = "";
 
+    // Esconde o popup
+    popup.style.display = "none";
+    document.body.classList.remove("no-scroll");
 
+    // Registra o fechamento
+    console.log(`Registrando fechamento para câmera ${cameraId}`);
+    fetch(`visualizacoes.php?camera_id=${cameraId}&acao=fechar`, {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Resposta do servidor ao fechar câmera ${cameraId}:`, data);
+        if (data && typeof data === 'object') {
+            atualizarInterface(cameraId, data);
+        } else {
+            console.error('Dados inválidos recebidos ao fechar:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao fechar visualização:', error);
+    });
+}
 
-        <style>
-            .dark-mode .slider-nav button {
-                background-color: rgb(0 0 0 / 20%);
-                border: 1px solid #000;
+document.addEventListener('DOMContentLoaded', () => {
+    // Configuração dos cards de vídeo e slides
+    document.querySelectorAll('.video-card, .map-video-card, .slide:not(.no-popup)').forEach(card => {
+        card.addEventListener('click', function() {
+            const cameraId = this.getAttribute('data-id') || this.getAttribute('data-camera-id');
+            if (!cameraId) return;
+
+            // Fecha o popup do mapa se existir
+            if (typeof map !== "undefined" && map.closePopup) {
+                map.closePopup();
             }
 
-            .dark-mode .slider-nav button:hover {
-                background-color: rgb(0 0 0 / 50%);
-                border: 1px solid #000;
+            abrirPopup(cameraId);
+        });
+    });
+
+    // Configuração dos botões de fechar
+    document.querySelectorAll('.popup .close').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const popup = this.closest('.popup');
+            if (!popup) return;
+            const cameraId = popup.id.replace('popup-', '');
+            fecharPopup(cameraId);
+        });
+    });
+
+    // Fecha o popup ao clicar fora do conteúdo
+    document.querySelectorAll('.popup').forEach(popup => {
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                const cameraId = popup.id.replace('popup-', '');
+                fecharPopup(cameraId);
             }
-
-            .dark-mode .video-card {
-                background-color: #1a1a1a;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
-                border: 2px solid #0000006b;
-            }
-
-            .dark-mode .noticias-slide .card-slide {
-                background-color: #1a1a1a;
-                color: white;
-                border: 2px solid #00000038;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
-            }
-
-            .dark-mode .slider-container {
-                background-color: #222;
-                border: 2px solid #0000004d;
-            }
-
-
-            .overlayCima-baixo {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 70%;
-                background-color: rgba(0, 0, 0, 0.192);
-                pointer-events: none;
-                z-index: -3;
-                /* SUBSTITUIR O CSS JA EXISTENTE */
-            }
-
-            .stripe-river-section {
-                margin-top: 0%;
-                /* NAO ESQUECER DE APAGAR O MARGIN-TOP DO ELEMENTY STYLE */
-            }
-
-            #map {
-                position: relative;
-                margin-top: 0px;
-                margin-left: -1.1%;
-                height: 300px;
-                width: 99%;
-                border-radius: 5px;
-                box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.136);
-            }
-
-            .leaflet-container a.leaflet-popup-close-button:hover {
-                color: #d91818;
-            }
-        </style>
-        </div>
-        </div>
-
-        </div>
-        </div>
-
-
-
-        <?php include 'cameras_tiangua.php'; ?>
-
-
-        <!-- Seção de Notícias -->
-        <section id="newsStripe" class="stripe-river-section" style="margin-top: 100px;">
-            <h2>Notícias</h2>
-            <div id="news-container" class="layout-news">
-
-                <style>
-                    .slider-container-baixo {
-                        width: 100%;
-                        margin: 20px auto;
-                        position: relative;
-                        overflow: hidden;
-                        border: 2px solid #ccc;
-                        background-color: #333;
-                        border-radius: 4px;
-                    }
-
-                    .slider-baixo {
-                        display: flex;
-                        transition: transform 0.5s ease-in-out;
-                        width: 100%;
-                        cursor: pointer;
-                    }
-
-                    .slide-baixo {
-                        min-width: 100%;
-                        height: 350px;
-                        position: relative;
-                    }
-
-                    .slide-baixo img {
-                        width: 100%;
-                        height: 120%;
-                        object-fit: cover;
-                        border-radius: 15px;
-                    }
-
-                    .slide-baixo h3,
-                    .slide-baixo p {
-                        position: absolute;
-                        color: white;
-                        margin: 0;
-                        padding: 0;
-                        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-                        z-index: 11;
-                    }
-
-                    .slide-baixo h3 {
-                        top: 310px;
-                        left: 20px;
-                    }
-
-                    .slide-baixo p {
-                        bottom: -15px;
-                        left: 20px;
-                    }
-
-
-
-
-
-                    .slider-nav-baixo {
-                        pointer-events: none;
-                        display: none
-                    }
-
-                    .slider-nav-baixo button.prev-baixo,
-                    .slider-nav-baixo button.next-baixo {
-                        background-color: rgba(0, 0, 0, 0.5);
-                        color: white;
-                        border: none;
-                        padding: 10px;
-                        width: 30px;
-                        height: 100px;
-                        cursor: pointer;
-                        font-size: 18px;
-                    }
-
-                    .slider-nav-baixo button.prev-baixo {
-                        border-radius: 0px 300px 300px 0px;
-                    }
-
-                    .slider-nav-baixo button.next-baixo {
-                        border-radius: 300px 0px 0px 300px;
-                    }
-
-                    .slider-nav-baixo button:hover {
-                        background-color: rgba(0, 0, 0, 0.8);
-                    }
-
-                    .indicators-baixo {
-                        text-align: center;
-                        margin-top: 10px;
-                    }
-
-                    .dot-baixo {
-                        height: 15px;
-                        width: 15px;
-                        margin: 0 5px;
-                        background-color: #bbb;
-                        border-radius: 50%;
-                        display: inline-block;
-                        cursor: pointer;
-                    }
-
-                    .dot-baixo.active {
-                        background-color: #717171;
-                    }
-
-
-
-                    .slide-baixo h3 {
-                        top: 290px;
-                        left: 20px;
-                        font-size: 18px;
-                    }
-
-                    .slide-baixo p {
-                        bottom: -22px;
-                        left: 20px;
-                        font-size: 14px;
-                    }
-
-                    .slide-baixo h1,
-                    .slide-baixo h2,
-                    .slide-baixo h3,
-                    .slide-baixo h4,
-                    .slide-baixo h5,
-                    .slide-baixo p {
-                        z-index: 11;
-                    }
-
-                    .overlayCima-baixo {
-                        position: absolute;
-                        top: 0px;
-                        left: 0;
-                        width: 100%;
-                        height: 0%;
-                        background-color: rgba(0, 0, 0, 0.1);
-                        pointer-events: none;
-                        z-index: 1;
-                    }
-
-                    .noticias-slide {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 0px;
-                    }
-
-                    @media (max-width: 400px) {
-                        #map {
-                            margin-left: -7.1%;
-                            width: 104%;
-                        }
-                    }
-                </style>
-
-                <!-- HTML -->
-                <!-- Slider HTML (substitua o conteúdo estático pelos slides dinâmicos) -->
-                <!-- Slider HTML -->
-                <div class="slider-container-baixo">
-                    <div class="overlayCima-baixo"></div>
-                    <div class="slider-baixo" id="slider-baixo">
-                        <!-- Slides serão inseridos dinamicamente -->
-                    </div>
-                    <div class="slider-nav-baixo">
-                        <button class="prev-baixo" id="prev-baixo">&#10094;</button>
-                        <button class="next-baixo" id="next-baixo">&#10095;</button>
-                    </div>
-                    <div class="indicators-baixo" id="indicators-baixo">
-                        <!-- Indicadores serão inseridos dinamicamente -->
-                    </div>
-                </div>
-
-                <script>
-                    // Função truncate atualizada para usar apenas media queries (max-width)
-                    // Ela ignora o parâmetro maxLength para larguras até 900px e utiliza os valores definidos:
-                    // - Até 300px: 20 caracteres
-                    // - Até 600px: 55 caracteres
-                    // - Até 900px: 100 caracteres
-                    // Para larguras maiores que 900px, utiliza o valor passado (ex: 70)
-                    function truncate(str, maxLength) {
-                        let desiredLength;
-                        if (window.matchMedia("(min-width: 300px) and (max-width: 400px)").matches) {
-                            desiredLength = 45;
-                        } else if (window.matchMedia("(min-width: 401px) and (max-width: 600px)").matches) {
-                            desiredLength = 60;
-                        } else if (window.matchMedia("(min-width: 601) and (max-width: 800px)").matches) {
-                            desiredLength = 70;
-                        } else if (window.matchMedia("(min-width: 801px) and (max-width: 1100px)").matches) {
-                            desiredLength = 90;
-                        } else if (window.matchMedia("(min-width: 1101px) and (max-width: 1366px)").matches) {
-                            desiredLength = 100;
-                        } else if (window.matchMedia("(min-width: 1367px)").matches) {
-                            desiredLength = 300;
-                        } else {
-                            desiredLength = maxLength;
-                        }
-                        return str.length > desiredLength ? str.substring(0, desiredLength) + "..." : str;
-                    }
-
-                    document.addEventListener("DOMContentLoaded", () => {
-                        fetch("scraper.php")
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.error) {
-                                    document.querySelector('.slider-container-baixo').innerHTML =
-                                        "<p>Erro: " + data.error + "</p>";
-                                    return;
-                                }
-
-                                // Embaralha os dados e seleciona as 3 primeiras notícias
-                                data.sort(() => Math.random() - 0.5);
-                                const selectedNews = data.slice(0, 3);
-
-                                const sliderContainer = document.getElementById("slider-baixo");
-                                const indicatorsContainer = document.getElementById("indicators-baixo");
-                                sliderContainer.innerHTML = "";
-                                indicatorsContainer.innerHTML = "";
-
-                                selectedNews.forEach((news, index) => {
-                                    const slide = document.createElement("div");
-                                    slide.classList.add("slide-baixo");
-                                    // Lembre: o texto a ser truncado está dentro do elemento h3
-                                    slide.innerHTML = `
-            <img src="${news.imagem}" alt="${news.titulo}">
-            <h3>${truncate(news.titulo, 70)}</h3>
-            <p>Confira a notícia completa</p>
-          `;
-                                    slide.addEventListener("click", () => {
-                                        window.open(news.link, "_blank");
-                                    });
-                                    sliderContainer.appendChild(slide);
-
-                                    const dot = document.createElement("span");
-                                    dot.classList.add("dot-baixo");
-                                    if (index === 0) dot.classList.add("active");
-                                    dot.addEventListener("click", () => {
-                                        currentSlide_baixo = index;
-                                        updateSlider();
-                                        resetAutoSlide();
-                                    });
-                                    indicatorsContainer.appendChild(dot);
-                                });
-
-                                initSlider();
-                            })
-                            .catch(error => console.error("Erro ao carregar notícias:", error));
-
-                        let currentSlide_baixo = 0;
-                        let autoSlide_baixo;
-
-                        function initSlider() {
-                            document.getElementById("next-baixo").addEventListener("click", () => {
-                                changeSlide_baixo(1);
-                            });
-                            document.getElementById("prev-baixo").addEventListener("click", () => {
-                                changeSlide_baixo(-1);
-                            });
-                            autoSlide_baixo = setInterval(() => changeSlide_baixo(1), 5000);
-                        }
-
-                        function updateSlider() {
-                            const slides = document.querySelectorAll(".slide-baixo");
-                            const dots = document.querySelectorAll(".dot-baixo");
-                            slides.forEach(slide => slide.classList.remove("active"));
-                            dots.forEach(dot => dot.classList.remove("active"));
-
-                            slides[currentSlide_baixo].classList.add("active");
-                            dots[currentSlide_baixo].classList.add("active");
-
-                            const slider = document.querySelector(".slider-baixo");
-                            slider.style.transform = `translateX(-${currentSlide_baixo * 100}%)`;
-                        }
-
-                        function changeSlide_baixo(direction) {
-                            const slides = document.querySelectorAll(".slide-baixo");
-                            const total = slides.length;
-                            currentSlide_baixo = (currentSlide_baixo + direction + total) % total;
-                            updateSlider();
-                            resetAutoSlide();
-                        }
-
-                        function resetAutoSlide() {
-                            clearInterval(autoSlide_baixo);
-                            autoSlide_baixo = setInterval(() => changeSlide_baixo(1), 5000);
-                        }
-                    });
-
-                </script>
-
-
-
-
-                <!-- Notícias Menores -->
-                <!-- Notícias Menores -->
-                <style>
-                    .noticias-slide {
-                        display: flex;
-                        flex-direction: column;
-                        /* Organiza as manchetes em coluna */
-
-                        /* Espaçamento entre as manchetes */
-                    }
-
-                    .card-slide {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        padding: 15px;
-                        border: 1px solid #ddd;
-                        border-radius: 8px;
-                        background-color: #fff;
-                        cursor: pointer;
-                        transition: background 0.3s ease-in-out;
-                    }
-
-                    .card-slide:hover {
-                        background-color: #f5f5f5;
-                    }
-
-                    .card-slide img {
-                        width: 120px;
-                        height: 80px;
-                        object-fit: cover;
-                        border-radius: 8px;
-                    }
-
-                    .text-content {
-                        flex: 1;
-                        margin-right: 10px;
-                    }
-
-                    .text-content h3 {
-                        font-size: 18px;
-                        margin: 0;
-                    }
-
-                    .text-content p {
-                        font-size: 14px;
-                        color: #666;
-                    }
-
-                    @media (max-width: 768px) {
-                        .noticias-slide .card-slide {
-                            width: 100%;
-                        }
-
-                    }
-                </style>
-
-                <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                        // Função para truncar o texto se maior que o limite
-                        function truncate(str, maxLength) {
-                            return str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
-                        }
-
-                        fetch("scraper.php")
-                            .then(response => response.json())
-                            .then(data => {
-                                const container = document.getElementById("noticias");
-                                container.innerHTML = "";
-                                if (data.error) {
-                                    container.innerHTML = "<p>Erro ao carregar notícias: " + data.error + "</p>";
-                                    return;
-                                }
-                                data.sort(() => Math.random() - 0.5);
-                                const selectedNews = data.slice(0, 3);
-                                selectedNews.forEach(noticia => {
-                                    const card = document.createElement("div");
-                                    card.classList.add("card-slide");
-                                    card.setAttribute("data-link", noticia.link);
-                                    card.innerHTML = `
-                    <div class="text-content">
-                        <h3>${truncate(noticia.titulo, 20)}</h3>
-                        <button onclick="window.open('${noticia.link}', '_blank'); event.stopPropagation();">Ver Notícias</button>
-                    </div>
-                    <img src="${noticia.imagem}" alt="${noticia.titulo}">
-                `;
-                                    card.addEventListener("click", function () {
-                                        window.open(this.getAttribute("data-link"), "_blank");
-                                    });
-                                    container.appendChild(card);
-                                });
-                            })
-                            .catch(error => console.error("Erro ao carregar notícias:", error));
-                    });
-                </script>
-
-
-
-
-
-
-
-
-                <!-- Container das manchetes -->
-                <div class="noticias-slide" id="noticias"></div>
-
-
-        </section>
-
-
-        <section id="adBanner" class="ad-banner-section">
+        });
+    });
+
+    // Configuração única dos botões de comentário
+    document.querySelectorAll('.comment-input-container button').forEach(btn => {
+        // Remove qualquer onclick inline
+        btn.removeAttribute('onclick');
+        btn.type = 'button';
+        
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            const cameraId = btn.id.replace('submit-comment-', '');
+            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
             
-                <img src="imagens/banner_propaganda.png" alt="Imagem de Anúncio" class="img_ad">
-           
-        </section>
-        <script>
-    document.getElementById('adBanner').addEventListener('click', () => {
-  let adicionais = [];
+            if (!comentario) { 
+                alert('Digite um comentário!'); 
+                return; 
+            }
 
-  document.querySelectorAll('.adicional-item').forEach(item => {
-    const quantity = parseInt(item.querySelector('.quantity').textContent || "0");
-    if (quantity > 0) {
-      const name = item.getAttribute('data-name');
-      adicionais.push(`${name} x${quantity}`);
+            const userId = localStorage.getItem('userId');
+            if (!userId) { 
+                alert('Você precisa estar logado para comentar.'); 
+                return; 
+            }
+
+            // Busca nome e envia o comentário
+            fetch(`getUserName.php?userId=${userId}`)
+                .then(r => r.json())
+                .then(data => enviarComentario(cameraId, data.name || 'Usuário', comentario))
+                .catch(() => enviarComentario(cameraId, 'Usuário', comentario));
+        });
+    });
+
+    // Configuração dos textareas para envio com Enter
+    document.querySelectorAll('.comment-input-container textarea').forEach(textarea => {
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const btn = this.parentElement.querySelector('button');
+                if (btn) btn.click();
+            }
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const menuToggle = document.querySelector(".menu-toggle");
+    const menuIcon = menuToggle.querySelector("i");
+    const menu = document.getElementById("nav");
+    const overlay = document.querySelector(".overlay");
+    const navLinks = document.querySelectorAll("#nav a");
+
+    function fecharMenu() {
+        if (window.innerWidth < 770) { // Só fecha o menu em telas pequenas
+            menu.classList.add("animate__fadeOutRight");
+            menu.classList.remove("animate__fadeInRight");
+
+            setTimeout(() => {
+                menu.style.display = "none";
+                overlay.style.display = "none";
+                menuToggle.classList.remove("active");
+                menuIcon.classList.remove("fa-times"); // Remove o "X"
+                menuIcon.classList.add("fa-bars"); // Volta para três barras
+            }, 90);
+        }
+    }
+
+    // Fecha o menu ao clicar em qualquer link de navegação
+    navLinks.forEach(link => {
+        link.addEventListener("click", function () {
+            fecharMenu();
+        });
+    });
+
+    // Fecha o menu ao clicar no overlay (fundo escuro)
+    overlay.addEventListener("click", function () {
+        fecharMenu();
+    });
+
+    // Abre ou fecha o menu ao clicar no botão de menu
+    menuToggle.addEventListener("click", function (event) {
+        if (!menu.classList.contains("animate__fadeInRight")) {
+            menu.style.display = "block";
+            menu.classList.add("animate__fadeInRight");
+            menu.classList.remove("animate__fadeOutRight");
+            overlay.style.display = "block";
+            menuToggle.classList.add("active");
+            menuIcon.classList.remove("fa-bars"); // Remove as três barras
+            menuIcon.classList.add("fa-times"); // Mostra o "X"
+        } else {
+            fecharMenu();
+        }
+        event.stopPropagation();
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const menuToggle = document.querySelector(".menu-toggle");
+    const menuIcon = menuToggle.querySelector("i");
+
+    menuToggle.addEventListener("click", function () {
+        menuIcon.classList.toggle("fa-bars");
+        menuIcon.classList.toggle("fa-times");
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+    const darkModeSwitch = document.getElementById("dark-mode-switch");
+    const toggleBtn = document.querySelector(".toggle-btn");
+    const body = document.body;
+    const themeIcon = document.getElementById("theme-icon"); // Ícone que será animado
+
+    // Verifica se o modo escuro está ativado no armazenamento local
+    if (localStorage.getItem("darkMode") === "enabled") {
+        body.classList.add("dark-mode");
+        darkModeSwitch.checked = true;
+        toggleBtn.classList.add("active");
+        if (themeIcon) {
+            themeIcon.classList.remove("fa-moon");
+            themeIcon.classList.add("fa-sun");
+        }
+    }
+
+    // Evento de clique no botão de modo escuro
+    darkModeToggle.addEventListener("click", function () {
+        // Se for em desktop, aplica a animação de rotação no ícone
+        if (window.innerWidth > 768 && themeIcon) {
+            themeIcon.classList.add("rotate");
+        }
+        
+        // Alterna o modo escuro/claro
+        body.classList.toggle("dark-mode");
+        const darkModeEnabled = body.classList.contains("dark-mode");
+
+        // Atualiza o estado do switch e do botão
+        darkModeSwitch.checked = darkModeEnabled;
+        toggleBtn.classList.toggle("active", darkModeEnabled);
+
+        // Armazena a preferência do usuário
+        localStorage.setItem("darkMode", darkModeEnabled ? "enabled" : "disabled");
+
+        // Se for desktop, após a animação, atualiza o ícone
+        if (window.innerWidth > 768 && themeIcon) {
+            setTimeout(function () {
+                themeIcon.classList.remove("rotate");
+                if (darkModeEnabled) {
+                    themeIcon.classList.remove("fa-moon");
+                    themeIcon.classList.add("fa-sun");
+                } else {
+                    themeIcon.classList.remove("fa-sun");
+                    themeIcon.classList.add("fa-moon");
+                }
+            }, 300);
+        }
+    });
+
+    // Evento de clique no switch
+    darkModeSwitch.addEventListener("change", function () {
+        body.classList.toggle("dark-mode", darkModeSwitch.checked);
+        toggleBtn.classList.toggle("active", darkModeSwitch.checked);
+
+        // Armazena a preferência do usuário
+        localStorage.setItem("darkMode", darkModeSwitch.checked ? "enabled" : "disabled");
+
+        // Atualiza o ícone sem animação (opcional)
+        if (themeIcon) {
+            if (darkModeSwitch.checked) {
+                themeIcon.classList.remove("fa-moon");
+                themeIcon.classList.add("fa-sun");
+            } else {
+                themeIcon.classList.remove("fa-sun");
+                themeIcon.classList.add("fa-moon");
+            }
+        }
+    });
+});
+
+// Função para enviar comentário (encapsula submitComment)
+function enviarComentario(cameraId, usuario, comentario) {
+    const textarea = document.getElementById(`new-comment-${cameraId}`);
+    textarea.value = comentario;
+    submitComment(cameraId);
+}
+
+// Função que faz o POST no servidor
+function submitComment(cameraId) {
+    const textarea = document.getElementById(`new-comment-${cameraId}`);
+    const text = textarea.value.trim();
+    if (!text) { alert('Digite um comentário'); return; }
+
+    // Verifica palavras inadequadas
+    if (!verificarComentario(text)) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('camera_id', cameraId);
+    formData.append('comentario', text);
+
+    fetch('salvar_comentario.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                textarea.value = '';
+                carregarComentarios(cameraId);
+            } else {
+                alert(res.message || 'Erro ao salvar comentário');
+            }
+        })
+        .catch(err => {
+            console.error('Erro ao salvar comentário:', err);
+            alert('Erro ao salvar comentário');
+        });
+}
+
+// Função para carregar comentários (única definição)
+function carregarComentarios(cameraId) {
+    fetch(`carregar_comentarios.php?camera_id=${cameraId}`)
+        .then(r => r.json())
+        .then(comentarios => {
+            const lista = document.getElementById(`comments-list-${cameraId}`);
+            lista.innerHTML = '<h1>Comentários</h1>';
+            comentarios.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'comment';
+                div.innerHTML = `
+                    <div class="comment-header">
+                        <i class="fas fa-user-circle fa-2x comment-avatar"></i>
+                        <div class="comment-info">
+                            <span class="comment-username">${c.nome}</span>
+                            <span class="comment-timestamp">${new Date(c.data).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="comment-text">
+                        <p>${c.comentario}</p>
+                    </div>
+                `;
+                lista.appendChild(div);
+            });
+        })
+        .catch(err => console.error('Erro ao carregar comentários:', err));
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userId = localStorage.getItem("userId");
+    const authLink = document.getElementById("auth-link");
+
+    if (userId) {
+        // Se o usuário está logado, mudar o link para "Sair"
+        authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sair';
+        authLink.href = "#"; // Remover redirecionamento para login
+        authLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Evita o redirecionamento
+            logoutUser(); // Chama a função de logout
+        });
+    }
+});
+
+// Função de logout
+function logoutUser() {
+    localStorage.removeItem("userId"); // Remove o ID do usuário
+    window.location.reload(); // Recarrega a página para aplicar a mudança
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("search-input");
+    const resultsContainer = document.getElementById("autocomplete-results");
+
+    searchInput.addEventListener("input", function () {
+        const query = searchInput.value.trim();
+
+        if (query.length < 1) {
+            resultsContainer.innerHTML = "";
+            resultsContainer.style.display = "none";
+            return;
+        }
+
+        fetch(`busca_cameras.php?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                resultsContainer.innerHTML = "";
+                
+                if (data.length > 0) {
+                    resultsContainer.style.display = "block";
+
+                    data.forEach(nome => {
+                        const div = document.createElement("div");
+                        div.classList.add("autocomplete-item");
+                        div.textContent = nome;
+                        div.addEventListener("click", function () {
+                            searchInput.value = nome;
+                            resultsContainer.innerHTML = "";
+                            resultsContainer.style.display = "none";
+                            
+                            // Simula o clique no botão de busca
+                            searchButton.click();
+                        });
+                        
+                        resultsContainer.appendChild(div);
+                    });
+                } else {
+                    resultsContainer.style.display = "none";
+                }
+            })
+            .catch(error => {});
+    });
+
+    // Oculta as sugestões se clicar fora do campo de busca
+    document.addEventListener("click", function (e) {
+        if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+            resultsContainer.style.display = "none";
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("search-input");
+    const resultsContainer = document.getElementById("autocomplete-results");
+    let currentIndex = -1; // Índice do item selecionado
+
+    searchInput.addEventListener("keydown", function (event) {
+        const items = resultsContainer.querySelectorAll(".autocomplete-item");
+
+        if (items.length > 0) {
+            if (event.key === "ArrowDown") {
+                event.preventDefault();
+                currentIndex = (currentIndex + 1) % items.length;
+                updateSelection();
+            } else if (event.key === "ArrowUp") {
+                event.preventDefault();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                updateSelection();
+            } else if (event.key === "Enter") {
+                event.preventDefault();
+                if (currentIndex >= 0) {
+                    // Atualiza o input com o item selecionado
+                    searchInput.value = items[currentIndex].textContent;
+                    resultsContainer.innerHTML = "";
+                }
+                // Submete o formulário automaticamente
+                searchInput.form.submit();
+            } else if (event.key === "Backspace") {
+                // Reseta a seleção durante a exclusão
+                currentIndex = -1;
+                clearSelection();
+            }
+        } else if (event.key === "Enter") {
+            // Caso não haja itens no autocomplete, submete o formulário normalmente
+            searchInput.form.submit();
+        }
+    });
+
+    // Atualiza a seleção visual e o valor do input
+    function updateSelection() {
+        const items = resultsContainer.querySelectorAll(".autocomplete-item");
+        items.forEach(item => item.classList.remove("selected"));
+        if (currentIndex >= 0) {
+            items[currentIndex].classList.add("selected");
+            searchInput.value = items[currentIndex].textContent;
+        }
+    }
+
+    // Limpa a seleção visual
+    function clearSelection() {
+        const items = resultsContainer.querySelectorAll(".autocomplete-item");
+        items.forEach(item => item.classList.remove("selected"));
+    }
+
+    // Limpa os resultados ao perder o foco
+    searchInput.addEventListener("blur", function () {
+        setTimeout(() => {
+            currentIndex = -1;
+            resultsContainer.innerHTML = "";
+        }, 200);
+    });
+
+    // Ao clicar em um item, preenche o campo de busca e submete o formulário
+    resultsContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("autocomplete-item")) {
+            searchInput.value = event.target.textContent;
+            resultsContainer.innerHTML = "";
+            searchInput.form.submit();
+        }
+    });
+});
+
+let currentFullscreenContainer = null;
+
+function enterFullScreen(containerId) {
+  var container = document.getElementById(containerId);
+  currentFullscreenContainer = container;
+  
+  if (container.requestFullscreen) {
+    container.requestFullscreen().then(() => {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("landscape").catch(err => {});
+      }
+      toggleFullscreenButtons(container, true);
+    }).catch(err => {});
+  } else if (container.webkitRequestFullscreen) { // Safari
+    container.webkitRequestFullscreen();
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock("landscape").catch(err => {});
+    }
+    toggleFullscreenButtons(container, true);
+  } else if (container.msRequestFullscreen) { // IE11
+    container.msRequestFullscreen();
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock("landscape").catch(err => {});
+    }
+    toggleFullscreenButtons(container, true);
+  } else {
+    alert("Fullscreen não é suportado neste dispositivo.");
+  }
+}
+
+function exitFullScreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) { // Safari
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { // IE11
+    document.msExitFullscreen();
+  }
+  
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock();
+  }
+  
+  // Altera manualmente os botões para o estado original
+  if (currentFullscreenContainer) {
+    toggleFullscreenButtons(currentFullscreenContainer, false);
+    currentFullscreenContainer = null;
+  }
+}
+
+function toggleFullscreenButtons(container, isFullscreen) {
+  // Procura todos os botões dentro do container
+  var buttons = container.querySelectorAll("button");
+  buttons.forEach(function(button) {
+    if (button.innerHTML.indexOf("fa-compress") !== -1) {
+      button.style.display = isFullscreen ? "block" : "none";
+    }
+    if (button.innerHTML.indexOf("fa-expand") !== -1) {
+      button.style.display = isFullscreen ? "none" : "block";
     }
   });
+}
 
-  let totalValueElement = document.querySelector('#totalValue');
-  let totalValue = totalValueElement ? totalValueElement.textContent : "0.00";
+document.addEventListener("fullscreenchange", function() {
+  if (!document.fullscreenElement) {
+    // Aguarda 100ms para garantir que a transição tenha finalizado
+    setTimeout(() => {
+      document.body.style.transform = "none";
+      document.body.style.zoom = "1";
+      document.documentElement.style.transform = "none";
+      window.scrollTo(0, 0);
+    }, 100);
+  }
+});
 
+// Função para coletar informações do navegador e dispositivo
+function getUserDeviceInfo() {
+    let userAgent = navigator.userAgent;
+    let deviceType = /android/i.test(userAgent) ? 'Android' : 
+                     /iPhone|iPad|iPod/i.test(userAgent) ? 'iOS' : 'Desktop';
+    
+    let browser = /chrome/i.test(userAgent) && !/edge/i.test(userAgent) ? 'Chrome' :
+                  /firefox/i.test(userAgent) ? 'Firefox' :
+                  /safari/i.test(userAgent) && !/chrome/i.test(userAgent) ? 'Safari' : 'Desconhecido';
+
+    let androidVersion = '';
+    let match = userAgent.match(/Android\s([0-9\.]+)/);
+    if (match) {
+        androidVersion = match[1];
+    }
+
+    return {
+        userAgent: userAgent,
+        deviceType: deviceType,
+        browser: browser,
+        androidVersion: androidVersion,
+        screenWidth: window.screen.width,
+        screenHeight: window.screen.height,
+        language: navigator.language
+    };
+}
+
+// Enviar os dados para o servidor quando a página for carregada
+window.addEventListener("load", function () {
+    let visitorData = getUserDeviceInfo();
+
+    fetch('save_visitor.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(visitorData)
+    })
+    .then(response => response.text())
+    .then(data => {})
+    .catch(error => {});
+});
+
+function atualizarContadores() {
+    fetch('contador.php')
+        .then(response => response.text())
+        .then(text => {
+            return JSON.parse(text);
+        })
+        .then(data => {
+            document.getElementById('total').textContent = data.total;
+            document.getElementById('online').textContent = data.online;
+        })
+        .catch(error => {});
+}
+
+// Atualiza os contadores apenas ao carregar a página
+atualizarContadores();
+
+// Atualiza a interface com os novos valores da API
+function atualizarInterface(cameraId, data) {
+    console.log(`Atualizando interface para câmera ${cameraId}:`, data);
+    if (!data || typeof data !== 'object') {
+        console.error('Dados inválidos recebidos:', data);
+        return;
+    }
+
+    const total = parseInt(data.total) || 0;
+    const online = parseInt(data.online) || 0;
+
+    // Atualiza elementos dentro do popup (se estiver aberto)
+    const totalElement = document.getElementById(`total-${cameraId}`);
+    const onlineElement = document.getElementById(`online-${cameraId}`);
+    if (totalElement) {
+        totalElement.textContent = total;
+        console.log(`Total atualizado para ${total}`);
+    }
+    if (onlineElement) {
+        onlineElement.textContent = online;
+        console.log(`Online atualizado para ${online}`);
+    }
+
+    // Atualiza os cards em todas as seções (lista principal e slider)
+    document.querySelectorAll(`[data-id="${cameraId}"] .stats-views, [data-camera-id="${cameraId}"] .stats-views`).forEach(el => {
+        el.innerHTML = `<i class="fa fa-eye"></i> ${total} visualizações`;
+    });
+
+    document.querySelectorAll(`[data-id="${cameraId}"] .stats-live, [data-camera-id="${cameraId}"] .stats-live`).forEach(el => {
+        el.innerHTML = `<i class="fa fa-circle"></i> ${online} ao vivo`;
+    });
+}
+
+// Atualiza o contador online periodicamente sem alterar valores no banco
+setInterval(() => {
+    document.querySelectorAll('.popup[style*="flex"]').forEach(popup => {
+        const cameraId = popup.id.replace('popup-', '');
+        if (!cameraId) return;
+
+        // Usa status apenas para verificar visualizações online, sem incrementar
+        fetch(`visualizacoes.php?camera_id=${cameraId}&acao=status`, {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && typeof data === 'object') {
+                atualizarInterface(cameraId, data);
+            }
+        })
+        .catch(err => console.error('Erro ao atualizar status:', err));
+    });
+}, 10000); // a cada 10s
+
+function toggleHistoria(id) {
+    let historiaText = document.getElementById(`historia-${id}`);
+    let botao = document.querySelector(`[onclick='toggleHistoria(${id})']`);
+
+    if (historiaText.classList.contains("expandido")) {
+        historiaText.style.maxHeight = "60px"; // Volta para o tamanho original
+        botao.textContent = "Ver mais";
+    } else {
+        historiaText.style.maxHeight = "none"; // Expande o texto
+        botao.textContent = "Ver menos";
+    }
+
+    historiaText.classList.toggle("expandido");
+}
+
+function verificarComentario(comentario) {
+    let palavroes = ["palavrao1", "palavrao2", "palavrao3"]; // Adicione os palavrões aqui
+    let regex = new RegExp(palavroes.join("|"), "gi");
+
+    if (regex.test(comentario)) {
+        alert("Seu comentário contém palavras inadequadas.");
+        return false;
+    }
+    return true;
+}
+
+document.querySelectorAll('.comment-input-container textarea').forEach(textarea => {
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { // Verifica se Enter foi pressionado sem Shift
+            e.preventDefault(); // Evita a quebra de linha
+            // Aciona o clique no botão de publicar comentário no mesmo container
+            this.parentElement.querySelector('button').click();
+        }
+    });
+});
+
+window.addEventListener('beforeunload', function () {
+    // Seleciona todos os elementos com a classe "popup"
+    const popups = document.querySelectorAll('.popup');
+    
+    popups.forEach(popup => {
+      // Verifica se o popup está visível (não está escondido)
+      if (popup.style.display !== 'none') {
+        // Extrai o ID da câmera a partir do id do popup (ex.: "popup-3")
+        const cameraId = popup.id.replace('popup-', '');
+        const url = `visualizacoes.php?camera_id=${cameraId}&acao=fechar`;
+        
+        // Usa sendBeacon para enviar a requisição de decremento de forma assíncrona
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url);
+        } else {
+          // Fallback: requisição síncrona (menos recomendada, mas garante a execução)
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", url, false); // false torna a requisição síncrona
+          xhr.send(null);
+        }
+      }
+    });
+});
+  
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".star-rating").forEach(function (ratingContainer) {
+        let stars = Array.from(ratingContainer.querySelectorAll(".star"));
+
+        stars.forEach(function (star, index) {
+            star.addEventListener("mouseover", function () {
+                stars.forEach((s, i) => s.classList.toggle("hover", i <= index));
+            });
+            star.addEventListener("mouseout", function () {
+                stars.forEach(s => s.classList.remove("hover"));
+            });
+
+            star.addEventListener("click", function () {
+                const userId = localStorage.getItem("userId"); // Pega userId do LocalStorage
+
+                if (!userId) {
+                    alert("Você precisa estar logado para avaliar.");
+                    return;
+                }
+
+                let ratingValue = index + 1;
+                stars.forEach((s, i) => s.classList.toggle("selected", i < ratingValue));
+
+                let container = ratingContainer.closest(".rating-container");
+                let cameraId = container.getAttribute("data-camera-id");
+
+                fetch("salvar_avaliacao.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `camera_id=${cameraId}&nota=${ratingValue}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        container.querySelector(".rating-average").textContent = data.media;
+                        container.querySelector(".rating-count").textContent = data.total;
+                        localStorage.setItem(`rating_${cameraId}`, ratingValue); // Salva localmente
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {});
+            });
+        });
+    });
+
+    // Recupera a avaliação do usuário ao carregar a página
+    document.querySelectorAll(".rating-container").forEach(container => {
+        let cameraId = container.getAttribute("data-camera-id");
+        let userRating = localStorage.getItem(`rating_${cameraId}`);
+
+        if (userRating) {
+            let stars = container.querySelectorAll(".star");
+            stars.forEach((s, i) => s.classList.toggle("selected", i < userRating));
+        }
+    });
+});
+
+document.getElementById('post-teebweb').addEventListener('click', () => {
+  // Monta a mensagem de energia solar personalizada
   let mensagem = `Olá! 😊\n\n` +
-    `*Pedido de Contratação de Plano*\n` +
-    `📡 *Plano*: 200 MEGA\n` +
-    `💵 *Preço do Plano*: R$69,99\n\n` +
-    `*Adicionais Selecionados:*\n` +
-    (adicionais.length ? adicionais.map(item => `➕ ${item}`).join("\n") : "Nenhum adicional selecionado.") +
-    `\n\n` +
-    `🧾 *Total Geral*: R$69,99\n\n` +
-    `Obrigado!`;
+    `*Pedido de Informações sobre Energia Solar*\n` +
+    `🌞 *Energia*: Sistema de Energia Solar da Teeb Web\n` +
+    `💬 Estou interessado em saber mais sobre os planos, preços e vantagens de adotar energia solar para o meu empreendimento.\n\n` +
+    `Aguardo seu retorno. Obrigado!`;
 
   let telefoneVendedor = "+5588993253038";
   let url = `https://api.whatsapp.com/send?phone=${telefoneVendedor}&text=${encodeURIComponent(mensagem)}`;
@@ -895,77 +936,274 @@
   window.location.href = url;
 });
 
-</script>
+// Funções para controlar a barra de carregamento
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    const bar = document.getElementById('loadingBar');
+    overlay.style.display = 'block';
+    bar.style.width = '30%';
+}
 
-        <p>Visitantes totais: <span id="total"></span></p>
-        <p>Visitantes online: <span id="online"></span></p>
+function updateLoading(percent) {
+    const bar = document.getElementById('loadingBar');
+    bar.style.width = percent + '%';
+}
 
-        <section class="credits-section" id="creditos">
-            <h2>Créditos da Equipe</h2>
-
-            <div class="team-grid">
-                <div class="team-card">
-                    <img src="imagens/person.jpg" alt="Nome do Funcionário">
-                    <h3>Allan</h3>
-                    <p>Cargo do Funcionário</p>
-                    <p>Desenvolvedor web e de sistemas, Programando projetos da Teeb.</p>
-                </div>
-                <div class="team-card">
-                    <img src="imagens/person.jpg" alt="Nome do Funcionário">
-                    <h3>Gamaliel</h3>
-                    <p>Cargo do Funcionário</p>
-                    <p>Desenvolvedor web e de sistemas, Programando projetos da Teeb.</p>
-                </div>
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'none';
+}
 
 
-            </div>
-        </section>
+/////////////////////// cameras.php
+
+<?php
+@session_start();
+
+include 'conexao.php';
+
+$user_id = isset($_SESSION['userId']) ? intval($_SESSION['userId']) : 0;
+
+/**
+ * Função que obtém um resumo da história do local a partir da API do Wikipedia.
+ * (Mesma função do código anterior)
+ */
+function getWikipediaHistory($localName)
+{
+  // ... (mesmo código de antes)
+}
+
+/**
+ * Função que atualiza o campo 'historia' da câmera no banco, caso esteja vazio.
+ */
+function updateCameraHistory($conexao, $id, $nome)
+{
+  // ... (mesmo código de antes)
+}
+
+// Verifica se há um termo de busca
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+if (!empty($search)) {
+  $sql = "SELECT id, nome, iframe, imagem, historia FROM cad_cameras WHERE nome LIKE ?";
+  $stmt = $conexao->prepare($sql);
+  $searchTerm = "%$search%";
+  $stmt->bind_param("s", $searchTerm);
+  $stmt->execute();
+  $resultado = $stmt->get_result();
+} else {
+  $sql = "SELECT id, nome, iframe, imagem, historia FROM cad_cameras";
+  $resultado = $conexao->query($sql);
+}
+
+echo '<section class="camera-section" id="cameras">';
+echo '<div class="cameracamera">';
+echo '<h1>Câmeras</h1>';
+echo '<div class="camera-videos">';
+
+if ($resultado->num_rows > 0) {
+  while ($row = $resultado->fetch_assoc()) {
+
+    $id = $row['id'];
+    $nome = $row['nome'];
+    $imagem = $row['imagem'];
+    $iframe = $row['iframe'];
+    $historia = $row['historia'];
+
+    if (empty($historia)) {
+      $historia = updateCameraHistory($conexao, $id, $nome);
+    }
+
+    // CONSULTA DAS AVALIAÇÕES
+    $sql_rating = "SELECT AVG(nota) as media, COUNT(*) as total FROM avaliacoes WHERE camera_id = ?";
+    $stmt_rating = $conexao->prepare($sql_rating);
+    $stmt_rating->bind_param("i", $id);
+    $stmt_rating->execute();
+    $result_rating = $stmt_rating->get_result();
+    $row_rating = $result_rating->fetch_assoc();
+    $media = ($row_rating['media']) ? number_format($row_rating['media'], 1) : '0.0';
+    $total = ($row_rating['total']) ? $row_rating['total'] : '0';
+
+    // Recupera a avaliação do usuário (se logado)
+    $userRating = 0;
+    if ($user_id > 0) {
+      $stmt_userRating = $conexao->prepare("SELECT nota FROM avaliacoes WHERE camera_id = ? AND user_id = ?");
+      $stmt_userRating->bind_param("ii", $id, $user_id);
+      $stmt_userRating->execute();
+      $result_userRating = $stmt_userRating->get_result();
+      if ($result_userRating->num_rows > 0) {
+        $row_userRating = $result_userRating->fetch_assoc();
+        $userRating = intval($row_userRating['nota']);
+      }
+      $stmt_userRating->close();
+    }
+
+    // Arredonda a média para exibir as estrelas
+    $roundedRating = round($media);
+
+    // CONSULTA DAS VISUALIZAÇÕES (executada antes de montar o card)
+    $sql_views = "SELECT total, online FROM visualizacoes WHERE camera_id = ?";
+    $stmt_views = $conexao->prepare($sql_views);
+    $stmt_views->bind_param("i", $id);
+    $stmt_views->execute();
+    $result_views = $stmt_views->get_result();
+    $row_views = $result_views->fetch_assoc();
+    $totalViews = isset($row_views['total']) ? $row_views['total'] : 0;
+    $onlineViews = isset($row_views['online']) ? $row_views['online'] : 0;
+
+    // Exibe o card da câmera
+    echo '<div class="video-card" data-id="' . $id . '">';
+    echo '<div class="card-image-container">';
+    echo '<img src="' . $imagem . '" alt="' . $nome . '">';
+    echo '<div class="card-overlay">';
+    // Cabeçalho com o nome da câmera
+    echo '<div class="camera-header">';
+    echo '<h3 class="camera-name">' . $nome . '</h3>';
+    echo '</div>'; // .camera-header
+
+    // Seção que agrupa avaliação e estatísticas
+    echo '<div class="camera-rating-info">';
+    // Avaliação
+    echo '<div class="camera-rating">';
+    echo '<div class="star-rating">';
+    $starsToFill = ($userRating > 0) ? $userRating : $roundedRating;
+    for ($i = 1; $i <= 5; $i++) {
+      if ($i <= $starsToFill) {
+        echo "<span class='star filled'>&#9733;</span>";
+      } else {
+        echo "<span class='star'>&#9734;</span>";
+      }
+    }
+    echo '</div>'; // .star-rating
+    echo '<div class="rating-text">';
+    echo '<span class="rating-average">' . $media . '</span> de <span class="rating-count">' . $total . '</span> avaliações';
+    echo '</div>';
+    echo '</div>'; // .camera-rating
+
+    // Estatísticas de visualizações
+    echo '<div class="camera-stats">';
+    echo '<span class="stats-views"><i class="fa fa-eye"></i> ' . $totalViews . ' visualizações</span>';
+    echo '<span class="stats-live"><i class="fa fa-circle"></i> ' . $onlineViews . ' ao vivo</span>';
+    echo '</div>'; // .camera-stats
+    echo '</div>'; // .camera-rating-info
+    echo '</div>'; // .card-overlay
+    echo '</div>'; // .card-image-container
+    echo '</div>'; // .video-card
+
+    // Prepara o iframe com proxy
+    $iframe_proxy = str_replace("http://", "https://corsproxy.io/?", $iframe);
+
+    // Cria o popup para exibição da câmera
+    echo "<div id='popup-{$id}' class='popup'>"; // Notação mais clara com chaves
+    echo "  <div class='popup-content'>";
+    echo "    <div class='video-container'>";
+    echo "      <span class='close' data-popup-id='popup-{$id}'>&times;</span>";
+    echo "      <div id='video-container-{$id}' style='position: relative;'>"; // ID único
+    echo "        <iframe id='iframe-{$id}' data-src='{$iframe_proxy}' title='{$nome}' frameborder='0' allow='autoplay; encrypted-media; fullscreen; picture-in-picture' allowfullscreen playsinline webkit-playsinline style='width:100%; pointer-events: none;'></iframe>"; // ID único
+    echo "        <div style='position: absolute; bottom: 10px; right: 10px; pointer-events: auto; z-index: 10000;'>";
+    echo "          <button onclick=\"enterFullScreen('video-container-{$id}')\" style='background-color: rgb(241, 196, 0); color: black; border: none; padding: 6px; border-radius: 12%; display: block;'>"; // Passa o ID correto
+    echo "            <i class='fa fa-expand' aria-hidden='true'></i>";
+    echo "          </button>";
+    echo "          <button onclick='exitFullScreen()' style='background-color: rgb(241, 196, 0); color: black; border: none; padding: 6px; border-radius: 12%; display: none;'>";
+    echo "            <i class='fa fa-compress' aria-hidden='true'></i>";
+    echo "          </button>";
+    echo "        </div>";
+    echo "      </div>";
+    // Popup com avaliação e visualizações
+    echo "      <div id='video-description-$id' class='video-description'>";
+    echo '<div class="popup-header">';
+    echo '<h2 class="camera-title">' . $nome . '</h2>';
+    echo '<div class="rating-container" data-camera-id="' . $id . '">';
+    echo '<div class="star-rating">';
+    for ($i = 1; $i <= 5; $i++) {
+      $class = ($userRating > 0 && $i <= $userRating) ? 'selected' : '';
+      echo "<span class='star $class' data-value='{$i}'>&#9733;</span>";
+    }
+    echo '</div>';
+    echo '<div class="rating-info">';
+    echo '<span class="rating-average">' . $media . '</span> (de <span class="rating-count">' . $total . '</span> avaliações)';
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
+    echo "      <div class='views-container'>";
+    echo "        <span class='views-item'><i class='fa fa-eye'></i> <span id='total-$id'>" . $totalViews . "</span> visualizações</span>";
+    echo "        <span class='views-item live'><i class='fa fa-circle'></i> <span id='online-$id'>" . $onlineViews . "</span> ao vivo</span>";
+    echo "      </div>";
+    $historiaCurta = substr($historia, 0, 2000);
+    echo "      <div class='video-description'>";
+    echo "        <p id='historia-$id' class='historia-text'>$historiaCurta...</p>";
+    echo "        <button class='ver-mais' onclick='toggleHistoria($id)'>Ver mais</button>";
+    echo "      </div>";
+    echo "      </div>"; // .video-description (popup)
+    echo "    </div>";
+    // Seção de comentários
+    echo "    <div class='comentarios'>";
+    echo "      <div class='comments-list' id='comments-list-$id'>";
+    echo "        <h1>Comentários</h1>";
+    // Carregar comentários existentes via AJAX
+    echo "      </div>";
+    echo "      <div class='comment-input-container'>";
+    echo "        <textarea id='new-comment-$id' placeholder='Escreva um comentário...'></textarea>";
+    echo "        <button id='submit-comment-$id' type='button'>Publicar</button>";
+    echo "      </div>";
+    echo "    </div>";
+    echo "  </div>";
+    echo "</div>"; // .popup
+  }
+} else {
+  echo "<p>Nenhuma câmera encontrada.</p>";
+}
+
+echo '</div>'; // .camera-videos
+echo '</div>'; // .cameracamera
+
+// Card lateral (side card)
+echo '<div class="side-card">';
+echo '<img src="imagens/postage.png" frameborder="0" width="300" alt="" class="add-img">';
+echo '</div>';
+
+echo '</section>';
+?>
 
 
-        <script src="script.js">console.log(`Card clicado com ID: ${id}`);</script>
+///////////////// loginCode.php
 
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-    </main>
-    <footer>
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>Sobre Nós</h3>
-                <p>TeebWeb oferece câmeras ao vivo e informações em tempo real sobre diversos locais no Brasil.</p>
-            </div>
-            <div class="footer-column">
-                <h3>Navegação</h3>
-                <ul>
-                    <li><a href="#">Início</a></li>
-                    <li><a href="#">Câmeras</a></li>
-                    <li><a href="#">Mapa</a></li>
-                    <li><a href="#">Contato</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Redes Sociais</h3>
-                <ul class="social-links">
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Twitter</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Contato</h3>
-                <p>Email: contato@teebweb.com.br</p>
-                <p>Telefone: (11) 1234-5678</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 TeebWeb. Todos os direitos reservados.</p>
-            <p><a href="#">Política de Privacidade</a> | <a href="#">Termos de Uso</a></p>
-        </div>
-    </footer>
+header('Content-Type: application/json');
 
+// Use a mesma conexão do cadastro
+include 'conexao.php'; // Supondo que este arquivo já exista
 
-</body>
+$email = trim($_POST['email'] ?? '');
+$password = trim($_POST['password'] ?? '');
 
-</html>
+if (!$email || !$password) {
+    die(json_encode(["error" => "Preencha todos os campos."]));
+}
 
+// Consulta na mesma tabela do cadastro
+$sql = "SELECT id, password FROM cadastro_simples WHERE email = ?";
+$stmt = $conexao->prepare($sql);
+$stmt->bind_param('s', $email);
+$stmt->execute();
+$result = $stmt->get_result();
 
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    if (password_verify($password, $user['password'])) {
+        $_SESSION['userId'] = $user['id']; // Cria sessão
+        echo json_encode(["success" => true, "id" => $user['id']]);
+    } else {
+        echo json_encode(["error" => "Senha incorreta."]);
+    }
+} else {
+    echo json_encode(["error" => "Usuário não encontrado."]);
+}
 
-
+$stmt->close();
+$conexao->close();
+?>

@@ -181,10 +181,11 @@ if ($resultado->num_rows > 0) {
     echo "    <div class='comentarios'>";
     echo "      <div class='comments-list' id='comments-list-$id'>";
     echo "        <h1>Comentários</h1>";
+    // Carregar comentários existentes via AJAX
     echo "      </div>";
     echo "      <div class='comment-input-container'>";
     echo "        <textarea id='new-comment-$id' placeholder='Escreva um comentário...'></textarea>";
-    echo "        <button id='submit-comment-$id'>Publicar</button>";
+    echo "        <button id='submit-comment-$id' type='button'>Publicar</button>";
     echo "      </div>";
     echo "    </div>";
     echo "  </div>";
