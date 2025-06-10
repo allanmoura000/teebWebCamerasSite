@@ -223,34 +223,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Configuração única dos botões de comentário
-    document.querySelectorAll('.comment-input-container button').forEach(btn => {
-        // Remove qualquer onclick inline
-        btn.removeAttribute('onclick');
-        btn.type = 'button';
-        
-        btn.addEventListener('click', e => {
-            e.preventDefault();
-            const cameraId = btn.id.replace('submit-comment-', '');
-            const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
-            
-            if (!comentario) { 
-                alert('Digite um comentário!'); 
-                return; 
-            }
-
-            const userId = localStorage.getItem('userId');
-            if (!userId) { 
-                alert('Você precisa estar logado para comentar.'); 
-                return; 
-            }
-
-            // Busca nome e envia o comentário
-            fetch(`getUserName.php?userId=${userId}`)
-                .then(r => r.json())
-                .then(data => enviarComentario(cameraId, data.name || 'Usuário', comentario))
-                .catch(() => enviarComentario(cameraId, 'Usuário', comentario));
-        });
+  // Remova esta seção original:
+/*
+document.querySelectorAll('.comment-input-container button').forEach(btn => {
+    btn.addEventListener('click', e => {
+        // ...
     });
+});
+*/
+
+// Substitua por esta nova abordagem:
+document.addEventListener('click', function(e) {
+    // Verifica se o clique foi em um botão de submit de comentário
+    if (e.target && e.target.matches('.comment-input-container button')) {
+        e.preventDefault();
+        const btn = e.target;
+        const cameraId = btn.id.replace('submit-comment-', '');
+        const comentario = document.getElementById(`new-comment-${cameraId}`).value.trim();
+        
+        if (!comentario) { 
+            alert('Digite um comentário!'); 
+            return; 
+        }
+
+        const userId = localStorage.getItem('userId');
+        if (!userId) { 
+            alert('Você precisa estar logado para comentar.'); 
+            return; 
+        }
+
+        // Busca nome e envia o comentário
+        fetch(`getUserName.php?userId=${userId}`)
+            .then(r => r.json())
+            .then(data => enviarComentario(cameraId, data.name || 'Usuário', comentario))
+            .catch(() => enviarComentario(cameraId, 'Usuário', comentario));
+    }
+});
 
     // Configuração dos textareas para envio com Enter
     document.querySelectorAll('.comment-input-container textarea').forEach(textarea => {
@@ -401,37 +409,66 @@ document.addEventListener("DOMContentLoaded", function () {
 function enviarComentario(cameraId, usuario, comentario) {
     const textarea = document.getElementById(`new-comment-${cameraId}`);
     textarea.value = comentario;
-    submitComment(cameraId);
+
+    const btn = document.getElementById(`submit-comment-${cameraId}`);
+    btn.disabled = true;
+
+    submitComment(cameraId)
+        .catch(err => {
+            // Só loga erro se não for um comentário duplicado
+            if (err !== 'Comentário duplicado') {
+                console.error('Erro:', err);
+            }
+        })
+        .finally(() => {
+            btn.disabled = false;
+        });
 }
 
 // Função que faz o POST no servidor
 function submitComment(cameraId) {
     const textarea = document.getElementById(`new-comment-${cameraId}`);
     const text = textarea.value.trim();
-    if (!text) { alert('Digite um comentário'); return; }
+    if (!text) { 
+        alert('Digite um comentário'); 
+        return Promise.reject('Comentário vazio');
+    }
 
     // Verifica palavras inadequadas
     if (!verificarComentario(text)) {
-        return;
+        return Promise.reject('Comentário contém palavras inadequadas');
     }
 
     const formData = new FormData();
     formData.append('camera_id', cameraId);
     formData.append('comentario', text);
 
-    fetch('salvar_comentario.php', { method: 'POST', body: formData })
+    return fetch('salvar_comentario.php', { method: 'POST', body: formData })
         .then(r => r.json())
         .then(res => {
             if (res.success) {
                 textarea.value = '';
                 carregarComentarios(cameraId);
+                return res;
             } else {
-                alert(res.message || 'Erro ao salvar comentário');
+                // Tratamento especial para mensagem de comentário duplicado
+                if (res.message === 'Você já enviou este comentário recentemente') {
+                    // Limpa o campo de comentário já que é um duplicado
+                    textarea.value = '';
+                    // Mostra mensagem mais amigável
+                    alert('Por favor, aguarde um momento antes de enviar o mesmo comentário novamente.');
+                    return Promise.reject('Comentário duplicado');
+                }
+                throw new Error(res.message || 'Erro ao salvar comentário');
             }
         })
         .catch(err => {
-            console.error('Erro ao salvar comentário:', err);
-            alert('Erro ao salvar comentário');
+            // Não mostra erro no console se for apenas um comentário duplicado
+            if (err !== 'Comentário duplicado') {
+                console.error('Erro ao salvar comentário:', err);
+                alert(err.message || 'Erro ao salvar comentário');
+            }
+            throw err;
         });
 }
 
@@ -441,6 +478,9 @@ function carregarComentarios(cameraId) {
         .then(r => r.json())
         .then(comentarios => {
             const lista = document.getElementById(`comments-list-${cameraId}`);
+             if (!lista.dataset.lastLoad || lista.dataset.lastLoad < Date.now() - 10000) {
+            lista.innerHTML = '<h1>Comentários</h1>';
+        }
             lista.innerHTML = '<h1>Comentários</h1>';
             comentarios.forEach(c => {
                 const div = document.createElement('div');
@@ -458,8 +498,10 @@ function carregarComentarios(cameraId) {
                     </div>
                 `;
                 lista.appendChild(div);
+                
             });
         })
+        
         .catch(err => console.error('Erro ao carregar comentários:', err));
 }
 

@@ -191,196 +191,99 @@
         <?php include 'cameras.php'; ?>
 
 
-        <div class="mapa-section" id="mapa">
-            <div class="mapamundi">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-                <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-                <div class="mapa-section" id="mapa">
-                    <div class="mapamundi">
-                        <div id="map"></div>
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-                        <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function () {
-                                // Event delegation para os cards das câmeras (lista e mapa)
-                                document.querySelectorAll(".video-card, .map-video-card").forEach(card => {
-                                    card.addEventListener("click", function () {
-                                        const cameraId = card.getAttribute("data-id") || card.getAttribute("data-camera-id");
-                                        if (cameraId) {
-                                            abrirPopup(cameraId);
-                                            // Se existir um popup do Leaflet aberto, feche-o
-                                            if (typeof map !== "undefined" && map.closePopup) {
+<div class="mapa-section" id="mapa">
+    <div class="mapamundi">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+        <div id="map"></div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Função para exibir um card dentro do marcador no mapa (SIMPLIFICADA)
+                function exibirCardNoMapa(camera, marker) {
+                    console.log(`Exibindo card da câmera ${camera.id} no mapa`);
+                    
+                    var cardHtml = `
+                        <div class="map-video-card" data-camera-id="${camera.id}">
+                            <img src="${camera.imagem}" alt="${camera.nome}">
+                            <p>${camera.nome}</p>
+                            <div class="views-container"></div>
+                        </div>
+                    `;
+                    
+                    var popup = L.popup({ keepInView: true, autoClose: false, closeOnClick: false })
+                        .setLatLng(marker.getLatLng())
+                        .setContent(cardHtml)
+                        .openOn(map);
+                }
+
+                // Inicializa o mapa
+                var map = L.map('map').setView([-3.7309, -40.9928], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Função para carregar as câmeras
+                function carregarCameras() {
+                    fetch('teste_json.php')
+                        .then(response => response.json())
+                        .then(cameras => {
+                            console.log("Dados carregados do JSON:", cameras);
+                            if (Array.isArray(cameras) && cameras.length > 0) {
+                                cameras.forEach(camera => {
+                                    if (camera.latitude && camera.longitude) {
+                                        let latitude = parseFloat(camera.latitude);
+                                        let longitude = parseFloat(camera.longitude);
+                                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                                            var marker = L.marker([latitude, longitude]).addTo(map);
+
+                                            marker.on('click', function () {
                                                 map.closePopup();
-                                            }
-                                        } else {
-                                            console.error("Identificador da câmera não encontrado no card.");
-                                        }
-                                    });
-                                });
-                            });
-
-                            // Função para abrir o popup completo (vídeo, comentários, etc.)
-                            function abrirPopup(cameraId) {
-                                console.log(`Abrindo popup para câmera ID: ${cameraId}`);
-                                const popup = document.getElementById(`popup-${cameraId}`);
-                                if (popup) {
-                                    popup.style.display = "flex";
-                                    document.body.classList.add("no-scroll");
-                                    carregarComentarios(cameraId);
-                                    const iframe = popup.querySelector("iframe");
-                                    if (iframe && !iframe.src) {
-                                        const videoSrc = iframe.getAttribute("data-src");
-                                        iframe.src = videoSrc;
-                                    }
-                                } else {
-                                    console.error(`Popup com ID popup-${cameraId} não encontrado.`);
-                                }
-                            }
-
-                            // Função para fechar o popup completo
-                            function fecharPopup(cameraId) {
-                                console.log(`Fechando popup para câmera ID: ${cameraId}`);
-                                const popup = document.getElementById(`popup-${cameraId}`);
-                                if (popup) {
-                                    // Opcional: remover o src do iframe para descarregar o vídeo
-                                    const iframe = popup.querySelector("iframe");
-                                    if (iframe) {
-                                        iframe.src = "";
-                                    }
-                                    popup.style.display = "none";
-                                    document.body.classList.remove("no-scroll");
-                                } else {
-                                    console.error(`Popup com ID popup-${cameraId} não encontrado.`);
-                                }
-                            }
-
-                            // Função para exibir um card dentro do marcador no mapa
-                            function exibirCardNoMapa(camera, marker) {
-                                console.log(`Exibindo card da câmera ${camera.id} no mapa`);
-                                let iframe_proxy = camera.iframe ? camera.iframe.replace("http://", "https://corsproxy.io/?") : "";
-                                var cardHtml = `
-              <div class="map-video-card" data-id="${camera.id}" onclick="registrarVisualizacao(${camera.id}); abrirPopup(${camera.id});">
-                <img src="${camera.imagem}" alt="${camera.nome}">
-                <p>${camera.nome}</p>
-                <div class="views-container">
-           
-              </div>
-            `;
-                                var popup = L.popup({ keepInView: true, autoClose: false, closeOnClick: false })
-                                    .setLatLng(marker.getLatLng())
-                                    .setContent(cardHtml)
-                                    .openOn(map);
-                                // Se o popup completo ainda não existe, adiciona-o ao body
-                                if (!document.getElementById(`popup-${camera.id}`)) {
-                                    let popupHtml = `
-                <div id="popup-${camera.id}" class="popup">
-                  <div class="popup-content">
-                    <div class="video-container">
-                      <span class="close" data-popup-id="popup-${camera.id}" onclick="fecharPopup(${camera.id})">&times;</span>
-                      <div id="video-container-${camera.id}">
-                        ${iframe_proxy ? `<iframe id="iframe-${camera.id}" data-src="${iframe_proxy}" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen playsinline webkit-playsinline></iframe>` : "<p>Vídeo não disponível</p>"}
-                      </div>
-                      <div id="video-description-${camera.id}">
-                        <h2>${camera.nome}</h2>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `;
-                                    document.body.insertAdjacentHTML("beforeend", popupHtml);
-                                }
-                            }
-
-                            // Função para carregar as câmeras do banco de dados e adicioná-las ao mapa
-                            function carregarCameras() {
-                                fetch('teste_json.php')
-                                    .then(response => response.json())
-                                    .then(cameras => {
-                                        console.log("Dados carregados do JSON:", cameras);
-                                        if (Array.isArray(cameras) && cameras.length > 0) {
-                                            cameras.forEach(camera => {
-                                                if (camera.latitude && camera.longitude) {
-                                                    let latitude = parseFloat(camera.latitude);
-                                                    let longitude = parseFloat(camera.longitude);
-                                                    if (!isNaN(latitude) && !isNaN(longitude)) {
-                                                        var marker = L.marker([latitude, longitude]).addTo(map);
-
-                                                        // Evento de clique para animar o zoom e exibir o card
-                                                        marker.on('click', function () {
-                                                            // Fecha o popup aberto anteriormente
-                                                            map.closePopup();
-
-                                                            // Desabilita o arraste do mapa para garantir que a animação ocorra sem interferência
-                                                            map.dragging.disable();
-
-                                                            // Animação de flyTo para centralizar e aproximar do marcador
-                                                            map.flyTo([latitude, longitude], 17, {
-                                                                animate: true,
-                                                                duration: 1,
-                                                                easeLinearity: 0.8
-                                                            });
-
-                                                            // Quando a animação terminar, reabilita o arraste e abre o popup
-                                                            map.once('moveend', function () {
-                                                                map.dragging.enable();
-                                                                exibirCardNoMapa(camera, marker);
-                                                            });
-                                                        });
-                                                    } else {
-                                                        console.warn(`Coordenadas inválidas para ${camera.nome}: ${camera.latitude}, ${camera.longitude}`);
-                                                    }
-                                                }
+                                                map.dragging.disable();
+                                                map.flyTo([latitude, longitude], 17, {
+                                                    animate: true,
+                                                    duration: 1,
+                                                    easeLinearity: 0.8
+                                                });
+                                                
+                                                map.once('moveend', function () {
+                                                    map.dragging.enable();
+                                                    exibirCardNoMapa(camera, marker);
+                                                });
                                             });
-                                        } else {
-                                            console.error("Erro: Nenhum dado de câmera encontrado.");
                                         }
-                                    })
-                                    .catch(error => console.error("Erro ao buscar dados do mapa:", error));
-                            }
-
-                            // Inicializa o mapa
-                            var map = L.map('map').setView([-3.7309, -40.9928], 15);
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; OpenStreetMap contributors'
-                            }).addTo(map);
-                            carregarCameras();
-
-                            // Fecha o card do mapa quando o usuário clicar fora dele
-                            map.on('click', function (e) {
-                                if (!e.originalEvent.target.closest(".map-video-card")) {
-                                    map.closePopup();
-                                }
-                            });
-
-                            // Função para atualizar os contadores em todos os elementos com os IDs duplicados
-                            function atualizarInterface(cameraId, data) {
-                                document.querySelectorAll(`[id="total-${cameraId}"]`).forEach(el => {
-                                    el.textContent = data.total ?? 0;
-                                });
-                                document.querySelectorAll(`[id="online-${cameraId}"]`).forEach(el => {
-                                    el.textContent = data.online ?? 0;
-                                });
-                            }
-
-                            // Atualiza os contadores de visualizações tanto nos cards da lista quanto nos do mapa
-                            setInterval(() => {
-                                document.querySelectorAll('.video-card, .map-video-card').forEach(card => {
-                                    const cameraId = card.getAttribute('data-id') || card.getAttribute('data-camera-id');
-                                    if (cameraId) {
-                                        fetch(`visualizacoes.php?camera_id=${cameraId}&acao=status`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                atualizarInterface(cameraId, data);
-                                            })
-                                            .catch(error => console.error('❌ Erro ao atualizar status:', error));
                                     }
                                 });
-                            }, 5000);
-                        </script>
-                    </div>
-                </div>
-            </div>
-        </div>
+                            }
+                        })
+                        .catch(error => console.error("Erro ao buscar dados do mapa:", error));
+                }
+                carregarCameras();
+
+                // Fecha o card do mapa quando o usuário clicar fora dele
+                map.on('click', function (e) {
+                    if (!e.originalEvent.target.closest(".map-video-card")) {
+                        map.closePopup();
+                    }
+                });
+
+                // Delegation de evento para os cards do mapa
+                map.getContainer().addEventListener('click', function(e) {
+                    const card = e.target.closest('.map-video-card');
+                    if (card) {
+                        const cameraId = card.getAttribute('data-camera-id');
+                        if (cameraId) {
+                            // Fecha popup do mapa
+                            map.closePopup();
+                            
+                            // Abre popup completo
+                            abrirPopup(cameraId);
+                        }
+                    }
+                });
+            });
+        </script>
+    </div>
+</div>
 
 
 
