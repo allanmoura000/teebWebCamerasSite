@@ -32534,3 +32534,574 @@ al: 0
 [2025-06-10 15:32:53] Requisição recebida - Camera ID: 1, Ação: status
 [2025-06-10 15:32:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
 [2025-06-10 15:32:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:33:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:33:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:33:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:34:53] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:34:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:34:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:34:53] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:34:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:34:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:34:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:34:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:34:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:35:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:35:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:35:53] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:35:53] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:35:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:35:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:35:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:35:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:35:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:35:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+
+[2025-06-10 15:36:37] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:36:37] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 2, Ação: status
+9, Online final: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:37] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:37] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:36:37] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:37] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 5 - Total: 22, Online: 0[2025-06-10 15:36:41] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:36:41] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:41] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:41] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:41] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:36:46] Requisição recebida - Camera ID: 7, Ação: status
+
+[2025-06-10 15:36:46] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:46] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:46] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:51] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:51] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:51] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:36:56] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:36:56] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:36:56] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:36:56] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 10 - Total: 21, Online: 0[2025-06-10 15:37:01] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:01] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:01] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:01] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:37:06] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:06] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:06] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:06] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:37:11] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:37:11] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:11] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:11] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+
+[2025-06-10 15:37:16] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:16] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:16] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:16] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:21] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:21] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:21] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:21] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:21] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:21] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:21] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:21] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:26] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:26] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:26] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:26] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:26] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:26] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:31] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:31] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:31] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:36] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:36] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:36] Requisição recebida - Camera ID: 1, Ação: status
+: 21, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:36] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:36] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:37:53] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:37:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:37:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 6, Ação: status
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 4, Ação: status
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 10, Ação: status
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 6 - Total: 10, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 4 - Total: 24, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 6 - Total final: 10, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 2 - Total final: 23, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 4 - Total final: 24, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 2, Ação: status
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 7, Ação: status
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 5, Ação: status
+[2025-06-10 15:38:53] Requisição recebida - Camera ID: 1, Ação: status
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 2 - Total: 23, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 7 - Total: 6, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 5 - Total: 22, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 1 - Total: 39, Online: 0
+[2025-06-10 15:38:53] Registro existente encontrado para câmera 10 - Total: 21, Online: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 7 - Total final: 6, Online final: 0
+
+[2025-06-10 15:38:53] Transação commitada para câmera 5 - Total final: 22, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 1 - Total final: 39, Online final: 0
+[2025-06-10 15:38:53] Transação commitada para câmera 10 - Total final: 21, Online final: 0

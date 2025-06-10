@@ -1,0 +1,13 @@
+* [33m8d29c4b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgama-versao[m[33m)[m V1 10/06
+* [33mb4530b9[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/gama-versao[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m visualizações e comentarios funcionando só que o usuario atual não fica impresso no comentario
+* [33m74bc91a[m aparentemente tudo funcionando com a veriificação e style ok
+* [33mdd12a39[m aparentemente verificação funcionando com apenas um envio
+* [33m18c8533[m versão verificação funcionando mas com alguns erros
+* [33m1023d02[m codigo de verificação parte2: o codigo é enviado e conferido perfeitamente
+* [33m8a21fd4[m Verificação por codigo part 1:codigo chega no email mas nao verifica no site
+*   [33m4dc8cff[m Cadastro par1 de novo
+[32m|[m[33m\[m  
+[32m|[m * [33m40a8a22[m Create README.md
+* [33m|[m [33m5896c47[m Cadastro parte 1 concluido
+[33m|[m[33m/[m  
+* [33m35aeed2[m primeiro commit
