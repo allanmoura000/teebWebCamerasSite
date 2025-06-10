@@ -804,6 +804,8 @@
                         }
 
                     }
+
+                    
                 </style>
 
                 <script>
@@ -830,7 +832,7 @@
                                     card.setAttribute("data-link", noticia.link);
                                     card.innerHTML = `
                     <div class="text-content">
-                        <h3>${truncate(noticia.titulo, 20)}</h3>
+                        <h3>${truncate(noticia.titulo, 30)}</h3>
                         <button onclick="window.open('${noticia.link}', '_blank'); event.stopPropagation();">Ver Notícias</button>
                     </div>
                     <img src="${noticia.imagem}" alt="${noticia.titulo}">

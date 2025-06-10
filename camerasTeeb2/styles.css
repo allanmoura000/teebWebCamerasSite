@@ -341,7 +341,7 @@ header .dropdown:hover .dropdown-menu {
     /* Largura máxima da barra de pesquisa */
     border: 1px solid #ccc;
     /* Bordas */
-    border-radius: 5px;
+    border-radius: 0px;
     /* Cantos arredondados */
     background-color: white;
     overflow: hidden;

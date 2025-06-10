@@ -198,10 +198,7 @@ if ($resultado->num_rows > 0) {
 echo '</div>'; // .camera-videos
 echo '</div>'; // .cameracamera
 
-// Card lateral (side card)
-echo '<div class="side-card">';
-echo '<img src="imagens/postage.png" frameborder="0" width="300" alt="" class="add-img">';
-echo '</div>';
+
 
 echo '</section>';
 ?>
