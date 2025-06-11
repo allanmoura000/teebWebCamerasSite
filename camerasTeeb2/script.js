@@ -80,6 +80,17 @@ function abrirPopup(cameraId) {
     // Carrega os comentários imediatamente
     carregarComentarios(cameraId);
 
+    // Carrega o iframe
+    const iframe = popup.querySelector("iframe");
+    if (iframe) {
+        // Reseta o iframe para about:blank primeiro
+        iframe.src = "about:blank";
+        // Força um pequeno delay antes de carregar o conteúdo real
+        setTimeout(() => {
+            iframe.src = iframe.getAttribute("data-src");
+        }, 100);
+    }
+
     // Registra visualização apenas uma vez
     console.log(`Registrando visualização para câmera ${cameraId}`);
     fetch(`visualizacoes.php?camera_id=${cameraId}&acao=abrir`, {
@@ -120,12 +131,6 @@ function abrirPopup(cameraId) {
     .catch(error => {
         console.error('Erro ao registrar visualização:', error);
     });
-
-    // Carrega o iframe se necessário
-    const iframe = popup.querySelector("iframe");
-    if (iframe && !iframe.src) {
-        iframe.src = iframe.getAttribute("data-src");
-    }
 }
 
 // Função para fechar o popup

@@ -140,7 +140,7 @@ if ($resultado->num_rows > 0) {
     echo "    <div class='video-container'>";
     echo "      <span class='close' data-popup-id='popup-{$id}'>&times;</span>";
     echo "      <div id='video-container-{$id}' style='position: relative;'>"; // ID único
-    echo "        <iframe id='iframe-{$id}' data-src='{$iframe_proxy}' title='{$nome}' frameborder='0' allow='autoplay; encrypted-media; fullscreen; picture-in-picture' allowfullscreen playsinline webkit-playsinline style='width:100%; pointer-events: none;'></iframe>"; // ID único
+    echo "        <iframe id='iframe-{$id}' src='about:blank' data-src='{$iframe_proxy}' title='{$nome}' frameborder='0' allow='autoplay; encrypted-media; fullscreen; picture-in-picture' allowfullscreen playsinline webkit-playsinline style='width:100%; pointer-events: none;'></iframe>"; // ID único
     echo "        <div style='position: absolute; bottom: 10px; right: 10px; pointer-events: auto; z-index: 10000;'>";
     echo "          <button onclick=\"enterFullScreen('video-container-{$id}')\" style='background-color: rgb(241, 196, 0); color: black; border: none; padding: 6px; border-radius: 12%; display: block;'>"; // Passa o ID correto
     echo "            <i class='fa fa-expand' aria-hidden='true'></i>";
