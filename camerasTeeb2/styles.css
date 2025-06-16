@@ -485,8 +485,147 @@ footer {
     transition: filter 0.3s ease-in-out;
 }
 
+/* Estilos para a seção de créditos */
+.credits-section {
+    padding: 15px;
+    margin: 15px auto;
+    max-width: 900px;
+    background-color: transparent;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
 
+.credits-section h2 {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 400;
+    opacity: 0.9;
+}
 
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 5px;
+}
+
+.team-card {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.team-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.team-card img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid #f1c400;
+}
+
+.team-card h3 {
+    font-size: 1rem;
+    color: #444;
+    margin: 8px 0 4px;
+}
+
+.team-card p {
+    font-size: 0.8rem;
+    color: #777;
+    margin: 3px 0;
+    line-height: 1.3;
+}
+
+/* Modo escuro para a seção de créditos */
+.dark-mode .credits-section {
+    background-color: transparent;
+}
+
+.dark-mode .credits-section h2 {
+    color: #aaa;
+}
+
+.dark-mode .team-card {
+    background-color: rgba(39, 39, 39, 0.8);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .team-card h3 {
+    color: #ddd;
+}
+
+.dark-mode .team-card p {
+    color: #bbb;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .credits-section {
+        padding: 10px;
+        margin: 10px auto;
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+
+    .team-card img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .team-card h3 {
+        font-size: 0.9rem;
+    }
+
+    .team-card p {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .credits-section {
+        padding: 8px;
+        margin: 8px auto;
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .team-card {
+        padding: 8px;
+    }
+
+    .team-card img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .team-card h3 {
+        font-size: 0.85rem;
+    }
+
+    .team-card p {
+        font-size: 0.7rem;
+    }
+}
 
 /* Estilos para telas maiores (mínimo 769px) */
 /* Estilos para telas maiores (mínimo 769px) */
@@ -712,59 +851,6 @@ footer {
       .search-btn:hover {
         background-color: rgb(201, 165, 6);
       }
-}
-
-@media (max-width: 480px) {
-    header .logo img {
-        width: 100px;
-    }
-
-    .menu-toggle i {
-        font-size: 30px;
-        color: white;
-    }
-
-    #nav ul {
-        gap: 0;
-        align-items: flex-start;
-    }
-
-   
-
-    .profile-icon a i {
-        font-size: 20px;
-        text-align: left;
-    }
-
-    header .container {
-        padding: 6 5px;
-    }
-
-    footer {
-        padding: 20px 0;
-    }
-
-    .footer-column h3 {
-        font-size: 16px;
-    }
-
-    .footer-column p,
-    .footer-column ul {
-        font-size: 12px;
-        line-height: 20px;
-    }
-
-    .footer-bottom {
-        font-size: 10px;
-    }
-
-    .contact-info h3 {
-        font-size: 1em;
-    }
-
-    .contact-info ul li {
-        font-size: 0.9em;
-    }
 }
 
 @media (min-width: 1024px) {

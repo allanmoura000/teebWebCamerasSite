@@ -1,0 +1,34 @@
+[13-Jun-2025 14:06:06 Europe/Berlin] Erro: Erro PHP - require_once(config.php): Failed to open stream: No such file or directory em C:\xampp\htdocs\camerasTeeb2\camerasTeeb2\enviar_codigo_brevo.php:56
+[2025-06-13 14:17:52] Input recebido: {"userId":"168","code":"466628"}
+[2025-06-13 14:17:52] Dados processados - userId: 168, code: 466628
+[2025-06-13 14:17:52] Erro: Usuário não encontrado
+[2025-06-13 15:13:29] Input recebido: {"userId":"169","code":"829753"}
+[2025-06-13 15:13:29] Dados processados - userId: 169, code: 829753
+[2025-06-13 15:13:29] Erro: Usuário não encontrado
+[2025-06-13 15:15:42] Input recebido: {"userId":"170","code":"703868"}
+[2025-06-13 15:15:42] Dados processados - userId: 170, code: 703868
+[2025-06-13 15:15:42] Erro: Unknown column 'codigo_verificacao' in 'field list'
+[2025-06-13 15:25:50] Input recebido: {"userId":"171","code":"156727"}
+[2025-06-13 15:25:50] Dados processados - userId: 171, code: 156727
+[2025-06-13 15:25:50] Código armazenado: 
+[13-Jun-2025 15:25:50 Europe/Berlin] PHP Deprecated:  preg_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated in C:\xampp\htdocs\camerasTeeb2\camerasTeeb2\verificar_codigo.php on line 60
+[2025-06-13 15:25:50] Códigos limpos - Recebido: 156727, Armazenado: 
+[2025-06-13 15:25:50] Código inválido - Não corresponde
+[2025-06-13 15:28:22] Input recebido: {"userId":"171","code":"692303"}
+[2025-06-13 15:28:22] Dados processados - userId: 171, code: 692303
+[2025-06-13 15:28:22] Código armazenado: 692303
+[2025-06-13 15:28:22] Códigos limpos - Recebido: 692303, Armazenado: 692303
+[2025-06-13 15:28:22] Usuário verificado com sucesso
+[16-Jun-2025 13:09:53 Europe/Berlin] Input recebido: {"userId":179,"email":"allanmouraoficial2@gmail.com"}
+[16-Jun-2025 13:09:53 Europe/Berlin] Dados recebidos - userId: 179, email: allanmouraoficial2@gmail.com
+[16-Jun-2025 13:09:53 Europe/Berlin] Código gerado: 450765
+[16-Jun-2025 13:09:53 Europe/Berlin] Conexão com banco estabelecida
+[16-Jun-2025 13:09:53 Europe/Berlin] Código atualizado no banco
+[16-Jun-2025 13:09:53 Europe/Berlin] Configuração Brevo carregada
+[16-Jun-2025 13:09:54 Europe/Berlin] Tentando enviar email via Brevo para: allanmouraoficial2@gmail.com
+[16-Jun-2025 13:09:55 Europe/Berlin] Email enviado com sucesso. Message ID: <202506161109.50529077013@smtp-relay.mailin.fr>
+[2025-06-16 13:10:16] Input recebido: {"userId":"179","code":"450765"}
+[2025-06-16 13:10:16] Dados processados - userId: 179, code: 450765
+[2025-06-16 13:10:16] Código armazenado: 450765
+[2025-06-16 13:10:16] Códigos limpos - Recebido: 450765, Armazenado: 450765
+[2025-06-16 13:10:16] Usuário verificado com sucesso

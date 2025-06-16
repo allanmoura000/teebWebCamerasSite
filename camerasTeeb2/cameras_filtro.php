@@ -394,25 +394,20 @@
 
 
         <section class="credits-section" id="creditos">
-            <div class="container">
-                <h2>Créditos</h2>
-                <ul class="team-grid">
-                    <li class="team-card">
-                        <img src="imagens/alan.jpg" alt="Allan">
-                        <div class="info">
-                            <h3>Allan</h3>
-                            <p>Desenvolvedor Front‑end</p>
-                        </div>
-                    </li>
-                    <li class="team-card">
-                        <img src="imagens/gamaliel.jpg" alt="Gamaliel">
-                        <div class="info">
-                            <h3>Gamaliel</h3>
-                            <p>Designer UX/UI</p>
-                        </div>
-                    </li>
-                    <!-- Adicione mais membros conforme necessário -->
-                </ul>
+            <h2>Equipe de Desenvolvimento</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <img src="imagens/alan.jpg" alt="Allan" loading="lazy">
+                    <h3>Allan</h3>
+                    <p>Desenvolvedor Full Stack</p>
+                    <p>Desenvolvimento web e sistemas</p>
+                </div>
+                <div class="team-card">
+                    <img src="imagens/gamaliel.jpg" alt="Gamaliel" loading="lazy">
+                    <h3>Gamaliel</h3>
+                    <p>Designer UX/UI</p>
+                    <p>Interface e experiência do usuário</p>
+                </div>
             </div>
         </section>
 

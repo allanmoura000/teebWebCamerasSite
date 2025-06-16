@@ -1,0 +1,16 @@
+{
+    "name": "teebweb/cameras-teeb",
+    "description": "Sistema de Câmeras Teeb",
+    "type": "project",
+    "require": {
+        "php": ">=7.2",
+        "phpmailer/phpmailer": "^6.8",
+        "google/apiclient": "^2.18",
+        "getbrevo/brevo-php": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}

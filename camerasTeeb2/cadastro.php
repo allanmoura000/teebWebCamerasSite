@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/init.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -615,7 +618,7 @@
             <img src="imagens/homem_identidade.png" alt="Imagem 2" class="popup-image">
             <br><br><br>
             <p class="popup-text">Tire a foto com o documento próximo ao rosto, conforme o exemplo ilustrado abaixo e
-                clique em “Enviar Documentação”</p>
+                clique em "Enviar Documentação"</p>
             <br> <br>
 
             <h4 class="popup-subtitle" style="font-size: 21px;">Caso tenha dúvidas, siga o passo a passo abaixo</h4>
@@ -710,36 +713,118 @@ function updateStepIndicators(step) {
         }
     }
 }
-        function sendVerificationCode(userId, email) {
-            return fetch("enviar_codigo.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+        async function sendVerificationCode(userId, email) {
+            try {
+                console.log('Enviando código para:', { userId, email });
+                
+                const response = await fetch('enviar_codigo_brevo.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include',
                 body: JSON.stringify({ userId, email })
-            })
-            .then(response => response.json());
+                });
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Erro ao enviar código');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                throw error;
+            }
         }
+
+        // Função para verificar se há uma verificação pendente
+        function checkPendingVerification() {
+            const pending = sessionStorage.getItem('pendingVerification');
+            if (pending) {
+                const { userId, email } = JSON.parse(pending);
+                sessionStorage.removeItem('pendingVerification');
+                // Tenta enviar o código novamente
+                sendVerificationCode(userId, email)
+                    .then(() => {
+                        console.log('Código enviado com sucesso após autenticação');
+                        // Atualiza a interface se necessário
+                        if (typeof updateUIAfterVerification === 'function') {
+                            updateUIAfterVerification();
+        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao enviar código após autenticação:', error);
+                        alert('Erro ao enviar código após autenticação: ' + error.message);
+                    });
+            }
+        }
+
+        // Chama a verificação quando a página carrega
+        document.addEventListener('DOMContentLoaded', checkPendingVerification);
 
         function validateCode() {
         const code = document.getElementById("verificationCode").value;
         const userId = localStorage.getItem("userId");
 
+            console.log("ID do usuário armazenado:", userId);
+            console.log("Tipo do ID:", typeof userId);
+
+            if (!userId) {
+                alert("Erro: ID do usuário não encontrado. Por favor, faça o cadastro novamente.");
+                return;
+            }
+
+            // Verifica se o ID é um número válido
+            if (isNaN(parseInt(userId))) {
+                console.error("ID inválido:", userId);
+                alert("Erro: ID do usuário inválido. Por favor, faça o cadastro novamente.");
+                return;
+            }
+
+            if (!code) {
+                alert("Por favor, digite o código de verificação.");
+                return;
+            }
+
+            console.log("Enviando verificação - userId:", userId, "code:", code);
+
         fetch("verificar_codigo.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                },
             body: JSON.stringify({ userId, code })
         })
-        .then(response => response.json())
+            .then(response => {
+                console.log("Status da resposta:", response.status);
+                return response.text().then(text => {
+                    console.log("Resposta bruta:", text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error("Erro ao fazer parse do JSON:", e);
+                        throw new Error("Resposta inválida do servidor: " + text);
+                    }
+                });
+            })
         .then(data => {
+                console.log("Dados processados:", data);
             if (data.success) {
                 nextStep(3); // Vai para a etapa de conclusão
-                
-                // Redireciona para a home após 3 segundos
                 setTimeout(() => {
-                    window.location.href = "index.php"; // Altere para a URL da sua home
+                        window.location.href = "index.php";
                 }, 3000);
             } else {
-                alert("Código inválido. Tente novamente.");
+                    alert(data.error || "Código inválido. Tente novamente.");
             }
+            })
+            .catch(error => {
+                console.error("Erro na verificação:", error);
+                alert("Erro ao verificar código: " + error.message);
         });
     }
 
@@ -797,21 +882,35 @@ function validateStep1() {
         body: `name=${encodeURIComponent(name)}&cpf=${encodeURIComponent(cpf)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
     })
     .then(response => {
+        console.log('Status da resposta salvar_usuario1:', response.status); // Debug log
         updateLoading(60);
-        return response.json();
+        return response.text().then(text => {
+            console.log('Resposta bruta salvar_usuario1:', text); // Debug log
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Erro ao fazer parse do JSON salvar_usuario1:', e);
+                throw new Error('Resposta inválida do servidor ao salvar usuário');
+            }
+        });
     })
     .then(data => {
         if (data.error) {
             hideLoading();
             alert(`Erro ao salvar dados: ${data.error}`);
+            btn.removeAttribute('data-loading');
+            btn.textContent = "Enviar";
+            btn.disabled = false;
         } else {
             updateLoading(80);
             localStorage.setItem("userId", data.id);
             localStorage.setItem("userEmail", email);
             
             // Envia o código APENAS UMA VEZ
-            sendVerificationCode(data.id, email)
-                .then(() => {
+            console.log('Tentando enviar código de verificação...'); // Debug log
+            return sendVerificationCode(data.id, email)
+                .then(response => {
+                    console.log('Resposta do envio de código:', response); // Debug log
                     updateLoading(100);
                     setTimeout(() => {
                         hideLoading();
@@ -819,18 +918,23 @@ function validateStep1() {
                     }, 500);
                 })
                 .catch(error => {
+                    console.error('Erro detalhado ao enviar código:', error); // Debug log
                     hideLoading();
-                    console.error("Erro ao enviar código:", error);
-                    alert("Falha ao enviar código de verificação");
+                    btn.removeAttribute('data-loading');
+                    btn.textContent = "Enviar";
+                    btn.disabled = false;
+                    alert("Falha ao enviar código de verificação: " + error.message);
                 });
         }
     })
     .catch(error => {
+        console.error('Erro detalhado:', error); // Debug log
         hideLoading();
-        console.error("Erro:", error);
-        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+        btn.removeAttribute('data-loading');
+        btn.textContent = "Enviar";
+        btn.disabled = false;
+        alert("Ocorreu um erro ao enviar os dados: " + error.message);
     });
-    
 }
 
 // Máscaras nos campos de entrada

@@ -804,23 +804,20 @@
         <p>Visitantes online: <span id="online"></span></p>
 
         <section class="credits-section" id="creditos">
-            <h2>Créditos da Equipe</h2>
-
+            <h2>Equipe de Desenvolvimento</h2>
             <div class="team-grid">
                 <div class="team-card">
-                    <img src="imagens/person.jpg" alt="Nome do Funcionário">
+                    <img src="imagens/alan.jpg" alt="Allan" loading="lazy">
                     <h3>Allan</h3>
-                    <p>Cargo do Funcionário</p>
-                    <p>Desenvolvedor web e de sistemas, Programando projetos da Teeb.</p>
+                    <p>Desenvolvedor Full Stack</p>
+                    <p>Desenvolvimento web e sistemas</p>
                 </div>
                 <div class="team-card">
-                    <img src="imagens/person.jpg" alt="Nome do Funcionário">
+                    <img src="imagens/gamaliel.jpg" alt="Gamaliel" loading="lazy">
                     <h3>Gamaliel</h3>
-                    <p>Cargo do Funcionário</p>
-                    <p>Desenvolvedor web e de sistemas, Programando projetos da Teeb.</p>
+                    <p>Designer UX/UI</p>
+                    <p>Interface e experiência do usuário</p>
                 </div>
-
-
             </div>
         </section>
 
